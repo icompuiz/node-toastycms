@@ -29,15 +29,16 @@ var users = [{
 		]
 	}
 },{
-	username: 'special',
-	password: 'special',
+	username: 'public',
+	password: 'public',
 	fullname: 'special User',
-	email: 'special@email.com',
+	email: 'public@email.com',
 	options: {
+		type: 'system',
+		nologon: true,
 		groups: [
-			'administrators',
-			'users',
-		]
+			'public'
+		],
 	}
 }];
 

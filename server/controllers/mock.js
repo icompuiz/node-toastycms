@@ -3,7 +3,8 @@ var modelName = 'Mock';
 var $mongoose = require('mongoose'),
 	$restful = require('node-restful');
 
-var model = $mongoose.model(modelName);
+var model = $mongoose.model(modelName),
+	Route = $mongoose.model('Route');
 
 var resource = $restful
 	.model(modelName, model.schema)
@@ -34,7 +35,30 @@ resource.before('get', function(req, res, next) {
 		});
 	} else {
 		// check route acl
-		next();
+
+		Route.findOne({ path: req.path }).exec(function(err, routeData) {
+
+			if (err) {
+				return next(err);
+			}
+
+					
+			var route = new Route(routeData);
+			route.isAllowed('read', function(err, isAllowed) {
+
+				if (err) {
+					return next(err);
+				}
+
+
+				if (isAllowed) {
+					return next();
+				}
+
+				return res.json(401, 'Forbidden');
+
+			});
+		});
 	}
 
 });

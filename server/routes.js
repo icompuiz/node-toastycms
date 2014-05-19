@@ -3,15 +3,44 @@
 var _ = require('lodash'),
 	$toastySession = require('./toastySession');
 
+var routesRegistered = false;
+
 
 function main(app) {
+
+	if (routesRegistered) {
+		console.log('Routes have already been registered');
+		return;
+	}
+
+	routesRegistered = true;
 
 	var Authentication = require('./controllers/authenticationCtrl');
 	var Mock = require('./controllers/mock.js');
 
 	var apiRoutes = [{
 		path: '/api/mock',
-		resource: Mock.resource
+		resource: Mock.resource,
+		access: {
+			users: [{
+				username: 'public',
+				access: {
+					read: true
+				}
+			}],
+			groups: [{
+				name: 'public',
+				access: {
+					read: true
+				}
+			}, {
+				name: 'users',
+				access: {
+					read: true,
+					create: true
+				}
+			}]
+		}
 	}];
 
 	var authRoutes = [{
@@ -65,14 +94,14 @@ function main(app) {
 
 	function cleanRequest(req, res, next) {
 		if (req.user) {
-			if(req.user.salt) {
+			if (req.user.salt) {
 				req.user.salt = null;
-			}	
+			}
 			if (req.user.hash) {
 				req.user.hash = null;
 			}
 		}
-		next();	
+		next();
 	}
 
 	function registerRoute(route) {
@@ -128,15 +157,17 @@ function main(app) {
 			.before('get', middleware)
 			.after('get', middleware)
 
-			.before('post', middleware)
+		.before('post', middleware)
 			.after('post', middleware)
 
-			.before('put', middleware)
+		.before('put', middleware)
 			.after('put', middleware)
 
-			.before('delete', middleware)
+		.before('delete', middleware)
 			.after('delete'), middleware;
 	});
+
+	module.exports.apiRoutes = apiRoutes;
 }
 
 

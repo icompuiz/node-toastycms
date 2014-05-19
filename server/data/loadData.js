@@ -2,7 +2,8 @@
 
 var _ = require('lodash'),
 	$async = require('async'),
-	$mongoose = require('mongoose');
+	$mongoose = require('mongoose'),
+	$routes = require('../routes');
 
 
 function main(app, dataInitialized) {
@@ -16,6 +17,18 @@ function main(app, dataInitialized) {
 			data: require('./groups')
 		}
 	};
+
+	function removeRoutes(doneRemovingRoutes) {
+		var Route = $mongoose.model('Route');
+		Route.remove({}, function(err) {
+			if (err) {
+				console.log('loadData::removeRoutes::fail', err);
+				return doneRemovingRoutes(err);
+			}
+			console.log('loadData::removeRoutes::success');
+			doneRemovingRoutes();
+		})
+	}
 
 	function removeMockObjects(doneRemovingMocks) {
 		var Mock = $mongoose.model('Mock');
@@ -235,14 +248,71 @@ function main(app, dataInitialized) {
 		mock.save(done);
 	}
 
+	function addRoutes(doneAddingRoutes) {
+
+		var routes = $routes.apiRoutes;
+
+		var Route = $mongoose.model('Route'),
+			AccessControlList = $mongoose.model('AccessControlList'),
+			User = $mongoose.model('User'),
+			UserAccessControlEntry = $mongoose.model('UserAccessControlEntry'),
+			Group = $mongoose.model('Group'),
+			GroupAccessControlEntry = $mongoose.model('GroupAccessControlEntry');
+
+		$async.each(routes, function(routeData) {
+
+			var route = new Route({
+				path: routeData.path
+			});
+
+			function addUsers(doneAddingUsers) {
+				AccessControlList
+					.addUsers(route.acl, routeData.access.users, doneAddingUsers);
+			}
+
+			function addGroups(doneAddingGroups) {
+				AccessControlList
+					.addGroups(route.acl, routeData.access.groups, doneAddingGroups)
+			}
+
+			route.save(function(err) {
+
+				// add access
+				if (err) {
+					return doneAddingRoutes(err);
+				}
+
+				if (routeData.access) {
+
+
+					$async.series({
+						users: addUsers,
+						groups: addGroups
+					}, function(err, results) {
+						if (err) {
+							return doneAddingRoutes(err);
+						}
+
+						doneAddingRoutes(null, results);
+					});
+
+				}
+
+			});
+
+		});
+	}
+
 	$async.series([
 		removeUsers,
 		removeGroups,
 		removeAccessControlLists,
 		removeAccessControlEntries,
+		removeRoutes,
 		removeMockObjects,
 		addGroups,
 		addUsers,
+		addRoutes,
 		mockData
 	], function(err, results) {
 		console.log('loadData::complete');
