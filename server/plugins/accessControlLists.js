@@ -28,7 +28,7 @@ function AccessControlListPlugin(schema, options) {
 			AccessControlList = $mongoose.model('AccessControlList'),
 			UserAccessControlEntry = $mongoose.model('UserAccessControlEntry');
 
-		console.log("Checking acls for", currentUser.username, "on resource", data._id);
+		console.log("Checking acls for", currentUser.username, "on resource", data.constructor.modelName, data._id);
 
 		if (currentUser) {
 

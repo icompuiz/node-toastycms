@@ -31,7 +31,7 @@ var users = [{
 },{
 	username: 'public',
 	password: 'public',
-	fullname: 'special User',
+	fullname: 'public',
 	email: 'public@email.com',
 	options: {
 		type: 'system',

@@ -249,6 +249,7 @@ function main(app, dataInitialized) {
 	}
 
 	function addRoutes(doneAddingRoutes) {
+		console.log('loadData::addRoutes::enter');
 
 		var routes = $routes.apiRoutes;
 
@@ -261,21 +262,28 @@ function main(app, dataInitialized) {
 
 		$async.each(routes, function(routeData) {
 
+			console.log('loadData::addRoutes::each::enter');
+
+
 			var route = new Route({
 				path: routeData.path
 			});
 
 			function addUsers(doneAddingUsers) {
+				console.log('loadData::addRoutes::each::addUsers::enter', route.acl);
 				AccessControlList
 					.addUsers(route.acl, routeData.access.users, doneAddingUsers);
 			}
 
 			function addGroups(doneAddingGroups) {
+				console.log('loadData::addRoutes::each::addGroups::enter', route.acl);
 				AccessControlList
 					.addGroups(route.acl, routeData.access.groups, doneAddingGroups)
 			}
 
 			route.save(function(err) {
+
+
 
 				// add access
 				if (err) {
@@ -284,7 +292,8 @@ function main(app, dataInitialized) {
 
 				if (routeData.access) {
 
-
+					console.log('loadData::addRoutes::saveRoute::success', routeData.path);
+					console.log('loadData::addRoutes::saveRoute', 'Adding Users and Groups');
 					$async.series({
 						users: addUsers,
 						groups: addGroups

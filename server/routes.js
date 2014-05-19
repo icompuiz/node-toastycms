@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash'),
+	$async = require('async'),
 	$toastySession = require('./toastySession');
 
 var routesRegistered = false;
@@ -17,23 +18,21 @@ function main(app) {
 
 	var Authentication = require('./controllers/authenticationCtrl');
 	var Mock = require('./controllers/mock.js');
+	var Route = require('./controllers/route.js');
 
 	var apiRoutes = [{
 		path: '/api/mock',
-		resource: Mock.resource,
+		controller: Mock,
 		access: {
-			users: [{
+			users: [
+			{
 				username: 'public',
 				access: {
-					read: true
-				}
+					read: true,
+					create: true
+				}				
 			}],
 			groups: [{
-				name: 'public',
-				access: {
-					read: true
-				}
-			}, {
 				name: 'users',
 				access: {
 					read: true,
@@ -146,25 +145,18 @@ function main(app) {
 
 	_.each(apiRoutes, function(route) {
 
-		function middleware(res, req, next) {
-			// setUser(res, req, next);
-			cleanRequest(res, req, next);
-		}
-
 		console.log('Registering route', route.path);
-		route.resource.register(app, route.path);
-		route.resource
-			.before('get', middleware)
-			.after('get', middleware)
 
-		.before('post', middleware)
-			.after('post', middleware)
+		route.controller.resource
+			.before('get', Route.checkRoute)
+			.before('post', Route.checkRoute)
 
-		.before('put', middleware)
-			.after('put', middleware)
+			.after('get', cleanRequest)
+			.after('post', cleanRequest)
+			.after('put', cleanRequest)
+			.after('delete', cleanRequest);
 
-		.before('delete', middleware)
-			.after('delete'), middleware;
+		route.controller.resource.register(app, route.path);
 	});
 
 	module.exports.apiRoutes = apiRoutes;

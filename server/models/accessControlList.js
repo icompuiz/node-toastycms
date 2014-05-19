@@ -127,7 +127,7 @@ AccessControlListSchema.pre('save', function(done) {
 
 
 });
-AccessControlListSchema.statics.addGroups = function(id, groups, done) {
+AccessControlListSchema.statics.addGroups = function(id, groupsToAdd, done) {
 
 	var Group = $mongoose.model('Group'),
 		GroupAccessControlEntry = $mongoose.model('GroupAccessControlEntry');
@@ -145,11 +145,11 @@ AccessControlListSchema.statics.addGroups = function(id, groups, done) {
 		}
 
 		var groups = [];
-		$async.each(groups || [], function(groupData, processNextGroup) {
+		$async.each(groupsToAdd || [], function(groupData, processNextGroup) {
 
 			var name = groupData.name || groupData;
 
-			var groupQuery = User.findOne({
+			var groupQuery = Group.findOne({
 				name: name
 			});
 
@@ -161,6 +161,8 @@ AccessControlListSchema.statics.addGroups = function(id, groups, done) {
 				if (!group) {
 					return processNextGroup('Group ' + name + ' not found');
 				}
+
+				console.log("EJEJEJKEEEKWKR EHERE!! jksjkdjkd");
 
 				var ace = new GroupAccessControlEntry({
 					group: group._id
@@ -187,11 +189,21 @@ AccessControlListSchema.statics.addGroups = function(id, groups, done) {
 				return done(err);
 			}
 
-			AccessControlList.findOneAndUpdate(id, {
+			AccessControlList.findOneAndUpdate({
+				_id: id
+			}, {
 				$push: {
-					groups: groups
+					groups: {
+						$each: groups
+					}
+
 				}
-			}, function(err) {
+			}, {
+				upsert: true,
+				safe: true
+			}, function(err, group) {
+
+
 				if (err) {
 					return done(err);
 				}
@@ -203,7 +215,7 @@ AccessControlListSchema.statics.addGroups = function(id, groups, done) {
 
 };
 
-AccessControlListSchema.statics.addUsers = function(id, users, done) {
+AccessControlListSchema.statics.addUsers = function(id, usersToAdd, done) {
 
 	var User = $mongoose.model('User'),
 		UserAccessControlEntry = $mongoose.model('UserAccessControlEntry');
@@ -221,9 +233,9 @@ AccessControlListSchema.statics.addUsers = function(id, users, done) {
 		}
 
 		var users = [];
-		$async.each(users || [], function(userData, processNextUser) {
+		$async.each(usersToAdd || [], function(userData, processNextUser) {
 
-			var username = userData.name || userData;
+			var username = userData.username || userData;
 
 			var userQuery = User.findOne({
 				username: username
@@ -246,6 +258,7 @@ AccessControlListSchema.statics.addUsers = function(id, users, done) {
 					ace.access = userData.access
 				}
 
+
 				ace.save(function(err) {
 					if (err) {
 						return processNextUser(err);
@@ -263,10 +276,18 @@ AccessControlListSchema.statics.addUsers = function(id, users, done) {
 				return done(err);
 			}
 
-			AccessControlList.findOneAndUpdate(id, {
+			AccessControlList.findOneAndUpdate({
+				_id: id
+			}, {
 				$push: {
-					users: users
+					users: {
+						$each: users
+					}
+
 				}
+			}, {
+				upsert: true,
+				safe: true
 			}, function(err) {
 				if (err) {
 					return done(err);

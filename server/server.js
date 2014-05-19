@@ -66,7 +66,25 @@ function main(app, config) {
 	$passport.deserializeUser(User.deserializeUser());
 	
 	app.all('*',function (req, res, next) {
-		console.log("HERE!!!");
+		
+		if (!req.isAuthenticated()) {
+			console.log('Not logged in');
+			var userQuery = User.findOne({ username: 'public' });
+			userQuery.select('_id username fullname');
+			return userQuery.exec(function(err, user) {
+				
+				if (err || !user) {
+					return res.send(500, 'Error finding public user. Request failed');
+				}
+
+				console.log(user);
+
+				$toastySession.user = user;
+				next();
+
+			});
+		}
+
 		$toastySession.user = req.user;
 		next();
 	});
