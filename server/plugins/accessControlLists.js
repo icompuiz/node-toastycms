@@ -217,7 +217,9 @@ function AccessControlListPlugin(schema, options) {
 
 	};
 
-	schema.pre('save', function(done) {
+	var addAcl = function(done) {
+
+		console.log('plugin::accesscontrollists::pre::save::enter');
 
 		var User = $mongoose.model('User'),
 			Group = $mongoose.model('Group'),
@@ -226,40 +228,76 @@ function AccessControlListPlugin(schema, options) {
 
 		var doc = this;
 
-		var accessControlList = new AccessControlList({
-			users: [],
-			groups: []
+		// after the acl is constructed, the current user is added to it
+		// the acl is added to the document
+		function addUser(accessControlList, saveAcl) { 
+
+			if ($toastySession.user) {
+				var currentUser = $toastySession.user;
+				var ace = new UserAccessControlEntry({
+					user: currentUser
+				});
+
+				doc.acl = accessControlList._id;
+
+				ace.save(function(err) {
+					if (err) {
+						return saveAcl(err);
+					}
+					accessControlList.users.push(ace);
+					saveAcl(done); // the acl will be saved and the callback will be invoked
+					// saveAccessControlList();
+				})
+			} else {
+				doc.acl = accessControlList._id;
+				saveAcl(done); // the acl will be saved and the callback will be invoked
+			}
+
+		}
+
+		AccessControlList.create(addUser); // create a new acl and add the user to it.
+
+		// var accessControlList = new AccessControlList({
+		// 	users: [],
+		// 	groups: []
+		// });
+
+		// // helpful function to prevent duplicate code
+
+		// function saveAccessControlList() {
+		// 	accessControlList.save(function(err) {
+		// 		if (err) {
+		// 			return done(err);
+		// 		}
+		// 		doc.acl = accessControlList;
+		// 		done();
+
+		// 	});
+		// }
+
+		
+	}
+
+	schema.methods.addAcl = addAcl;
+
+	schema.pre('save', function(done) {
+
+		addAcl.call(this, done);
+
+	});
+
+	schema.pre('remove', function(done) {
+
+		console.log('plugin::accessControlLists::schema::pre::remove::enter');
+
+
+		AccessControlList.findById(this.acl).exec(function(err, acl) {
+			console.log('plugin::accessControlLists::schema::pre::remove::findById::enter');
+			acl.remove(function(err, acl) {
+				console.log('plugin::accessControlLists::schema::pre::remove::findById::remove::exit');
+				done(err);
+			});
 		});
-
-		// helpful function to prevent duplicate code
-
-		function saveAccessControlList() {
-			accessControlList.save(function(err) {
-				if (err) {
-					return done(err);
-				}
-				doc.acl = accessControlList;
-				done();
-
-			});
-		}
-
-		if ($toastySession.user) {
-			var currentUser = $toastySession.user;
-			var ace = new UserAccessControlEntry({
-				user: currentUser
-			});
-
-			ace.save(function(err) {
-				if (err) {
-					return done(err);
-				}
-				accessControlList.users.push(ace);
-				saveAccessControlList();
-			})
-		} else {
-			saveAccessControlList();
-		}
 
 	});
 }

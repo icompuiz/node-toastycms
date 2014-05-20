@@ -2,8 +2,15 @@ var $mongoose = require('mongoose'),
 	Route = $mongoose.model('Route');
 
 module.exports.checkRoute = function(req, res, next) {
-
 	console.log('controler::route::checkRoute::enter');
+
+	if (req.params.id) {
+		
+		console.log('controler::route::checkRoute', 'forwarding to object permission checks');
+
+		return next();
+	}
+
 	
 	var right;
 	if ('get' === req.method.toLowerCase()) {
