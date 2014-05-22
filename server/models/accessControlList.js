@@ -217,8 +217,6 @@ AccessControlListSchema.pre('save', function(done) {
 
 	var accessControlList = this;
 
-	console.log(accessControlList);
-
 	var User = $mongoose.model('User'),
 		Group = $mongoose.model('Group'),
 		UserAccessControlEntry = $mongoose.model('UserAccessControlEntry'),
@@ -235,10 +233,21 @@ AccessControlListSchema.pre('save', function(done) {
 	});
 
 	function addRootUserACE(doneAddingRootUser) {
+		console.log('model::accessControlList::pre::addRootUserACE::enter');
+
 		rootUser.exec(function(err, root) {
+			console.log('model::accessControlList::pre::addRootUserACE::findRoot::enter');
 			if (err) {
+				console.log('model::accessControlList::pre::addRootUserACE::findRoot::err', err);
 				return doneAddingRootUser(err);
 			}
+			
+			if (!root) {
+				var err = new Error('Fatal error: Could not find root user.');
+				console.log('model::accessControlList::pre::addRootUserACE::findRoot::err', err);
+				return doneAddingRootUser(err);
+			}
+			
 
 			if (!_.isArray(accessControlList.users)) {
 				accessControlList.users = [];
@@ -252,17 +261,32 @@ AccessControlListSchema.pre('save', function(done) {
 
 			ace.save(function(err) {
 				if (err) {
+					console.log('model::accessControlList::pre::addRootUserACE::findRoot::save::err', err);
 					return doneAddingRootUser(err);
 				}
+
+
+
+				console.log('model::accessControlList::pre::addRootUserACE::findRoot::save::success');
 				accessControlList.users.push(ace);
 				doneAddingRootUser(null, ace);
+
 			});
 		});
 	}
 
 	function addAdministratorUserACE(doneAddingAdministratorUser) {
+		console.log('model::accessControlList::pre::addAdministratorUserACE::enter');
 		administratorUser.exec(function(err, administrator) {
+			console.log('model::accessControlList::pre::addAdministratorUserACE::findAdministrator::enter');
 			if (err) {
+				console.log('model::accessControlList::pre::addAdministratorUserACE::findAdministrator::err', err);
+				return doneAddingAdministratorUser(err);
+			}
+
+			if (!administrator) {
+				var err = new Error('Fatal error: Could not find administrator user.');
+				console.log('model::accessControlList::pre::addAdministratorUserACE::findAdministrator::err', err);
 				return doneAddingAdministratorUser(err);
 			}
 
@@ -278,8 +302,10 @@ AccessControlListSchema.pre('save', function(done) {
 
 			ace.save(function(err) {
 				if (err) {
+					console.log('model::accessControlList::pre::addAdministratorUserACE::findAdministrator::save::err', err);
 					return doneAddingAdministratorUser(err);
 				}
+				console.log('model::accessControlList::pre::addAdministratorUserACE::findAdministrator::save::success');
 				accessControlList.users.push(ace);
 				doneAddingAdministratorUser(null, ace);
 			});
@@ -287,13 +313,24 @@ AccessControlListSchema.pre('save', function(done) {
 	}
 
 	function addAdministratorsGroupACE(doneAddingAdministratorsGroup) {
+
+		console.log('model::accessControlList::pre::addAdministratorGroupACE::enter');
+
 		administratorsGroup.exec(function(err, administrators) {
+			console.log('model::accessControlList::pre::addAdministratorGroupACE::findAdministratorGroup::enter');
 			if (err) {
+				console.log('model::accessControlList::pre::addAdministratorGroupACE::findAdministratorGroup::err', err);
 				return doneAddingAdministratorsGroup(err);
 			}
 
-			if (!_.isArray(accessControlList.users)) {
-				accessControlList.users = [];
+			if (!administrators) {
+				var err = new Error('Fatal error: Could not find administrators group.');
+				console.log('model::accessControlList::pre::addAdministratorGroupACE::findAdministratorGroup::err', err);
+				return doneAddingAdministratorsGroup(err);
+			}
+
+			if (!_.isArray(accessControlList.groups)) {
+				accessControlList.groups = [];
 			}
 
 			var ace = new GroupAccessControlEntry();
@@ -303,8 +340,11 @@ AccessControlListSchema.pre('save', function(done) {
 			};
 			ace.save(function(err) {
 				if (err) {
+					console.log('model::accessControlList::pre::addAdministratorGroupACE::findAdministratorGroup::save::err', err);
 					return doneAddingAdministratorsGroup(err);
 				}
+				
+				console.log('model::accessControlList::pre::addAdministratorGroupACE::findAdministratorGroup::save::success');
 				accessControlList.groups.push(ace);
 				doneAddingAdministratorsGroup(null, ace);
 			});
@@ -317,9 +357,11 @@ AccessControlListSchema.pre('save', function(done) {
 		administrators: addAdministratorsGroupACE
 	}, function(err, results) {
 		if (err) {
+			console.log('model::accessControlList::pre::error', err);
 			return done(err);
 		}
-		console.log('Done adding access control entries');
+		console.log('model::accessControlList::pre::success', accessControlList);
+		
 		done();
 	});
 
@@ -328,16 +370,18 @@ AccessControlListSchema.pre('save', function(done) {
 
 AccessControlListSchema.pre('remove', function(done) {
 
-	console.log('model::accessControlList::pre::remove::enter');
 
 	var AccessControlEntry = $mongoose.model('AccessControlEntry');
 
 	var usersAndGroups = _.flatten([this.users, this.groups]);
 
-	$async.each(usersAndGroups, function(ace, deleteNextACE) {
-		console.log('model::accessControlList::pre::remove::eachACE::enter');
+	console.log('model::accessControlList::pre::remove::enter', usersAndGroups);
 
-		AccessControlEntry.findById(ace._id).exec(function(err, ace) {
+
+	$async.each(usersAndGroups, function(ace, deleteNextACE) {
+		console.log('model::accessControlList::pre::remove::eachACE::enter', ace);
+
+		AccessControlEntry.findOne({_id: ace}).exec(function(err, ace) {
 			console.log('model::accessControlList::pre::remove::eachACE::findById::enter');
 			ace.remove(function(err, ace) {
 				console.log('model::accessControlList::pre::remove::eachACE::findById::remove::exit');

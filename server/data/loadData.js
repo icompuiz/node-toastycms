@@ -18,6 +18,38 @@ function main(app, dataInitialized) {
 		}
 	};
 
+	function removeDirectories(doneRemovingDirectories) {
+
+		var Directory = $mongoose.model('Directory');
+		Directory.remove({}, function(err) {
+
+
+			if (err) {
+				console.log('loadData::removeDirectories::fail', err);
+				return doneRemovingDirectories(err);
+			}
+			console.log('loadData::removeDirectories::success');
+			doneRemovingDirectories();
+		});
+
+	}
+
+	function removeFiles(doneRemovingFiles) {
+
+		var File = $mongoose.model('File');
+		File.remove({}, function(err) {
+
+			if (err) {
+				console.log('loadData::removeFiles::fail', err);
+				return doneRemovingFiles(err);
+			}
+			console.log('loadData::removeFiles::success');
+			doneRemovingFiles();
+
+		});
+
+	}
+
 	function removeRoutes(doneRemovingRoutes) {
 		var Route = $mongoose.model('Route');
 		Route.remove({}, function(err) {
@@ -315,6 +347,8 @@ function main(app, dataInitialized) {
 	$async.series([
 		removeUsers,
 		removeGroups,
+		removeDirectories,
+		removeFiles,
 		removeAccessControlLists,
 		removeAccessControlEntries,
 		removeRoutes,

@@ -290,12 +290,29 @@ function AccessControlListPlugin(schema, options) {
 
 		console.log('plugin::accessControlLists::schema::pre::remove::enter');
 
+		var AccessControlList = $mongoose.model('AccessControlList');
 
 		AccessControlList.findById(this.acl).exec(function(err, acl) {
 			console.log('plugin::accessControlLists::schema::pre::remove::findById::enter');
+			
+			if (err) {
+				console.log('plugin::accessControlLists::schema::pre::remove::findById::err');
+				return done(err);
+			}
+			
+			if (!acl) {
+				console.log('plugin::accessControlLists::schema::pre::remove::findById::acl not found');
+				var err = new Error('ACL for model not found. This usually means the acl was already removed from the model');
+				return done(err);
+			}
+
 			acl.remove(function(err, acl) {
+				if (err) {
+					console.log('plugin::accessControlLists::schema::pre::remove::findById::remove::error', err);
+					return done(err);
+				}
 				console.log('plugin::accessControlLists::schema::pre::remove::findById::remove::exit');
-				done(err);
+				done();
 			});
 		});
 

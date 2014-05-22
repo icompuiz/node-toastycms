@@ -24,7 +24,24 @@ var DirectorySchema = new Schema({
 		type: $mongoose.Schema.Types.ObjectId,
 		ref: 'Directory'
 	},
-	files: [File]
+	files: [{
+		type: $mongoose.Schema.Types.ObjectId,
+		ref: 'File'
+	}]
+});
+
+DirectorySchema.pre('remove', function(done) {
+
+	var directory = this;
+
+	File.find({ directory: directory._id }).exec(function(err, files) {
+		$async.each(files, function(file, removeNextFile) {
+
+			file.remove(removeNextFile);
+
+		}, done)
+	});
+
 });
 
 DirectorySchema.plugin($accessControlListPlugin);

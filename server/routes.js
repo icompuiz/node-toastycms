@@ -19,7 +19,8 @@ function main(app) {
 	var Authentication = require('./controllers/authenticationCtrl.js');
 	var Mock = require('./controllers/mock.js');
 	var Route = require('./controllers/route.js');
-	var Filesystem = require('./controllers/filesystem.js');
+	var Directory = require('./controllers/directory.js');
+	var File = require('./controllers/file.js');
 
 	var apiRoutes = [{
 		path: '/api/mock',
@@ -41,8 +42,28 @@ function main(app) {
 			}]
 		}
 	}, {
-		path: '/api/fs',
-		controller: Filesystem,
+		path: '/api/fs/directories',
+		controller: Directory,
+		access: {
+			users: [{
+				username: 'public',
+				access: {
+					read: true,
+					create: true
+				}
+			}],
+			groups: [{
+				name: 'users',
+				access: {
+					read: true,
+					create: true
+				}
+			}]
+		}
+
+	}, {
+		path: '/api/fs/files',
+		controller: File,
 		access: {
 			users: [{
 				username: 'public',

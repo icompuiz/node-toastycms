@@ -68,7 +68,7 @@ function main(app, config) {
 	app.all('*',function (req, res, next) {
 		
 		if (!req.isAuthenticated()) {
-			console.log('Not logged in');
+			console.log('server::app.all::not authenticated::', 'setting current user to public');
 			var userQuery = User.findOne({ username: 'public' });
 			userQuery.select('_id username fullname');
 			return userQuery.exec(function(err, user) {
@@ -77,15 +77,15 @@ function main(app, config) {
 					return res.send(500, 'Error finding public user. Request failed');
 				}
 
-				console.log(user);
+				console.log('Making request as ', user.username);
 
 				$toastySession.user = user;
 				next();
-
 			});
 		}
 
 		$toastySession.user = req.user;
+		console.log('server::app.all::authenticated::', 'current user is', $toastySession.user.username);
 		next();
 	});
 
