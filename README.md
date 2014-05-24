@@ -2,6 +2,17 @@ ToastyCMS
 ==============
 A CMS for developers like their bread baked twice.
 
+###Major Technologies Used
+- NodeJS
+- MongoDB
+- Mongoose ODM
+- AngularJS
+- Twitter Bootstrap
+- LoDash
+- Node Async
+- Grunt
+- Bower
+- Karma
 
 ToastyCMS is my contribution to the world of content management systems. This version of ToastyCMS has been written completly using NodeJS using MongoDB as its core database. The client front end has been developed using AngularJS.
 
@@ -24,7 +35,7 @@ Current documentation is coming soon, but in the mean time here are some snaps o
 - Diagram 1: https://www.dropbox.com/s/eihyoy77q439k7e/WP_20140511_00_37_09_Pro.jpg
 - Diagram 2: https://www.dropbox.com/s/jy2jo8ol2zfzn2c/WP_20140510_16_38_07_Pro.jpg
 
-## Type, Template, Content
+##Type, Template, Content
 This is an object oriented style of content managment. A Type describes the attributes of Content. When defining a Type you will be defining all the attributes Content of that Type will have and will select the `input` module that knows the way values for that attribute will be defined by users. 
 
 After a Type has been defined, an output Template can be defined. A template describes how content can be output to viewers. In your template, attributes will be output using output modules that know how to output data of a given input format. 
@@ -36,3 +47,12 @@ Types can inherit properties from each other. The intention of this feature is t
 From the above example, a child type can be defined that does not add any new attributes by has a unique Template. In this template instead of using the `image` output module, it uses an output module called `link`. This module takes a value and outputs an `<a></a>` element whose href is the value exposed by the `file` input module. 
 
 I figure this flexibility will enable developers to define html templates, JSON templates, RSS feeds, and more.
+
+##File System
+One of the areas for improvement I found in content management systems I have used was in file management. Most CMS platforms rely on the host server's file system, which is sufficent for most installations. One of the benefits of using NodeJS for developing a server application is the cross-platform nature and scaleablity of the application inherited from NodeJS. Relying on the host system's file system limits both of these demensions. 
+
+To try and earn back these core benefits provided by NodeJS, ToastyCMS uses MongoDB's GridStore as it's filesytem. An API that has the ability to add and remove files, organize file into directories, and define permissions to control access has been implemented.
+
+I figure that developers will not have to worry about where to store files and manage their permissions in the context of a traditional file system while deploying their application anywhere. 
+
+The tradeoff here is this increases the coupling of this ToastyCMS and MongoDB, which means the likely hood of being able to hook in a different database system may become architecturally unfeasible. 
