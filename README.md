@@ -6,7 +6,7 @@ A CMS for developers like their bread baked twice.
 ToastyCMS is my contribution to the world of content management systems. This version of ToastyCMS has been written completly using NodeJS using MongoDB as its core database. The client front end has been developed using AngularJS.
 
 Out of the box Toasty provides an innovative file management system, access control mechanisms, as well at traditional content management features. 
-- Defining Static Webpages using a Type -> Template -> Definition style of content management
+- Defining Static Webpages using a Type, Template, Content style of content management
 - Extending the CMS with custom client side and server side modules.
  - Defining client side modules using an api exposed through AngularJS.
  - Defining server side modules using an api exposed through NodeJS.
@@ -24,7 +24,7 @@ Current documentation is coming soon, but in the mean time here are some snaps o
 - Diagram 1: https://www.dropbox.com/s/eihyoy77q439k7e/WP_20140511_00_37_09_Pro.jpg
 - Diagram 2: https://www.dropbox.com/s/jy2jo8ol2zfzn2c/WP_20140510_16_38_07_Pro.jpg
 
-## Type -> Template -> Definition
+## Type, Template, Content
 This is an object oriented style of content managment. A Type describes the attributes of Content. When defining a Type you will be defining all the attributes Content of that Type will have and will select the `input` module that knows the way values for that attribute will be defined by users. 
 
 After a Type has been defined, an output Template can be defined. A template describes how content can be output to viewers. In your template, attributes will be output using output modules that know how to output data of a given input format. 
