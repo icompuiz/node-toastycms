@@ -23,3 +23,16 @@ The previous version of ToastyCMS can be found at http://github.com/icompuiz/toa
 Current documentation is coming soon, but in the mean time here are some snaps of my high level architecture/class diagram for it.
 - Diagram 1: https://www.dropbox.com/s/eihyoy77q439k7e/WP_20140511_00_37_09_Pro.jpg
 - Diagram 2: https://www.dropbox.com/s/jy2jo8ol2zfzn2c/WP_20140510_16_38_07_Pro.jpg
+
+## Type -> Template -> Definition
+This is an object oriented style of content managment. A Type describes the attributes of Content. When defining a Type you will be defining all the attributes Content of that Type will have and will select the `input` module that knows the way values for that attribute will be defined by users. 
+
+After a Type has been defined, an output Template can be defined. A template describes how content can be output to viewers. In your template, attributes will be output using output modules that know how to output data of a given input format. 
+
+For example if a particular Type has an attribute called `image` with an input format of `file`. The expectation here is when a user goes to defined a value for this attribute, they will upload a file. For this attrubute an output module called `image` can be defined that knows how to consume the data exposed by the `file` input module when the user has defined a value. Assuming this value is the path to the file, the `image` output module will output an `<image />` html element whose source is the path.
+
+Types can inherit properties from each other. The intention of this feature is to allow for multiple output templates for a particular Type. In the previous version of ToastyCMS, the developer would define both the input and output format of a particular attribute. This version decouples this association in order to provide more flexibilility. 
+
+From the above example, a child type can be defined that does not add any new attributes by has a unique Template. In this template instead of using the `image` output module, it uses an output module called `link`. This module takes a value and outputs an `<a></a>` element whose href is the value exposed by the `file` input module. 
+
+I figure this flexibility will enable developers to define html templates, JSON templates, RSS feeds, and more.
