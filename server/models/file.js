@@ -5,29 +5,13 @@ var $mongoose = require('mongoose'),
 	Schema = $mongoose.Schema,
 	_ = require("lodash"),
 	$async = require('async'),
-	$accessControlListPlugin = require('../plugins/accessControlLists.js');
+	extend = require('mongoose-schema-extend');
+	FileSystemItem = require('./fileSystemItem');
 
 var prefix = "fs";
 var filesCollection = prefix + '.files';
 
-var FileSchema = new Schema({
-	created: {
-		type: Date,
-		default: Date.now
-	},
-	modified: {
-		type: Date,
-		default: Date.now
-	},
-	name: {
-		type: String,
-		default: '',
-		trim: true,
-	},
-	directory: {
-		type: $mongoose.Schema.Types.ObjectId,
-		ref: 'Directory'
-	},
+var FileSchema = FileSystemItem.schema.extend({
 	fileId: {
 		type: $mongoose.Schema.Types.ObjectId
 	}
@@ -168,8 +152,5 @@ FileSchema.pre('remove', function(done) {
 
 });
 
-
-
-FileSchema.plugin($accessControlListPlugin);
 var File = $mongoose.model('File', FileSchema);
 module.exports = File;

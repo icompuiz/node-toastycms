@@ -92,6 +92,10 @@ function main(app, config) {
 	$routes.register(app);
 
 	function connect(err) {
+		if ('test' === process.env.NODE_ENV) {
+			return;
+		}
+
 		if (!err) {
 			var port = $config.port || 9000;
 			app.listen(port, function() {
@@ -109,4 +113,21 @@ function main(app, config) {
 }
 
 var app = $express();
-$initialize.run(app, main); // connect to the database and do otherthing, then actually start the server
+
+if ('test' === process.env.NODE_ENV) {
+
+	module.exports = function(onReady) {
+		$initialize.run(app, function(app, config) {
+			main(app, config);
+			
+			if (onReady) {
+				onReady(app);
+			}
+		});
+	};
+
+} else {
+
+	$initialize.run(app, main); // connect to the database and do otherthing, then actually start the server
+}
+

@@ -1,13 +1,12 @@
 var $mongoose = require('mongoose'),
-	Schema = $mongoose.Schema,
-	$aclPlugin = require('../plugins/accessControlLists');
+	Model = require('./_model');
+	
 
 
-var mockSchema = new Schema({
+var mockSchema = Model.schema.extend({
 	field: String
 });
 
-mockSchema.plugin($aclPlugin);
 var Mock = $mongoose.model('Mock', mockSchema);
 
 module.exports = Mock;

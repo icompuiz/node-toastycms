@@ -29,6 +29,5 @@ var AccessControlEntrySchema = new Schema({
 	collection: 'accesscontrolentries'
 });
 
-module.exports = AccessControlEntrySchema;
-
-$mongoose.model('AccessControlEntry', AccessControlEntrySchema); // registered but not directly accessible
+var AccessControlEntry = $mongoose.model('AccessControlEntry', AccessControlEntrySchema); // registered but not directly accessible
+module.exports = AccessControlEntry;

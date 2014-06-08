@@ -69,14 +69,14 @@ function main(app) {
 				username: 'public',
 				access: {
 					read: true,
-					create: true
+					// create: true
 				}
 			}],
 			groups: [{
 				name: 'users',
 				access: {
 					read: true,
-					create: true
+					// create: true
 				}
 			}]
 		}
@@ -117,6 +117,12 @@ function main(app) {
 			res.render('index', {
 				user: req.user
 			});
+		},
+	}, {
+		path: '/isioma',
+		httpMethod: 'GET',
+		middleware: function(req, res, next) {
+			res.send("HERE");
 		}
 	}];
 

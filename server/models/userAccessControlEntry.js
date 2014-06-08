@@ -4,7 +4,7 @@ var $mongoose = require('mongoose'),
 
 var AccessControlEntry = require('./accessControlEntry.js');
 
-var UserAccessControlEntrySchema = AccessControlEntry.extend({
+var UserAccessControlEntrySchema = AccessControlEntry.schema.extend({
 	user: {
 		ref: 'User',
 		type: $mongoose.Schema.Types.ObjectId

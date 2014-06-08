@@ -1,51 +1,31 @@
 var $mongoose = require('mongoose'),
-	Schema = $mongoose.Schema,
-	_ = require("lodash"),
 	$async = require('async'),
-	$accessControlListPlugin = require('../plugins/accessControlLists.js');
+	$extend = require('mongoose-schema-extend'),
+	FileSystemItem = require('./fileSystemItem');
 
-var File = require('./file.js');
-
-var DirectorySchema = new Schema({
-	created: {
-		type: Date,
-		default: Date.now
-	},
-	modified: {
-		type: Date,
-		default: Date.now
-	},
-	name: {
-		type: String,
-		default: '',
-		trim: true,
-	},
-	parent: {
-		type: $mongoose.Schema.Types.ObjectId,
-		ref: 'Directory'
-	},
+var DirectorySchema = FileSystemItem.schema.extend({
 	files: [{
 		type: $mongoose.Schema.Types.ObjectId,
-		ref: 'File'
+		ref: 'FileSystemItem'
 	}]
 });
 
-DirectorySchema.pre('remove', function(done) {
+DirectorySchema.pre('remove', function(preRemoveDone) {
 
 	var directory = this;
+	var File = $mongoose.model('File');
 
 	File.find({ directory: directory._id }).exec(function(err, files) {
 		$async.each(files, function(file, removeNextFile) {
 
 			file.remove(removeNextFile);
 
-		}, done)
+		}, preRemoveDone)
 	});
 
 });
 
-DirectorySchema.plugin($accessControlListPlugin);
-
 var Directory = $mongoose.model('Directory', DirectorySchema);
+module.exports = Directory;
 
 

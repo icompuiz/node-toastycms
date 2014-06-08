@@ -9,7 +9,10 @@ var File = $mongoose.model('File'),
 
 var resource = $restful
 	.model('File', File.schema)
-	.methods(['get', 'post', 'put', 'delete']);
+	.methods(['get', 'put', 'delete']); 
+	// get file or metadata, update the file metadata, delete a file
+	// update a file ref not supported yet.
+
 
 var handleFileUpload = function(req, res, next) {
 	console.log('controller::file::handleFileUpload::enter')
@@ -108,29 +111,13 @@ var handleFileUpload = function(req, res, next) {
 	}
 };
 
+// Access Control: read 
 var handleFileDownload = function(req, res, next) {
 
 	console.log('controller::file::handleFileDownload::enter');
 
-	var fileId = req.params.id;
 
-	File.findById(fileId).exec(function(err, file) {
-
-		console.log('controller::file::handleFileDownload::findById::enter');
-		if (err) {
-			console.log('controller::file::handleFileDownload::findById::error', error);
-
-			return res.send(500, err.message);
-		}
-
-		if (!file) {
-
-			var err = new Error('File' +fileId+ 'not found');
-			console.log('controller::file::handleFileDownload::findById::error', err);
-			return res.send(400, err.message);
-
-		}
-
+	var onAllowed = function() {
 		file.download(function(err, fileStream) {
 
 			if (err) {
@@ -140,7 +127,7 @@ var handleFileDownload = function(req, res, next) {
 				return res.send(500, err.message);
 
 			}
-			
+
 			console.log('controller::file::handleFileDownload::findById::download::sucess', 'Sending stream');
 
 			var type = fileStream.contentType;
@@ -148,52 +135,100 @@ var handleFileDownload = function(req, res, next) {
 			res.header("Content-Disposition", "attachment; filename=" + $path.basename(fileStream.filename));
 			fileStream.stream(true).pipe(res);
 		});
+	};
 
-
-	});
+	handlePermissionCheck('read', req, res, onAllowed);
 
 };
 
-resource.route('upload.post', {
-	detail: true,
-	handler: handleFileUpload
-});
-
-resource.route('download.get', {
-	detail: true,
-	handler: handleFileDownload
-});
-
-resource.before('delete', function(req, res, next) {
+var handlePermissionCheck = function(right, req, res, onAllowed) {
 
 	var fileId = req.params.id;
-		console.log('controller::file::before::delete::enter');
+	console.log('controller::file::handlePermissionCheck::', right, '::enter');
 
 	File.findById(fileId).exec(function(err, file) {
-		
-		console.log('controller::file::before::delete::findById::enter');
+
+		console.log('controller::file::handlePermissionCheck::', right, '::findById::enter');
 		if (err) {
-			console.log('controller::file::before::delete::findById::err', err);
+			console.log('controller::file::handlePermissionCheck::', right, '::findById::err', err);
 			return res.send(500, err.message);
 
 		}
 
 		if (!file) {
 			var err = new Error('File not found');
-			console.log('controller::file::before::delete::findById::err', err);
+			console.log('controller::file::handlePermissionCheck::', right, '::findById::err', err);
 			return res.send(404, err.message);
 
 		}
 
+		file.isAllowed(right, function(err, isAllowed) {
+
+			if (err) {
+				console.log('controller::file::handlePermissionCheck::', right, '::isAllowed::err', err);
+				return res.send(500, err.message);
+			}
+
+			if (!isAllowed) {
+				return res.json(401, 'Forbidden');
+			}
+
+			onAllowed(file);
+
+		});
+	});
+
+}
+
+// when you upload to a valid file, you can modify the gridfs ref
+// resource.route('upload.post', {
+// 	detail: true,
+// 	handler: handleFileUpload
+// });
+
+// Access Control: read 
+resource.route('download.get', {
+	detail: true,
+	handler: handleFileDownload
+});
+
+// Access Control: remove 
+resource.before('delete', function(req, res, next) {
+
+	var onAllowed = function onAllowed(file) {
 		file.remove(function(err) {
 			if (err) {
 				console.log('controller::file::before::delete::findById::remove::err');
-				return res.send(200, err.message);
+				return res.send(500, err.message);
 			}
 			console.log('controller::file::before::delete::findById::remove::success');
 			res.json(200, file);
-		})
-	});
+		});
+	};
+
+	handlePermissionCheck('remove', req, res, onAllowed);
+
+});
+
+
+// Access Control: update 
+resource.before('put', function(req, res, next) {
+
+	var onAllowed = function() {
+		next();
+	};
+
+	handlePermissionCheck('update', req, res, onAllowed);
+});
+
+// Access Control: read
+resource.before('get', function(req, res, next) {
+
+	var onAllowed = function() {
+		next();
+	};
+
+	handlePermissionCheck('read', req, res, onAllowed);
 
 });
 
