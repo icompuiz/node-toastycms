@@ -131,9 +131,7 @@ FileSchema.methods.copyFile = function(tmpData, doneCopyingFile) {
 		if (err) {
 			return doneCopyingFile(err);
 		}
-
-		file.fileId = storedFile.fileId;
-
+		
 		doneCopyingFile(null, storedFile);
 	}
 

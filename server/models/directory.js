@@ -11,18 +11,15 @@ var DirectorySchema = FileSystemItem.schema.extend({
 });
 
 DirectorySchema.pre('remove', function(preRemoveDone) {
-
 	var directory = this;
-	var File = $mongoose.model('File');
 
-	File.find({ directory: directory._id }).exec(function(err, files) {
-		$async.each(files, function(file, removeNextFile) {
+	FileSystemItem.find({ directory: directory._id }).exec(function(err, files) {
+		$async.each(files, function(file, removeNextItem) {
 
-			file.remove(removeNextFile);
+			file.remove(removeNextItem);
 
 		}, preRemoveDone)
 	});
-
 });
 
 var Directory = $mongoose.model('Directory', DirectorySchema);

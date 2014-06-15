@@ -12,6 +12,8 @@ var FileSystemItemSchema = Model.schema.extend({
 		type: $mongoose.Schema.Types.ObjectId,
 		ref: 'Directory'
 	}
+}, {
+	collection: 'filesystemitems'
 });
 
 var FileSystemItem = $mongoose.model('FileSystemItem', FileSystemItemSchema);

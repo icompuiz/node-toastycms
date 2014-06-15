@@ -13,6 +13,11 @@ var ModelSchema = new Schema({
 	}
 });
 
+ModelSchema.pre('save', function(done) {
+	this.modified = Date.now();
+	done();
+});
+
 ModelSchema.plugin($accessControlListPlugin);
 var Model = $mongoose.model('Model', ModelSchema);
 module.exports = Model;

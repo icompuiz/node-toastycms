@@ -3,17 +3,18 @@ var $express = require('express'),
 	$passport = require('passport'),
 	$config = require('./configuration/config.json'),
 	$initialize = require('./configuration/initialize.js'),
-	$routes = require('./routes.js'),
 	$mongoose = require('mongoose'),
 	$fs = require('fs'),
 	$argv = require('optimist').argv,
 	LocalStrategy = require('passport-local').Strategy,
 	$toastySession = require('./toastySession');
 
-
 var MongoStore = require('connect-mongo')($express);
 
-function main(app, config) {
+function main(app, config, options) {
+
+	module.exports.app = app;
+
 	app.use($express.logger('dev'));
 
 	app.use($express.cookieParser(config.security.cookieSecret));
@@ -89,10 +90,13 @@ function main(app, config) {
 		next();
 	});
 
-	$routes.register(app);
 
 	function connect(err) {
-		if ('test' === process.env.NODE_ENV) {
+		
+		var $routes = require('./routes.js');
+		$routes.register(app);
+		
+		if (options && options.mode === 'test') {
 			return;
 		}
 
@@ -104,9 +108,10 @@ function main(app, config) {
 		}
 	}
 	
-	if ($argv.initdb) {
-		console.log('initialize');
-		require('./data/loadData')(app, connect);
+	if ((options && options.initialize) || $argv.initdb) {
+		console.log('toastyCMS::server::Load Data');
+		var $loadData = require('./data/loadData');
+		$loadData.run(connect);
 	} else {
 		connect();
 	}
@@ -114,20 +119,15 @@ function main(app, config) {
 
 var app = $express();
 
-if ('test' === process.env.NODE_ENV) {
 
-	module.exports = function(onReady) {
+module.exports = {
+	run: function(onReady, options) {
 		$initialize.run(app, function(app, config) {
-			main(app, config);
+			main(app, config, options);
 			
 			if (onReady) {
 				onReady(app);
 			}
-		});
-	};
-
-} else {
-
-	$initialize.run(app, main); // connect to the database and do otherthing, then actually start the server
-}
-
+		}, options);
+	}
+};

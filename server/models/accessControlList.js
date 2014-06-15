@@ -11,22 +11,39 @@ var AccessControlListSchema = new Schema({
 	groups: [{
 		type: $mongoose.Schema.Types.ObjectId,
 		ref: 'GroupAccessControlEntry'
-	}]
+	}],
+	model: {
+		type: String
+	}
+},{
+	collection: 'accesscontrollists'
 });
 
-AccessControlListSchema.statics.create = function(onCreate) {
+AccessControlListSchema.statics.create = function(schema, onCreate) {
+
+	console.log('model::accesscontrollist::create::enter');	
+
 
 	var accessControlList = new this({
 		users: [],
-		groups: []
+		groups: [],
+		model: schema.modelName
 	});
 
 	function saveAcl(done) {
 
+		console.log('model::accesscontrollist::create::saveAcl::enter');	
+
+
 		accessControlList.save(function(err) {
+			
 			if (err) {
+				console.log('model::accesscontrollist::create::saveAcl::error', err.message || err);	
 				return done(err);
 			}
+			
+			console.log('model::accesscontrollist::create::saveAcl::success');	
+			
 			done();
 		});
 
@@ -398,5 +415,4 @@ AccessControlListSchema.pre('remove', function(done) {
 });
 
 var AccessControlList = $mongoose.model('AccessControlList', AccessControlListSchema);
-
 module.exports = AccessControlList;

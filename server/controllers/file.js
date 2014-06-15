@@ -99,6 +99,8 @@ var handleFileUpload = function(req, res, next) {
 				return res.json(500, err);
 			}
 
+			file.fileId = storedFile.fileId;
+
 			console.log('controller::file::handleFileUpload::onFileCopied::success::stored file', storedFile.fileId);
 			console.log('controller::file::handleFileUpload::onFileCopied::success::current file', file.fileId);
 

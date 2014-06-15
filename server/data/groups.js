@@ -6,4 +6,6 @@ var groups = [{
 	name: 'public'
 }];
 
-module.exports = groups;
+module.exports = {
+	data: groups
+};

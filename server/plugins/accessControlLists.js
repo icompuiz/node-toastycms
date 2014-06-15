@@ -219,7 +219,6 @@ function AccessControlListPlugin(schema, options) {
 
 	var addAcl = function(done) {
 
-		console.log('plugin::accesscontrollists::pre::save::enter');
 
 		var User = $mongoose.model('User'),
 			Group = $mongoose.model('Group'),
@@ -232,7 +231,12 @@ function AccessControlListPlugin(schema, options) {
 		// the acl is added to the document
 		function addUser(accessControlList, saveAcl) { 
 
+			console.log('plugin::accesscontrollists::addAcl::addUser::enter');
+			
 			if ($toastySession.user) {
+				
+				console.log('plugin::accesscontrollists::addAcl::addUser::user', $toastySession.user);
+				
 				var currentUser = $toastySession.user;
 				var ace = new UserAccessControlEntry({
 					user: currentUser
@@ -249,31 +253,15 @@ function AccessControlListPlugin(schema, options) {
 					// saveAccessControlList();
 				})
 			} else {
+				console.log('plugin::accesscontrollists::addAcl::addUser::id', accessControlList._id);
+
 				doc.acl = accessControlList._id;
 				saveAcl(done); // the acl will be saved and the callback will be invoked
 			}
 
 		}
 
-		AccessControlList.create(addUser); // create a new acl and add the user to it.
-
-		// var accessControlList = new AccessControlList({
-		// 	users: [],
-		// 	groups: []
-		// });
-
-		// // helpful function to prevent duplicate code
-
-		// function saveAccessControlList() {
-		// 	accessControlList.save(function(err) {
-		// 		if (err) {
-		// 			return done(err);
-		// 		}
-		// 		doc.acl = accessControlList;
-		// 		done();
-
-		// 	});
-		// }
+		AccessControlList.create(doc.constructor, addUser); // create a new acl and add the user to it.
 
 		
 	}

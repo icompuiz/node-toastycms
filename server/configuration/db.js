@@ -9,10 +9,15 @@ var $mongoose = require('mongoose'),
  * Parse the system configuration object for relvant configuration settings
  * In this case they are the database options
  */
-var parseConfig = function(config, onParsed) {
+var parseConfig = function(config, onParsed, options) {
 
 
 	var db = config.db;
+	
+	if (options && options.useDb) {
+		db = config[options.useDb] || db;
+	}
+
 	if (db) {
 
 		var uri = ['mongodb://'];
