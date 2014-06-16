@@ -6,7 +6,7 @@ var $fs = require('fs'),
 	$db = require('./db'),
 	$security = require('./security');
 
-function main(app, next, options) {
+function main(next, options) {
 
 	function connectToDb(onDbConnected) {
 
@@ -26,7 +26,7 @@ function main(app, next, options) {
 
 		$security.parse($config, function(err, securityOptions) {
 			onSecurityParsed(null, securityOptions);
-		}, options)
+		}, options);
 
 	} 
 
@@ -35,7 +35,7 @@ function main(app, next, options) {
 		db: connectToDb,
 	}, function(err, config) {
 		module.exports.config = config;
-		next(app, config);
+		next(config);
 	});
 
 }

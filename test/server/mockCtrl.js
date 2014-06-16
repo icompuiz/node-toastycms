@@ -25,17 +25,18 @@ describe('Mock', function() {
         });
 
     });
-
+    
     describe('GET /api/mocks', function() {
-        it('respond with json', function(done) {
+
+        it('should respond with json', function(done) {
 
             request(app)
                 .get('/api/mocks')
                 .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
                 .expect(function(res) {
                 	console.log(res.body);
                 })
-                .expect('Content-Type', /json/)
                 .expect(200, done);
 
 

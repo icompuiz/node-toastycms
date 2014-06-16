@@ -1,5 +1,6 @@
 var $express = require('express'),
 	$path = require('path'),
+	$lodash = require('lodash'),
 	$passport = require('passport'),
 	$config = require('./configuration/config.json'),
 	$initialize = require('./configuration/initialize.js'),
@@ -11,7 +12,24 @@ var $express = require('express'),
 
 var MongoStore = require('connect-mongo')($express);
 
-function main(app, config, options) {
+function main(app, config, argument2, argument3) {
+
+	var options = {};
+	var callback = function() {};
+	
+	if ($lodash.isFunction(argument2)) {
+		callback = argument2;
+	}
+
+	if ($lodash.isObject(argument2)) {
+		options = argument2;
+
+		if ($lodash.isFunction(argument3)) {
+			callback = argument3;
+		}
+
+	}
+
 
 	module.exports.app = app;
 
@@ -92,23 +110,28 @@ function main(app, config, options) {
 
 
 	function connect(err) {
-		
-		var $routes = require('./routes.js');
-		$routes.register(app);
-		
-		if (options && options.mode === 'test') {
-			return;
+
+		function onRoutesRegistered() {
+
+			if (options.mode === 'test') {
+				return callback(app);
+			}
+
+			if (!err) {
+				var port = $config.port || 9000;
+				app.listen(port, function() {
+					console.log('Express server listening on port', port);
+					return callback(app);
+				});
+			}
+			
 		}
 
-		if (!err) {
-			var port = $config.port || 9000;
-			app.listen(port, function() {
-				console.log('Express server listening on port', port);
-			});
-		}
+		var $routes = require('./routes.js');
+		$routes.register(app, onRoutesRegistered);
 	}
-	
-	if ((options && options.initialize) || $argv.initdb) {
+
+	if (options.initialize || $argv.initdb) {
 		console.log('toastyCMS::server::Load Data');
 		var $loadData = require('./data/loadData');
 		$loadData.run(connect);
@@ -122,12 +145,8 @@ var app = $express();
 
 module.exports = {
 	run: function(onReady, options) {
-		$initialize.run(app, function(app, config) {
-			main(app, config, options);
-			
-			if (onReady) {
-				onReady(app);
-			}
+		$initialize.run(function(config) {
+			main(app, config, options, onReady);
 		}, options);
 	}
 };

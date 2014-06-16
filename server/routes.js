@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var path = require('path');
+var async = require('async');
 
 var routesRegistered = false;
 
@@ -60,14 +61,14 @@ var apiRoutes = [{
             username: 'public',
             access: {
                 read: true,
-                // create: true
+                create: true
             }
         }],
         groups: [{
             name: 'users',
             access: {
                 read: true,
-                // create: true
+                create: true
             }
         }]
     }
@@ -130,7 +131,7 @@ function cleanRequest(req, res, next) {
     next();
 }
 
-function main(app) {
+function main(app, afterRoutesRegistered) {
 
     if (routesRegistered) {
         console.log('Routes have already been registered');
@@ -139,7 +140,7 @@ function main(app) {
 
     routesRegistered = true;
 
-    function registerRoute(route) {
+    function registerRoute(route, afterRegisterRoute) {
 
         console.log('Registering', route.path);
 
@@ -169,31 +170,57 @@ function main(app) {
                 app.delete.apply(app, args);
                 break;
             default:
-                throw new Error('Invalid method specified for route ' + route.path);
+                var err = new Error('Invalid method specified for route ' + route.path);
+                return afterRegisterRoute(err);
         }
+
+        afterRegisterRoute();
 
     }
 
+    function registerAuthRoutes(afterRegisterAuthRoutes) {
 
-    _.each(authRoutes, registerRoute);
-    _.each(staticRoutes, registerRoute);
+    	async.each(authRoutes, registerRoute, afterRegisterAuthRoutes);
 
-    _.each(apiRoutes, function(route) {
+    }
 
-        console.log('Registering route', route.path);
+    function registerStaticRoutes(afterRegisterStaticRoutes) {
+    	
+    	async.each(staticRoutes, registerRoute, afterRegisterStaticRoutes);
 
-        route.controller.resource
-            .before('get', Route.checkRoute)
-            .before('post', Route.checkRoute)
+    }
 
-        .after('get', cleanRequest)
-            .after('post', cleanRequest)
-            .after('put', cleanRequest)
-            .after('delete', cleanRequest);
+    function registerAPIRoutes(afterRegisterAPIRoutes) {
+	    
+	    async.each(apiRoutes, function(route, afterRegisterRoute) {
 
-        route.controller.resource.register(app, route.path);
-    });
+	        console.log('Registering route', route.path);
 
+	        route.controller.resource
+	            .before('get', Route.checkRoute)
+	            .before('post', Route.checkRoute)
+
+	        .after('get', cleanRequest)
+	            .after('post', cleanRequest)
+	            .after('put', cleanRequest)
+	            .after('delete', cleanRequest);
+
+	        route.controller.resource.register(app, route.path);
+
+	        afterRegisterRoute();
+
+	    }, afterRegisterAPIRoutes);
+
+    }
+
+    async.series({
+
+    	registerAuthRoutes: registerAuthRoutes,
+		registerStaticRoutes: registerStaticRoutes,
+		registerAPIRoutes: registerAPIRoutes
+
+    }, afterRoutesRegistered);
+    
 }
 
 module.exports = {

@@ -39,6 +39,9 @@ resource.before('get', function(req, res, next) {
 
 });
 
+var accessControlListCtrlPlugin = require('../plugins/accessControlListCtrlPlugin');
+accessControlListCtrlPlugin.plugin(resource, model);
+
 module.exports = {
 	resource: resource
 };

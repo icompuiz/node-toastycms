@@ -53,14 +53,16 @@ function AccessControlListPlugin(schema, options) {
 
 					function checkUser(userAllowedResult) {
 
-						console.log("AccessControlListPlugin::isAllowed::checkUser::enter");
 
+						console.log("AccessControlListPlugin::isAllowed::checkUser::enter");
 						// var users = _.map(acl.users, function());
 
 						var allowed = false;
 
 						$async.each(acl.users, function(userACE, processNextUser) {
 
+							console.log("AccessControlListPlugin::isAllowed::checkUser::async::each");
+							
 							User
 								.findOne({
 									_id: userACE.user
@@ -75,8 +77,14 @@ function AccessControlListPlugin(schema, options) {
 
 
 										if (user._id.equals(currentUser._id)) {
+
+
 											userFound = true;
 											allowed = userACE.access[right] || userACE.access.all;
+											console.log('---------------------------------------');
+											console.log('Model', acl.model, 'Id', data._id);
+											console.log('Current', currentUser.username, 'ACE', user.username,'Right', right, 'Allowed', allowed);
+											console.log('---------------------------------------');
 											if (undefined === allowed) {
 												allowed = false;
 											}
@@ -241,6 +249,8 @@ function AccessControlListPlugin(schema, options) {
 				var ace = new UserAccessControlEntry({
 					user: currentUser
 				});
+
+				ace.access.all = true;
 
 				doc.acl = accessControlList._id;
 

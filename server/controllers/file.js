@@ -234,6 +234,9 @@ resource.before('get', function(req, res, next) {
 
 });
 
+var accessControlListCtrlPlugin = require('../plugins/accessControlListCtrlPlugin');
+accessControlListCtrlPlugin.plugin(resource, File);
+
 module.exports = {
 	handleFileUpload: handleFileUpload,
 	handleFileDownload: handleFileDownload,
