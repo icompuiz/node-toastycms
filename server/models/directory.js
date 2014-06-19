@@ -13,6 +13,9 @@ var DirectorySchema = FileSystemItem.schema.extend({
 DirectorySchema.pre('remove', function(preRemoveDone) {
 	var directory = this;
 
+    console.log('model::directory::pre::remove::enter');
+
+
 	FileSystemItem.find({ directory: directory._id }).exec(function(err, files) {
 		$async.each(files, function(file, removeNextItem) {
 

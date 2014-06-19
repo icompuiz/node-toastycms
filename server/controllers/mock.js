@@ -1,47 +1,53 @@
 var modelName = 'Mock';
 
 var $mongoose = require('mongoose'),
-	$restful = require('node-restful');
+    $restful = require('node-restful');
 
-var model = $mongoose.model(modelName),
-	Route = $mongoose.model('Route');
+var model = $mongoose.model(modelName);
 
 var resource = $restful
-	.model(modelName, model.schema)
-	.methods(['get', 'post', 'put', 'delete']);
+    .model(modelName, model.schema)
+    .methods(['get', 'post', 'put', 'delete']);
 
-resource.before('get', function(req, res, next) {
-	var id = req.params.id;
 
-	if (id) {
-		model.findOne({_id: id}).exec(function(err, mock) {
+function register() {
+    var accessControlListsController = require('../plugins/accessControlListsController');
+    accessControlListsController.plugin(resource, model);
 
-			if (mock) {
+    resource.before('get', function(req, res, next) {
+        var id = req.params.id;
 
-				mock.isAllowed('read', function(err, isAllowed) {
+        if (id) {
+            model.findOne({
+                _id: id
+            }).exec(function(err, mock) {
 
-					if (isAllowed) {
-						return next();
-					}
+                if (mock) {
 
-					return res.json(401, 'Forbidden');
+                    mock.isAllowed('read', function(err, isAllowed) {
 
-				});
-			} else {
+                        if (isAllowed) {
+                            return next();
+                        }
 
-				return res.json(404, 'Not found');
-			}
+                        return res.json(401, 'Forbidden');
 
-		});
-	}
+                    });
+                } else {
 
-	next();
+                    return res.json(404, 'Not found');
+                }
 
-});
+            });
+        }
 
-var accessControlListCtrlPlugin = require('../plugins/accessControlListCtrlPlugin');
-accessControlListCtrlPlugin.plugin(resource, model);
+        next();
+
+    });
+
+}
 
 module.exports = {
-	resource: resource
+    resource: resource,
+    register: register
 };

@@ -1,6 +1,6 @@
 var express = require('express'),
     request = require('supertest'),
-    toastyCMS = require('../../server/server');
+    toastyCMS = require('../../../server/server');
 
 describe('Mock', function() {
     var app;

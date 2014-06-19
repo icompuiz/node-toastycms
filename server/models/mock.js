@@ -1,13 +1,12 @@
 var $mongoose = require('mongoose'),
 	Schema = $mongoose.Schema,
-	$accessControlListPlugin = require('../plugins/accessControlLists.js');
+	$accessControlListPlugin = require('../plugins/accessControlListsModel.js');
 	
 var mockSchema = new Schema({
 	field: String
 });
 
-var Mock = $mongoose.model('Mock', mockSchema);
-
 mockSchema.plugin($accessControlListPlugin);
+var Mock = $mongoose.model('Mock', mockSchema);
 
 module.exports = Mock;

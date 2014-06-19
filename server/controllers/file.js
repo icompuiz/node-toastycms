@@ -1,186 +1,152 @@
 var $mongoose = require('mongoose'),
-	$restful = require('node-restful'),
-	$path = require('path'),
-	_ = require('lodash');
+    $restful = require('node-restful'),
+    $path = require('path'),
+    _ = require('lodash');
 
 var File = $mongoose.model('File'),
-	Directory = $mongoose.model('Directory'),
-	AccessControlList = $mongoose.model('AccessControlList');
+    Directory = $mongoose.model('Directory'),
+    AccessControlList = $mongoose.model('AccessControlList');
 
 var resource = $restful
-	.model('File', File.schema)
-	.methods(['get', 'put', 'delete']); 
-	// get file or metadata, update the file metadata, delete a file
-	// update a file ref not supported yet.
+    .model('File', File.schema)
+    .methods(['get', 'put', 'delete']);
+
 
 
 var handleFileUpload = function(req, res, next) {
-	console.log('controller::file::handleFileUpload::enter')
+    console.log('controller::file::handleFileUpload::enter')
 
-	var keys = Object.keys(req.files);
+    var keys = Object.keys(req.files);
 
-	if (keys.length > 0) {
-
-
-		var directoryId = req.body.directory;
-
-		if (!directoryId) {
-			return res.send(500, 'Please specify a directory');
-		}
-
-		var firstKey = keys[0];
-		var tmpFile = req.files[firstKey];
-
-		var copyData = {
-			path: tmpFile.path,
-			name: tmpFile.name,
-			type: tmpFile.type,
-			size: tmpFile.size
-		};
-
-		var fileData = {
-			name: tmpFile.name
-		};
-
-		var file = new File(fileData);
+    if (keys.length > 0) {
 
 
-		console.log('controller::file::handleFileUpload::update::before', fileData.name);
+        var directoryId = req.body.directory;
 
-		function saveFile() {
+        if (!directoryId) {
+            return res.send(500, 'Please specify a directory');
+        }
 
-			function done(err) {
+        var firstKey = keys[0];
+        var tmpFile = req.files[firstKey];
 
-				if (err) {
-					console.log('controller::file::handleFileUpload::findOneAndUpdate::saveFile::done::err')
-					return res.send(500, err.message);
-				}
-				console.log('controller::file::handleFileUpload::findOneAndUpdate::saveFile::done::success')
-				return res.json(200, file);
-			}
+        var copyData = {
+            path: tmpFile.path,
+            name: tmpFile.name,
+            type: tmpFile.type,
+            size: tmpFile.size
+        };
 
-			Directory
-				.findOneAndUpdate({
-						_id: directoryId
-					}, {
-						$push: {
-							files: file._id
-						}
-					}, {
-						upsert: true,
-						safe: true
-					},
-					function(err, directory) {
-						console.log('controller::file::handleFileUpload::findOneAndUpdate::enter');
-						if (err) {
-							console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-							return res.send(500, err.message);
-						}
+        var fileData = {
+            name: tmpFile.name,
+            directory: directoryId
+        };
 
-						if (!directory) {
-							console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-							return res.send(404, 'Directory not found'); // TODO: need to do clean up
-						}
+        var file = new File(fileData);
 
-						console.log('controller::file::handleFileUpload::findOneAndUpdate::success');
-						file.directory = directory._id;
 
-						file.save(done);
-					});
+        console.log('controller::file::handleFileUpload::update::before', fileData.name);
 
-		}
+        function saveFile() {
 
-		function onFileCopied(err, storedFile) {
+            function done(err) {
 
-			console.log('controller::file::handleFileUpload::onFileCopied::enter');
+                if (err) {
+                    console.log('controller::file::handleFileUpload::findOneAndUpdate::saveFile::done::err')
+                    return res.send(500, err.message);
+                }
+                console.log('controller::file::handleFileUpload::findOneAndUpdate::saveFile::done::success')
 
-			if (err) {
-				console.log('controller::file::handleFileUpload::onFileCopied::error', err);
-				return res.json(500, err);
-			}
+                file.acl = null;
 
-			file.fileId = storedFile.fileId;
+                return res.json(200, file);
+            }
 
-			console.log('controller::file::handleFileUpload::onFileCopied::success::stored file', storedFile.fileId);
-			console.log('controller::file::handleFileUpload::onFileCopied::success::current file', file.fileId);
+            file.save(done);
 
-			saveFile();
+        }
 
-		}
+        function onFileCopied(err, storedFile) {
 
-		file.copyFile(copyData, onFileCopied);
+            console.log('controller::file::handleFileUpload::onFileCopied::enter');
 
-	}
+            if (err) {
+                console.log('controller::file::handleFileUpload::onFileCopied::error', err);
+                return res.json(500, err);
+            }
+
+            file.fileId = storedFile.fileId;
+
+            console.log('controller::file::handleFileUpload::onFileCopied::success::stored file', storedFile.fileId);
+            console.log('controller::file::handleFileUpload::onFileCopied::success::current file', file.fileId);
+
+            saveFile();
+
+        }
+
+        Directory.findById(directoryId).exec(function(err, directory) {
+
+            if (err) {
+                console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
+                return res.json(400, err.message || err);
+            }
+
+            if (!directory) {
+                err = new Error('Specified directory not found');
+                console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
+                return res.json(404, err.message || err); // TODO: need to do clean up
+            }
+
+            file.copyFile(copyData, onFileCopied);
+
+        });
+
+    }
 };
 
 // Access Control: read 
 var handleFileDownload = function(req, res, next) {
 
-	console.log('controller::file::handleFileDownload::enter');
+    console.log('controller::file::handleFileDownload::enter');
+
+    var fileId = req.params.id;
 
 
-	var onAllowed = function() {
-		file.download(function(err, fileStream) {
+    File.findById(fileId).exec(function(err, file) {
+        if (err) {
+            return res.send(400, err.message || err);
+        }
 
-			if (err) {
+        if (!file) {
+            return res.send(404, 'File not found');
 
-				console.log('controller::file::handleFileDownload::findById::download::error', err);
+        }
 
-				return res.send(500, err.message);
 
-			}
+        file.download(function(err, fileStream) {
 
-			console.log('controller::file::handleFileDownload::findById::download::sucess', 'Sending stream');
+            if (err) {
 
-			var type = fileStream.contentType;
-			res.header('Content-Type', type);
-			res.header("Content-Disposition", "attachment; filename=" + $path.basename(fileStream.filename));
-			fileStream.stream(true).pipe(res);
-		});
-	};
+                console.log('controller::file::handleFileDownload::findById::download::error', err);
 
-	handlePermissionCheck('read', req, res, onAllowed);
+                return res.send(500, err.message);
+
+            }
+
+            console.log('controller::file::handleFileDownload::findById::download::sucess', 'Sending stream');
+
+            var type = fileStream.contentType;
+            res.header('Content-Type', type);
+            res.header("Content-Disposition", "attachment; filename=" + $path.basename(fileStream.filename));
+            fileStream.stream(true).pipe(res);
+        });
+
+    });
+
+
 
 };
 
-var handlePermissionCheck = function(right, req, res, onAllowed) {
-
-	var fileId = req.params.id;
-	console.log('controller::file::handlePermissionCheck::', right, '::enter');
-
-	File.findById(fileId).exec(function(err, file) {
-
-		console.log('controller::file::handlePermissionCheck::', right, '::findById::enter');
-		if (err) {
-			console.log('controller::file::handlePermissionCheck::', right, '::findById::err', err);
-			return res.send(500, err.message);
-
-		}
-
-		if (!file) {
-			var err = new Error('File not found');
-			console.log('controller::file::handlePermissionCheck::', right, '::findById::err', err);
-			return res.send(404, err.message);
-
-		}
-
-		file.isAllowed(right, function(err, isAllowed) {
-
-			if (err) {
-				console.log('controller::file::handlePermissionCheck::', right, '::isAllowed::err', err);
-				return res.send(500, err.message);
-			}
-
-			if (!isAllowed) {
-				return res.json(401, 'Forbidden');
-			}
-
-			onAllowed(file);
-
-		});
-	});
-
-}
 
 // when you upload to a valid file, you can modify the gridfs ref
 // resource.route('upload.post', {
@@ -188,57 +154,53 @@ var handlePermissionCheck = function(right, req, res, onAllowed) {
 // 	handler: handleFileUpload
 // });
 
-// Access Control: read 
-resource.route('download.get', {
-	detail: true,
-	handler: handleFileDownload
-});
+function register() {
 
-// Access Control: remove 
-resource.before('delete', function(req, res, next) {
+    var accessControlListsController = require('../plugins/accessControlListsController');
+    accessControlListsController.plugin(resource, File);
 
-	var onAllowed = function onAllowed(file) {
-		file.remove(function(err) {
-			if (err) {
-				console.log('controller::file::before::delete::findById::remove::err');
-				return res.send(500, err.message);
-			}
-			console.log('controller::file::before::delete::findById::remove::success');
-			res.json(200, file);
-		});
-	};
+    // Access Control: read 
+    resource.route('download.get', {
+        detail: true,
+        handler: handleFileDownload
+    });
 
-	handlePermissionCheck('remove', req, res, onAllowed);
+    // Access Control: remove 
+    resource.before('delete', function(req, res, next) {
 
-});
+        File.findById(req.params.id).exec(function(err, file) {
+
+            if (err) {
+                console.log('controller::file::before::delete::findById::err', err);
+                return res.send(500, err.message || err);
+            }
+
+            if (!file) {
+                err = new Error('File not found');
+                console.log('controller::file::before::delete::findById::err', err);
+                return res.send(404, err.message || err);
+            }
+
+            file.remove(function(err) {
+                if (err) {
+                    console.log('controller::file::before::delete::remove::err');
+                    return res.send(500, err.message || err);
+                }
+                console.log('controller::file::before::delete::findById::remove::success');
+
+                res.json(200, file);
+            });
+
+        });
 
 
-// Access Control: update 
-resource.before('put', function(req, res, next) {
+    });
 
-	var onAllowed = function() {
-		next();
-	};
-
-	handlePermissionCheck('update', req, res, onAllowed);
-});
-
-// Access Control: read
-resource.before('get', function(req, res, next) {
-
-	var onAllowed = function() {
-		next();
-	};
-
-	handlePermissionCheck('read', req, res, onAllowed);
-
-});
-
-var accessControlListCtrlPlugin = require('../plugins/accessControlListCtrlPlugin');
-accessControlListCtrlPlugin.plugin(resource, File);
+}
 
 module.exports = {
-	handleFileUpload: handleFileUpload,
-	handleFileDownload: handleFileDownload,
-	resource: resource
+    handleFileUpload: handleFileUpload,
+    handleFileDownload: handleFileDownload,
+    resource: resource,
+    register: register
 }

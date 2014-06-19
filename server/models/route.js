@@ -3,7 +3,7 @@
  */
 var $mongoose = require('mongoose'),
 	Schema = $mongoose.Schema
-	$aclPlugin = require('../plugins/accessControlLists');
+	$aclPlugin = require('../plugins/accessControlListsModel');
 
 	
 var routeSchema = new Schema({

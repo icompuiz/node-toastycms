@@ -198,9 +198,12 @@ function main(app, afterRoutesRegistered) {
 
 	        route.controller.resource
 	            .before('get', Route.checkRoute)
-	            .before('post', Route.checkRoute)
+	            .before('post', Route.checkRoute);
 
-	        .after('get', cleanRequest)
+	        route.controller.register();
+
+	        route.controller.resource
+	        	.after('get', cleanRequest)
 	            .after('post', cleanRequest)
 	            .after('put', cleanRequest)
 	            .after('delete', cleanRequest);
