@@ -40,18 +40,23 @@ describe('FileSystem', function() {
 
     });
 
-    describe('/api/fs/directories', function(done) {
+    describe('Directory API with Files', function(done) {
 
         var directory = {
             name: randomString()
         };
+
+        var subdirectory = {
+            name: randomString()
+        };
+
         var file;
 
         it('should respond with the new directory', function(done) {
 
-
             request(app)
-                .post('/api/fs/directories', directory)
+                .post('/api/fs/directories')
+                .send(directory)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(function(res) {
@@ -60,6 +65,12 @@ describe('FileSystem', function() {
                     }
 
                     directory._id = res.body._id;
+                })
+                .expect(function(res) {
+                    if (res.body.name !== directory.name) {
+                        return 'directory name doesn\'t match';
+                    }
+
                 })
                 .expect(201, done);
 
@@ -100,11 +111,17 @@ describe('FileSystem', function() {
                         return 'acl field visible';
                     }
                 })
+                .expect(function(res) {
+                    if (res.body.name !== 'image.png') {
+                        return 'file name doesn\'t match';
+                    }
+
+                })
                 .expect(200, done);
 
         });
 
-        it('should be in the directory', function(done) {
+        it('file should be in the directory', function(done) {
 
             request(app)
                 .get('/api/fs/files/' + file._id)
@@ -118,7 +135,7 @@ describe('FileSystem', function() {
 
         });
 
-        it('should be in the directory items list', function(done) {
+        it('file should be in the directory items list', function(done) {
 
             request(app)
                 .get('/api/fs/directories/' + directory._id)
@@ -178,14 +195,14 @@ describe('FileSystem', function() {
         it('should have deleted the file', function(done) {
 
             request(app)
-                .get('/api/fs/file/' + file._id)
-                // .set('Accept', 'application/json')
-                .expect('Content-Type', /html/)
+                .get('/api/fs/files/' + file._id)
+            // .set('Accept', 'application/json')
+            .expect('Content-Type', /html/)
                 .expect(404, done);
 
         });
 
-        it('should no longer be in the directory items list', function(done) {
+        it('file should no longer be in the directory items list', function(done) {
 
             request(app)
                 .get('/api/fs/directories/' + directory._id)
@@ -202,7 +219,97 @@ describe('FileSystem', function() {
 
         });
 
+        //-----------------------------------------------------
 
+        it('should create a subdirectory', function(done) {
+
+            subdirectory.directory = directory._id;
+
+            request(app)
+                .post('/api/fs/directories')
+                .send(subdirectory)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(function(res) {
+                    if (!res.body._id) {
+                        return 'no id present';
+                    }
+
+                    subdirectory = res.body;
+
+                })
+                .expect(function(res) {
+                    if (res.body.name !== subdirectory.name) {
+                        return 'subdirectory name doesn\'t match';
+                    }
+
+                })
+                .expect(201, done);
+
+        });
+
+        it('subdirectory should be in the directory', function(done) {
+
+            request(app)
+                .get('/api/fs/directories/' + subdirectory._id)
+                .expect('Content-Type', /json/)
+                .expect(function(res) {
+                    if (res.body.directory !== directory._id) {
+                        return 'The directory does not reference the directory'
+                    }
+                })
+                .expect(200, done);
+
+        });
+
+        it('subdirectory should be in the directory items list', function(done) {
+
+            request(app)
+                .get('/api/fs/directories/' + directory._id)
+                .expect('Content-Type', /json/)
+                .expect(function(res) {
+                    if (_.indexOf(res.body.files, subdirectory._id) === -1) {
+                        return 'The directory does not reference the directory';
+                    }
+                })
+                .expect(200, done);
+
+        });
+
+        it('should delete the subdirectory', function(done) {
+
+            request(app)
+                .delete('/api/fs/directories/' + subdirectory._id)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200, done);
+        });
+
+        it('should have deleted the subdirectory', function(done) {
+
+            request(app)
+                .get('/api/fs/directories/' + subdirectory._id)
+            // .set('Accept', 'application/json')
+            .expect('Content-Type', /html/)
+                .expect(404, done);
+
+        });
+
+        it('subdirectory should no longer be in the directory items list', function(done) {
+
+            request(app)
+                .get('/api/fs/directories/' + directory._id)
+                .expect('Content-Type', /json/)
+                .expect(function(res) {
+                    if (_.indexOf(res.body.files, subdirectory._id) !== -1) {
+                        return 'The directory still references the directory';
+                    }
+                })
+                .expect(200, done);
+
+        });
+
+        //-----------------------------------------------------
 
         it('should delete the directory', function(done) {
 
@@ -213,11 +320,11 @@ describe('FileSystem', function() {
                 .expect(200, done);
         });
 
-        it('should not exist directory', function(done) {
+        it('should have deleted the directory', function(done) {
             request(app)
                 .get('/api/fs/directories/' + directory._id)
-                // .set('Accept', 'application/json')
-                .expect('Content-Type', /html/)
+            // .set('Accept', 'application/json')
+            .expect('Content-Type', /html/)
                 .expect(404, done);
 
         });

@@ -20,7 +20,6 @@ function register() {
     var accessControlListsController = require('../plugins/accessControlListsController');
     accessControlListsController.plugin(resource, model);
 
-
     // add file to this directory
     // Access Control: update 
     resource.route('files.post', {
@@ -70,8 +69,6 @@ function register() {
 
         });
     });
-
-
 
 }
 

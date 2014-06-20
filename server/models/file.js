@@ -1,21 +1,21 @@
 'use strict';
 
+require('mongoose-schema-extend');
 var $mongoose = require('mongoose'),
     GridStore = $mongoose.mongo.GridStore,
     ObjectId = $mongoose.mongo.BSONPure.ObjectID,
     $filesystem = require('fs'),
-    Schema = $mongoose.Schema,
-    _ = require('lodash'),
-    $async = require('async'),
-    extend = require('mongoose-schema-extend');
+    Schema = $mongoose.Schema;
+    // _ = require('lodash'),
+    // $async = require('async'),
 var FileSystemItem = require('./fileSystemItem');
 
 var prefix = 'fs';
-var filesCollection = prefix + '.files';
+// var filesCollection = prefix + '.files';
 
 var FileSchema = FileSystemItem.schema.extend({
     fileId: {
-        type: $mongoose.Schema.Types.ObjectId
+        type: Schema.Types.ObjectId
     }
 });
 
@@ -26,7 +26,7 @@ var copyFile = function(file, doneCopyingFile) {
             var options = {
                 root: prefix,
                 // metadata: file.metadata,
-                content_type: file.type
+                'content_type': file.type
             };
 
             var gridStore = GridStore($mongoose.connection.db, new ObjectId(), file.name, 'w', options);
@@ -72,7 +72,7 @@ var download = function(fileId, sendStream) {
 var deleteFile = function(fileId, doneDeletingFile) {
 
     function doDelete(fileStream) {
-        fileStream.unlink(function(err, deleteResult) {
+        fileStream.unlink(function(err) {
             if (err) {
                 return doneDeletingFile(err);
             }
@@ -126,7 +126,7 @@ FileSchema.methods.download = function(sendStream) {
 
 FileSchema.methods.copyFile = function(tmpData, doneCopyingFile) {
 
-    var file = this;
+    // var file = this;
 
     function onFileCopied(err, storedFile) {
 
@@ -151,71 +151,6 @@ FileSchema.pre('remove', function(done) {
 
 });
 
-FileSchema.pre('save', function(done) {
-	var file = this;
-	var Directory = $mongoose.model('Directory');
-    Directory
-        .findOneAndUpdate({
-                _id: file.directory
-            }, {
-                $push: {
-                    files: file._id
-                }
-            }, {
-                upsert: true,
-                safe: true
-            },
-            function(err, directory) {
-                console.log('controller::file::handleFileUpload::findOneAndUpdate::enter');
-                if (err) {
-                    console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-                    return done(err);
-                }
-
-                if (!directory) {
-                	err = new Error('Specified directory not found');
-                    console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-                    return done(err); // TODO: need to do clean up
-                }
-
-                console.log('controller::file::handleFileUpload::findOneAndUpdate::success');
-                done();
-            });
-});
-
-FileSchema.post('remove', function(file) {
-	// var file = this;
-	var Directory = $mongoose.model('Directory');
-    Directory
-        .findOneAndUpdate({
-                _id: file.directory
-            }, {
-                $pull: {
-                    files: file._id
-                }
-            }, {
-                upsert: true,
-                safe: true
-            },
-            function(err, directory) {
-                console.log('controller::file::handleFileUpload::findOneAndUpdate::enter');
-                if (err) {
-                    console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-                    // return done(err);
-                    return;
-                }
-
-                if (!directory) {
-                	err = new Error('Specified directory not found');
-                    console.log('controller::file::handleFileUpload::findOneAndUpdate::error', err);
-                    // return done(err); // TODO: need to do clean up
-                    return;
-                }
-
-                console.log('controller::file::handleFileUpload::findOneAndUpdate::success');
-                // done();
-            });
-});
 
 var File = $mongoose.model('File', FileSchema);
 module.exports = File;
