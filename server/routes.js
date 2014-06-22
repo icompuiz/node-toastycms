@@ -14,6 +14,13 @@ var Route = require('./controllers/route.js');
 var Directory = require('./controllers/directory.js');
 var File = require('./controllers/file.js');
 
+var Content = require('./controllers/content.js');
+var ContentType = require('./controllers/contentType.js');
+var InputFormat = require('./controllers/inputFormat.js');
+var OutputFormat = require('./controllers/outputFormat.js');
+var Template = require('./controllers/template.js');
+
+
 var apiRoutes = [{
     path: '/api/mocks',
     controller: Mock,
@@ -73,6 +80,105 @@ var apiRoutes = [{
         }]
     }
 
+}, {
+    path: '/api/contentitems',
+    controller: Content,
+    access: {
+        users: [{
+            username: 'public',
+            access: {
+                read: true,
+                create: true
+            }
+        }],
+        groups: [{
+            name: 'users',
+            access: {
+                read: true,
+                create: true
+            }
+        }]
+    }
+
+}, {
+    path: '/api/contenttypes',
+    controller: ContentType,
+    access: {
+        users: [{
+            username: 'public',
+            access: {
+                read: true,
+                create: true
+            }
+        }],
+        groups: [{
+            name: 'users',
+            access: {
+                read: true,
+                create: true
+            }
+        }]
+    }
+
+}, {
+    path: '/api/inputformats',
+    controller: InputFormat,
+    access: {
+        users: [{
+            username: 'public',
+            access: {
+                read: true,
+                create: true
+            }
+        }],
+        groups: [{
+            name: 'users',
+            access: {
+                read: true,
+                create: true
+            }
+        }]
+    }
+
+}, {
+    path: '/api/outputformats',
+    controller: OutputFormat,
+    access: {
+        users: [{
+            username: 'public',
+            access: {
+                read: true,
+                create: true
+            }
+        }],
+        groups: [{
+            name: 'users',
+            access: {
+                read: true,
+                create: true
+            }
+        }]
+    }
+
+}, {
+    path: '/api/templates',
+    controller: Template,
+    access: {
+        users: [{
+            username: 'public',
+            access: {
+                read: true,
+                create: true
+            }
+        }],
+        groups: [{
+            name: 'users',
+            access: {
+                read: true,
+                create: true
+            }
+        }]
+    }
 }];
 
 var authRoutes = [{

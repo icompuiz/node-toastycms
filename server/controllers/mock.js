@@ -45,6 +45,9 @@ function register() {
 
     });
 
+    return resource;
+    
+
 }
 
 module.exports = {

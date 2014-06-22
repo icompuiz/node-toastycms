@@ -15,7 +15,6 @@ describe('Mock', function() {
         toastyCMS.run(function(server) {
 
             app = server;
-
             done();
 
         }, {

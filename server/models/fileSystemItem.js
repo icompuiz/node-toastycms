@@ -86,7 +86,6 @@ FileSystemItemSchema.pre('save', function(done) {
 });
 
 FileSystemItemSchema.post('remove', function(fsItem) {
-    // var fsItem = this;
 
     if (!fsItem.directory) {
         return;

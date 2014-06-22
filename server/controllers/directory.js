@@ -70,6 +70,9 @@ function register() {
         });
     });
 
+    return resource;
+
+
 }
 
 
