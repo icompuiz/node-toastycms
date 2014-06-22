@@ -9,8 +9,8 @@ var ContentPropertySchema = new Schema({
         required: true
     },
     format: {
-        ref: 'OutputFormat',
-        type: $mongoose.Schema.Types.ObjectId
+        type: String,
+        default: 'plaintext'
     },
     value: {
         type: String,

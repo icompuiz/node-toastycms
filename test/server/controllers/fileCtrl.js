@@ -1,6 +1,6 @@
-var express = require('express'),
-    request = require('supertest'),
-    async = require('async'),
+'use strict';
+
+var request = require('supertest'),
     fs = require('fs'),
     _ = require('lodash'),
     assert = require('assert'),
@@ -12,7 +12,7 @@ var randomString = function random(length) {
     // body...
     length = length || 5;
     return Math.random().toString(36).substring(7).substring(0, length);
-}
+};
 
 describe('FileSystem', function() {
 
@@ -40,7 +40,7 @@ describe('FileSystem', function() {
 
     });
 
-    describe('Directory API with Files', function(done) {
+    describe('Directory API with Files', function() {
 
         var directory = {
             name: randomString()

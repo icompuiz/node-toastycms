@@ -11,10 +11,7 @@ var resource = $restful
 
 
 function register() {
-
     return resource;
-
-
 }
 
 module.exports = {

@@ -9,8 +9,8 @@ var ContentTypePropertySchema = new Schema({
         required: true
     },
     format: {
-        ref: 'InputFormat',
-        type: $mongoose.Schema.Types.ObjectId
+        type: String,
+        default: 'plaintext'
     }
 });
 
