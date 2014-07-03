@@ -94,6 +94,8 @@ describe('Content Type', function() {
 
         });
 
+        //-----------------
+
         it('should create subcontentType', function(done) {
 
 
@@ -189,6 +191,9 @@ describe('Content Type', function() {
                 .expect(200, done);
 
         });
+
+        //-----------------
+        
 
         it('should delete the content type', function(done) {
 

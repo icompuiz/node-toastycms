@@ -1,6 +1,6 @@
 'use strict';
 
-var ModelDelteInterceptPlugin = function(resource, model) {
+var DeleteRequestInterceptor = function(resource, model) {
 
     // Access Control: remove 
     resource.before('delete', function(req, res, next) {
@@ -38,5 +38,5 @@ var ModelDelteInterceptPlugin = function(resource, model) {
 };
 
 module.exports = {
-	plugin: ModelDelteInterceptPlugin
+	plugin: DeleteRequestInterceptor
 };

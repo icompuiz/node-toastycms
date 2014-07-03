@@ -2,11 +2,11 @@ var $mongoose = require('mongoose'),
 	Route = $mongoose.model('Route');
 
 module.exports.checkRoute = function(req, res, next) {
-	console.log('controler::route::checkRoute::enter');
+	console.log('controller::route::checkRoute::enter');
 
 	if (req.params.id) {
 		
-		console.log('controler::route::checkRoute', 'forwarding to object permission checks');
+		console.log('controller::route::checkRoute', 'forwarding to object permission checks');
 
 		return next();
 	}
@@ -23,7 +23,7 @@ module.exports.checkRoute = function(req, res, next) {
 		return next();
 	}
 	
-	console.log('controler::route::checkRoute::right', right);
+	console.log('controller::route::checkRoute::right', right);
 
 	Route.findOne({
 		path: req.path

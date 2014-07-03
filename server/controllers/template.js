@@ -11,8 +11,8 @@ var resource = $restful
 
 function register() {
 
-    var modelDeleteIntecept = require('../plugins/modelDeleteIntercept');
-    modelDeleteIntecept.plugin(resource, model);
+    var deleteRequestInterceptor = require('../plugins/deleteRequestInterceptor');
+    deleteRequestInterceptor.plugin(resource, model);
 
     return resource;
 

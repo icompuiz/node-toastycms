@@ -13,8 +13,8 @@ var TemplateSchema = new Schema({
 var textModel = require('../plugins/textModel');
 TemplateSchema.plugin(textModel);
 
-var simpleTree = require('../plugins/simpleTree');
-TemplateSchema.plugin(simpleTree, 'Template');
+var nestableModel = require('../plugins/nestableModel');
+TemplateSchema.plugin(nestableModel, 'Template');
 
 var Template;
 module.exports = Template = $mongoose.model('Template', TemplateSchema);

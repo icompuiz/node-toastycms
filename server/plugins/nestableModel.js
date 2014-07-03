@@ -3,7 +3,7 @@
 var $mongoose = require('mongoose');
 var $async = require('async');
 
-var SimpleTreePlugin = function(schema, modelName) {
+var NestableModelPlugin = function(schema, modelName) {
 
     schema.add({
         parent: {
@@ -37,26 +37,26 @@ var SimpleTreePlugin = function(schema, modelName) {
                     safe: true
                 },
                 function(err, parent) {
-                    console.log('plugin::simpleTree::pre::save::findOneAndUpdate::enter');
+                    console.log('plugin::nestableModel::pre::save::findOneAndUpdate::enter');
                     if (err) {
-                        console.log('plugin::simpleTree::pre::save::findOneAndUpdate::error', err);
+                        console.log('plugin::nestableModel::pre::save::findOneAndUpdate::error', err);
                         return done(err);
                     }
 
                     if (!parent) {
                         err = new Error('Specified parent not found');
-                        console.log('plugin::simpleTree::pre::save::findOneAndUpdate::error', err);
+                        console.log('plugin::nestableModel::pre::save::findOneAndUpdate::error', err);
                         return done(err); // TODO: need to do clean up
                     }
 
-                    console.log('plugin::simpleTree::pre::save::findOneAndUpdate::success');
+                    console.log('plugin::nestableModel::pre::save::findOneAndUpdate::success');
                     done();
                 });
     });
     schema.pre('remove', function(preRemoveDone) {
         var doc = this;
 
-        console.log('plugin::simpleTree::pre::remove::enter');
+        console.log('plugin::nestableModel::pre::remove::enter');
         var Model = $mongoose.model(modelName);
 
         var conditions = {
@@ -90,21 +90,21 @@ var SimpleTreePlugin = function(schema, modelName) {
                 },
                 function(err, parent) {
 
-                    console.log('plugin::simpleTree::post::remove::findOneAndUpdate::enter');
+                    console.log('plugin::nestableModel::post::remove::findOneAndUpdate::enter');
                     if (err) {
-                        console.log('plugin::simpleTree::post::remove::findOneAndUpdate::error', err);
+                        console.log('plugin::nestableModel::post::remove::findOneAndUpdate::error', err);
                         // return done(err);
                         return;
                     }
 
                     if (!parent) {
                         err = new Error('Specified parent not found');
-                        console.log('plugin::simpleTree::post::remove::findOneAndUpdate::error', err);
+                        console.log('plugin::nestableModel::post::remove::findOneAndUpdate::error', err);
                         // return done(err); // TODO: need to do clean up
                         return;
                     }
 
-                    console.log('plugin::simpleTree::post::remove::findOneAndUpdate::success');
+                    console.log('plugin::nestableModel::post::remove::findOneAndUpdate::success');
                     // done();
                 });
     });
@@ -112,4 +112,4 @@ var SimpleTreePlugin = function(schema, modelName) {
 
 };
 
-module.exports = SimpleTreePlugin;
+module.exports = NestableModelPlugin;

@@ -19,8 +19,8 @@ var ContentTypeSchema = Model.schema.extend({
     collection: 'contenttypes'
 });
 
-var simpleTree = require('../plugins/simpleTree');
-ContentTypeSchema.plugin(simpleTree, 'ContentType');
+var nestableModel = require('../plugins/nestableModel');
+ContentTypeSchema.plugin(nestableModel, 'ContentType');
 
 var ContentType;
 module.exports = ContentType = $mongoose.model('ContentType', ContentTypeSchema);
