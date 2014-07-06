@@ -196,10 +196,11 @@ var authRoutes = [{
 }];
 
 var staticRoutes = [{
-    path: 'partials/*',
+    path: '/partials/*',
     httpMethod: 'GET',
     middleware: function(req, res) {
         var requestedView = path.join('./', req.url);
+        console.log("View::", requestedView);
         res.render(requestedView, function(err, html) {
             if (err) {
                 res.render('404');

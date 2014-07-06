@@ -15,6 +15,7 @@ requirejs.config({
         'aysnc': '../bower_components/async/lib/async',
         '$': '../bower_components/jquery/dist/jquery',
         'angular-bootstrap':'../bower_components/angular-bootstrap/ui-bootstrap',
+        'restangular':'../bower_components/restangular/dist/restangular.min',
         'angular-bootstrap-tmpls': '../bower_components/angular-bootstrap/ui-bootstrap-tpls'
     },
 
@@ -25,6 +26,9 @@ requirejs.config({
     shim: {
         'angular':{
             exports: 'angular'
+        },
+        'restangular': {
+            deps:['angular', '_'],
         },
         'angular-ui-router':{
             deps:['angular']

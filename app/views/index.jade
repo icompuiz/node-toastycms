@@ -1,7 +1,6 @@
 doctype html
 html.no-js
 	head
-
 	meta(charset='utf-8')
 	title
 	meta(name='description', content='')
@@ -14,8 +13,7 @@ html.no-js
 	// build:css({.tmp,app}) styles/main.css 
 	link(rel='stylesheet', href='styles/main.css')
 	// endbuild 
-	body
-	.container(ui-view='')
+	body(ui-view)
 	script(src='bower_components/requirejs/require.js', data-main='scripts/dependencies.js')
 	// endbower 
 	// endbuild 

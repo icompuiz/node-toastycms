@@ -7,6 +7,7 @@ define('app', [
     'angular-ui-router',
     'angular-bootstrap',
     // 'text!',
+    'restangular',
     './controllers/index',
     './directives/index',
     './services/index',
@@ -16,16 +17,17 @@ define('app', [
 
     return ng.module('toastycms', [
         'toastycms.controllers',
+        'restangular',
         'toastycms.directives',
         'toastycms.services',
         'toastycms.states',
         'ui.bootstrap',
         'ui.bootstrap.tpls',
-        'ui.router'
+        'ui.router',
     ]).run(function($state, $rootScope) {
 
         console.log('HERE!!');
 
-        $state.go('home');
+        $state.go('management');
     });
 });

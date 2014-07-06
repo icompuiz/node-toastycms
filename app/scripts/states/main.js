@@ -8,15 +8,29 @@ define(['./module'], function (states) {
 
     return states.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
-        $stateProvider.state('login', {
-            url: '/login',
-            template: '<div>login</html>',
+        $stateProvider.state('management', {
+            url: '/management',
+            templateUrl: 'partials/management/index',
+            controller: function($state) {
+                $state.transitionTo('management.login');
+            }
+        });
+
+        $stateProvider.state('management.login', {
+            url:'/management/login',
+            templateUrl: 'partials/management/loginlogout/login',
             controller: function() {}
         });
 
-        $stateProvider.state('home', {
-            url:'/home',
-            template: '<div>home</html>',
+        $stateProvider.state('management.logout', {
+            url:'/management/logout',
+            templateUrl: 'partials/management/loginlogout/logout',
+            controller: function() {}
+        });
+
+        $stateProvider.state('management.dashboard', {
+            url:'/management/dashboard',
+            templateUrl: 'partials/management/dashboard',
             controller: function() {}
         });
 
