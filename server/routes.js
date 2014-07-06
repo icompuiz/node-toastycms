@@ -216,12 +216,6 @@ var staticRoutes = [{
             user: req.user
         });
     },
-}, {
-    path: '/isioma',
-    httpMethod: 'GET',
-    middleware: function(req, res) {
-        res.send('HERE');
-    }
 }];
 
 
