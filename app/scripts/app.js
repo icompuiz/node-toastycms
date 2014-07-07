@@ -24,9 +24,9 @@ define('app', [
         'ui.bootstrap',
         'ui.bootstrap.tpls',
         'ui.router',
-    ]).run(function($state, $rootScope) {
+    ]).run(function($state, $rootScope, RestangularProvider) {
 
-        console.log('HERE!!');
+        RestangularProvider.setBaseUrl('/api');
 
         $state.go('management');
     });
