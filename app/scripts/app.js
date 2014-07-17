@@ -24,10 +24,10 @@ define('app', [
         'ui.bootstrap',
         'ui.bootstrap.tpls',
         'ui.router',
-    ]).run(function($state, $rootScope, RestangularProvider) {
-
-        RestangularProvider.setBaseUrl('/api');
-
-        $state.go('management');
-    });
+    ]).run(['$state', '$rootScope', 'Restangular', function($state, $rootScope, Restangular) {
+    
+            Restangular.setBaseUrl('/api');
+    
+            $state.go('management');
+        }]);
 });

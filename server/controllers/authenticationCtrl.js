@@ -2,7 +2,8 @@
 
 var $passport = require('passport'),
     $mongoose = require('mongoose'),
-    User = $mongoose.model('User')
+    $toastySession = require('../toastySession'),
+    User = $mongoose.model('User');
 
 function login(user, req, res, next) {
   req.logIn(user, function(err) {
@@ -18,6 +19,11 @@ function login(user, req, res, next) {
 }
 
 module.exports = {
+  currentUser: function(req, res, next) {
+
+    return res.jsonp(200, $toastySession.user);
+
+  },
   login: function(req, res, next) {
     
     if (req.isAuthenticated()) {

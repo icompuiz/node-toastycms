@@ -1,5 +1,13 @@
 doctype html
-// This is the root view for the management state 
-nav.navbar.navbar-default.navbar-static-top(role='navigation')
+//- This is the root view for the management state
+.site-wrapper
+	nav.navbar.navbar-default.navbar-static-top(role='navigation', ng-controller="NavbarCtrl")
+		ul.nav.navbar-nav.navbar-right
+			li
+				label.navbar-text 
+					span.glyphicon.glyphicon-user &nbsp;
+					| {{currentUser.username}}
+			li
+				a.navbar-link.logout(ng-click="logout()") Logout
 
-.container(ui-view)
+	.container(ui-view)
