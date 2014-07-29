@@ -23,162 +23,28 @@ var Template = require('./controllers/template.js');
 
 var apiRoutes = [{
     path: '/api/mocks',
-    controller: Mock,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
+    controller: Mock
 }, {
     path: '/api/fs/directories',
-    controller: Directory,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: Directory
 }, {
     path: '/api/fs/files',
-    controller: File,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: File
 }, {
     path: '/api/contentitems',
-    controller: Content,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: Content
 }, {
     path: '/api/contenttypes',
-    controller: ContentType,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: ContentType
 }, {
     path: '/api/inputformats',
-    controller: InputFormat,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: InputFormat
 }, {
     path: '/api/outputformats',
-    controller: OutputFormat,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
-
+    controller: OutputFormat
 }, {
     path: '/api/templates',
-    controller: Template,
-    access: {
-        users: [{
-            username: 'public',
-            access: {
-                read: true,
-                create: true
-            }
-        }],
-        groups: [{
-            name: 'users',
-            access: {
-                read: true,
-                create: true
-            }
-        }]
-    }
+    controller: Template
 }];
 
 var authRoutes = [{
@@ -217,7 +83,21 @@ var staticRoutes = [{
     path: '/',
     httpMethod: 'GET',
     middleware: function(req, res) {
-        res.render('index', {
+        res.render('404');
+    },
+}, {
+    path: '/management/',
+    httpMethod: 'GET',
+    middleware: function(req, res) {
+        res.render('management', {
+            user: req.user
+        });
+    },
+}, {
+    path: '/management/*',
+    httpMethod: 'GET',
+    middleware: function(req, res) {
+        res.render('management', {
             user: req.user
         });
     },

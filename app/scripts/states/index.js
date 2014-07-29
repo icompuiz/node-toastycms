@@ -1,4 +1,4 @@
 /**
  * Attach all state definitions
  **/
-define(['./main', './controlpanel', './content', './file'], function () {});
+define(['./main','./dashboard', './controlpanel', './content', './file'], function () {});

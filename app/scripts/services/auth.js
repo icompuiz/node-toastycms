@@ -1,65 +1,92 @@
-define(['./module'], function (services) {
-	'use strict';
-	services.service('AuthenticationSvc', ['$http', '$log', '$q', function($http, $log, $q) {
+define(['./module'], function(services) {
+		'use strict';
+		services.service('AuthenticationSvc', ['$http', '$rootScope', '$log', '$q',
+				function($http, $rootScope, $log, $q) {
 
-		var auth = {
-			login: function(credentials) {
+						var publicUser = {
+								username: 'public',
+								fullname: 'public',
+								assets: {
+										'/login': true
+								}
+						};
 
-				var promise = $q.defer();
+						var auth = {
+								currentUser: publicUser,
+								authorize: function(asset) {
+										var isAllowed = auth.currentUser.assets[asset] || false;
 
-				$http.post('/login', credentials).then(function(data) {
+										return isAllowed;
+								},
+								isLoggedIn: function() {
 
-					$log.log('Logged in', data);
+										var isLoggedIn = false;
+										if (auth.currentUser.username !== publicUser.username) {
+												isLoggedIn = true;
+										}
+										return isLoggedIn;
 
-					auth.currentUser = data.data;
+								},
+								login: function(credentials) {
 
-					promise.resolve(auth.currentUser);
+										var promise = $q.defer();
 
-				}, function(error) {
+										$http.post('/login', credentials).then(function(data) {
 
-					$log.log('Error While Logging In', error);
+												$log.log('Logged in', data);
 
-					promise.reject(error);
+												auth.currentUser = data.data;
 
-				});
+												promise.resolve(auth.currentUser);
 
-				return promise.promise;
+										}, function(error) {
 
-			},
-			logout: function() {
+												$log.log('Error While Logging In', error);
 
-				var promise = $q.defer();
+												promise.reject(error);
 
-				$http.get('/logout').then(function(data) {
-					$log.log('Logged out', data);
-					
-					auth.currentUser = publicUser;
+										});
 
-					promise.resolve(data);
-				});
+										return promise.promise;
 
-				return promise.promise;
+								},
+								logout: function() {
 
-			}
-		};
+										var promise = $q.defer();
 
-		var publicUser = { 
-			username: 'public'
-		};
+										$http.get('/logout').then(function(data) {
+												$log.log('Logged out', data);
+												auth.currentUser = publicUser;
+												promise.resolve(data);
+										});
 
-		$.ajax('/me', {
-			method: 'GET',
-			async: false,
-			success: function(user) {
-				auth.currentUser = user;
-			}, 
-			error: function() {
-				auth.currentUser = publicUser;
-			}
-		});
+										return promise.promise;
 
-		return auth;
-		
-	}]);
+								}
+						};
+
+
+						function updateCurrentUser() {
+
+								$.ajax('/me', {
+										method: 'GET',
+										async: false,
+										success: function(user) {
+												auth.currentUser = user;
+										},
+										error: function() {
+												auth.currentUser = publicUser;
+										}
+								});
+						}
+
+						updateCurrentUser();
+
+						$rootScope.$on('$stateChangeSuccess', updateCurrentUser);
+
+						return auth;
+
+				}
+		]);
 
 });

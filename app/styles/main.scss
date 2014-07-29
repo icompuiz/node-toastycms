@@ -6,6 +6,9 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 @import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
 
+
+@import "../bowerless_components/whhg/css/whhg.css";
+
 .browsehappy {
 	margin: 0.2em 0;
 	background: #ccc;
@@ -98,11 +101,14 @@ body {
 	border-color: #DADADA;
 }
 
+@import url(http://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans);
+
 .site-wrapper {
 	height: 100%;
 	width: 100%;
 	position: absolute;
 	background: #f8f8f8;
+	font-family: "Open Sans";
 }
 
 .navbar-link {
@@ -116,4 +122,100 @@ body {
 	border: 1px solid #e7e7e7;
 	padding: 20px;
 	border-radius: 5px;
+}
+
+$sidebar-width: 253px;
+$sidebar-font-size: 1.2em;
+$sidebar-item-height: 50px;
+
+.sidebar-left-wrapper {
+	position: fixed;
+	top: 0px;
+	left: 0;
+	bottom: 0;
+	background: #191818;
+	color: #999;
+	width: $sidebar-width;
+	border-right: 2px solid #505050;
+	.container-fluid {
+		padding: 0;
+	}
+	overflow: auto;
+}
+.content-area-wrapper {
+	position: fixed;
+	top: 0px;
+	bottom: 0;
+	left: $sidebar-width;
+	right: 0;
+}
+
+.dashboard-menu {
+
+	.dashboard-menu-title {
+		a {
+			font-size: ($sidebar-font-size * 1.1);
+			padding: 0.5em 0.8em;
+			text-decoration: none;
+			display: block;
+		}
+	}
+
+	.dashboard-menu-separator {
+		border-color: #505050;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	a {
+		color: #fff;
+		&:hover {
+			color: #FFF3E2;
+		}
+	}
+
+	ul {
+		padding: 0;
+		margin: 0;
+		li {
+			list-style: none;
+			a {
+				cursor: pointer;
+				padding: 0.6em 1em;
+				white-space: normal;
+				display: block;
+				&:hover {
+					background: #505050;
+					color: #FFF;
+					text-decoration: none;
+				}
+			}
+		}
+		> li {
+			a {
+				// height: $sidebar-item-height;
+				// line-height: $sidebar-item-height;
+				font-size: $sidebar-font-size;
+			}
+			
+
+			> ul {
+				li {
+					a {
+						padding: 0.3em 2em;	
+						// height: ($sidebar-item-height - 10);
+						// line-height: ($sidebar-item-height - 10);
+
+						font-size: ($sidebar-font-size * 0.95);
+					}
+				}
+			}
+		}
+	}
+
+}
+
+.caret.caret-flipped {
+	border-top-width: 0;
+	border-bottom: 4px solid #000000;
 }

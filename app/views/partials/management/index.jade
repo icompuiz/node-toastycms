@@ -1,13 +1,14 @@
 doctype html
 //- This is the root view for the management state
 .site-wrapper
-	nav.navbar.navbar-default.navbar-static-top(role='navigation', ng-controller="NavbarCtrl")
+	nav.hide.navbar.navbar-default.navbar-static-top(role='navigation', ng-controller="NavbarCtrl")
 		ul.nav.navbar-nav.navbar-right
 			li
 				label.navbar-text 
 					span.glyphicon.glyphicon-user &nbsp;
-					| {{currentUser.username}}
-			li
+					| {{currentUser.fullname}}
+			li(t-locked-asset="/logout")
 				a.navbar-link.logout(ng-click="logout()") Logout
-
-	.container(ui-view)
+			li(t-locked-asset="/login")
+				a.navbar-link.logout(href="/#/management/login") Login
+	ui-view

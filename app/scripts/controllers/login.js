@@ -11,7 +11,7 @@ define(['./module'], function (controllers) {
 							password: $scope.password
 						}).then(function(data) {
 
-				$state.transitionTo('management.dashboard');
+				$state.transitionTo('management.dashboard.home');
 
 			}, function(error) {
 

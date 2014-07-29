@@ -9,6 +9,8 @@ var $mongoose = require('mongoose'),
 
 function AccessControlListPlugin(schema, options) {
 
+	options = options || { noadmin: false };
+
 	schema.add({ // Attach acls to existing schema
 		acl: {
 			ref: 'AccessControlList',
@@ -247,7 +249,8 @@ function AccessControlListPlugin(schema, options) {
 				
 				var currentUser = $toastySession.user;
 				var ace = new UserAccessControlEntry({
-					user: currentUser
+					user: currentUser,
+					acl: accessControlList._id
 				});
 
 				ace.access.all = true;
@@ -271,7 +274,7 @@ function AccessControlListPlugin(schema, options) {
 
 		}
 
-		AccessControlList.create(doc.constructor, addUser); // create a new acl and add the user to it.
+		AccessControlList.create(doc, addUser, options.noadmin); // create a new acl and add the user to it.
 
 		
 	}
