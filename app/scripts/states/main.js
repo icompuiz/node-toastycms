@@ -20,7 +20,11 @@ define(['./module'], function(states) {
 								templateUrl: 'partials/management/base',
 								controller: function($rootScope, $state, AuthenticationSvc) {
 										if (!AuthenticationSvc.isLoggedIn()) {
-												$state.go('login');
+											$state.go('login');
+										} else {
+											if ($state.current.name === 'management') {
+												$state.go('management.authenticated.dashboard.home');
+											}
 										}
 								}
 						});

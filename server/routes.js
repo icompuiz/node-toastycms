@@ -86,6 +86,14 @@ var staticRoutes = [{
         res.render('404');
     },
 }, {
+    path: '/management',
+    httpMethod: 'GET',
+    middleware: function(req, res) {
+        res.render('management', {
+            user: req.user
+        });
+    },
+},{
     path: '/management/',
     httpMethod: 'GET',
     middleware: function(req, res) {
