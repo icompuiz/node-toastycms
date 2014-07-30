@@ -9,6 +9,7 @@ requirejs.config({
         'domReady': '../bower_components/requirejs-domready/domReady',
         'angular': '../bower_components/angular/angular',
         'angular-ui-router': '../bower_components/angular-ui-router/release/angular-ui-router',
+        'angular-ui-tree': '../bower_components/angular-ui-tree/dist/angular-ui-tree.min',
         'handlebars': '../bower_components/handlebars/handlebars',
         // 'text': '../bower_components/requirejs-text/text',
         '_': '../bower_components/lodash/dist/lodash',
@@ -31,6 +32,9 @@ requirejs.config({
             deps:['angular', '_'],
         },
         'angular-ui-router':{
+            deps:['angular']
+        },
+        'angular-ui-tree':{
             deps:['angular']
         },
         'handlebars':{

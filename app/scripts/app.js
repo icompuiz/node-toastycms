@@ -5,6 +5,7 @@
 define('app', [
     'angular',
     'angular-ui-router',
+    'angular-ui-tree',
     'angular-bootstrap',
     // 'text!',
     'restangular',
@@ -24,11 +25,12 @@ define('app', [
         'ui.bootstrap',
         'ui.bootstrap.tpls',
         'ui.router',
+        'ui.tree'
     ]).config(['$locationProvider', function($locationProvider) {
 
             $locationProvider.html5Mode(true).hashPrefix('!');
         
-    }]).run(['$state', '$rootScope', 'Restangular', function($state, $rootScope, Restangular) {
+    }]).run(['$state', '$rootScope', 'Restangular',  function($state, $rootScope, Restangular) {
     
             Restangular.setBaseUrl('/api');
 

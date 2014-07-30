@@ -12,7 +12,7 @@ define(['./module'], function (controllers) {
 			
 			AuthenticationSvc.logout().then(function(data) {
 
-				$state.transitionTo('management.login');
+				$state.go('login');
 
 			});
 

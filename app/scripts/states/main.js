@@ -17,28 +17,18 @@ define(['./module'], function(states) {
 
 						$stateProvider.state('management', {
 								url: '/management',
-								templateUrl: 'partials/management/index',
+								templateUrl: 'partials/management/base',
 								controller: function($rootScope, $state, AuthenticationSvc) {
-										if (AuthenticationSvc.isLoggedIn()) {
-												$state.go('management.dashboard.home');
-												// $rootScope.$broadcast('toasty.loginSuccess');
-
-										} else {
-												$state.go('management.login');
+										if (!AuthenticationSvc.isLoggedIn()) {
+												$state.go('login');
 										}
 								}
 						});
 
-						$stateProvider.state('management.login', {
-								url: '/login',
+						$stateProvider.state('login', {
+								url: '/management/login',
 								templateUrl: 'partials/management/loginlogout/login',
 								controller: 'LoginCtrl'
-						});
-
-						$stateProvider.state('management.logout', {
-								url: '/logout',
-								templateUrl: 'partials/management/loginlogout/logout',
-								controller: function() {}
 						});
 
 				}

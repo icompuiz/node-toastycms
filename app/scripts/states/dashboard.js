@@ -4,28 +4,29 @@
  */
 
 define(['./module'], function(states) {
-		'use strict';
+    'use strict';
 
-		return states.config(['$stateProvider', '$urlRouterProvider',
-				function($stateProvider, $urlRouterProvider) {
-						$stateProvider.state('management.dashboard', {
-								templateUrl: 'partials/management/dashboard',
-								abstract: true,
-								url: '/dashboard'
-						});
+    return states.config(['$stateProvider', '$urlRouterProvider',
+        function($stateProvider, $urlRouterProvider) {
 
-						$stateProvider.state('management.dashboard.home', {
-								url: '/home',
-								views: {
-									'content-area': {
-										templateUrl: 'partials/management/dashboard/home'
-									},
-									'sidebar-left': {
-										templateUrl: 'partials/management/sidebar/default',
-										controller: 'SidebarCtrl'
-									}
-								}
-						});
-				}
-		]);
+            $stateProvider.state('management.authenticated.dashboard', {
+                url: '',
+                views: {
+                    'authenticated': {
+                        templateUrl: 'partials/management/dashboard/index'
+                    }
+                }
+            });
+
+            $stateProvider.state('management.authenticated.dashboard.home', {
+                url: '/dashboard',
+                views: {
+                    dashboard: {
+                        templateUrl: 'partials/management/dashboard/home'
+                    }
+                }
+            });
+
+        }
+    ]);
 });

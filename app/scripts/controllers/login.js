@@ -11,7 +11,7 @@ define(['./module'], function (controllers) {
 							password: $scope.password
 						}).then(function(data) {
 
-				$state.transitionTo('management.dashboard.home');
+				$state.go('management.authenticated.dashboard.home');
 
 			}, function(error) {
 
@@ -19,6 +19,10 @@ define(['./module'], function (controllers) {
 
 			});
 
+		}
+
+		if (AuthenticationSvc.isLoggedIn()) {
+			$state.go('management.authenticated.dashboard.home');
 		}
 	}]);
 

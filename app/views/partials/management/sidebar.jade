@@ -1,35 +1,35 @@
-.sidebar-left.container-fluid.dashboard-menu
-	.dashboard-menu-title
-		a(ui-sref="management.dashboard.home")
+.sidebar-left.container-fluid.sidebar-menu
+	.sidebar-menu-title
+		a(ui-sref="management.authenticated.dashboard.home")
 			img.management-logo(src="images/logo-xs.png")
-	hr.dashboard-menu-separator
+	hr.sidebar-menu-separator
 	ul.items
 		li
 			a(ng-click="item1Visible = !item1Visible")
 				i.icon-webpage
-				| &nbsp; Content Management &nbsp;
+				| &nbsp; Content Management
 				//- i.caret(ng-show="!item1Visible", ng-click="item1Visible = !item1Visible")
 				//- i.caret(ng-show="item1Visible", ng-click="item1Visible = !item1Visible")
 			ul(collapse="!item1Visible")
 				li
-					a
+					a(ui-sref="management.authenticated.content.home")
 						i.icon-document
 						| &nbsp; Content
 				li
-					a 
+					a(ui-sref="management.authenticated.content-types.home")
 						i.icon-squaret
 						| &nbsp; Types
 				li
-					a 
+					a(ui-sref="management.authenticated.content-templates.home")
 						i.icon-html
 						| &nbsp; Templates
 		li
-			a 
+			a(ui-sref="management.authenticated.files.home")
 				i.icon-legacyfilemanager
 				| &nbsp; File Management
 		li
-			hr.dashboard-menu-separator
+			hr.sidebar-menu-separator
 		li
-			a 
+			a(ui-sref="management.authenticated.settings.home") 
 				i.icon-controlpanel
-				| &nbsp;Control Panel
+				| &nbsp; Settings

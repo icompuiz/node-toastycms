@@ -7,6 +7,8 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 // endbower
 
 
+@import "../bower_components/angular-ui-tree/dist/angular-ui-tree.min.css";
+
 @import "../bowerless_components/whhg/css/whhg.css";
 
 .browsehappy {
@@ -118,17 +120,48 @@ body {
 	margin-right: 10px;
 }
 
-.login-form.ng-scope {
+.login-logo {
+	width: 100%;
+	text-align: center;
+	margin-top: 10px;
+	img {
+		width: 80%;
+		max-width: 410px;
+	}
+}
+
+.login-form {
 	border: 1px solid #e7e7e7;
 	padding: 20px;
-	border-radius: 5px;
+	// border-radius: 5px;
+	margin-top: 10px;
 }
 
 $sidebar-width: 253px;
 $sidebar-font-size: 1.2em;
 $sidebar-item-height: 50px;
+$sidebar-separator-color: #333;
+$navbar-height: 50px;
 
-.sidebar-left-wrapper {
+.navigation-wrapper {
+	position: fixed;
+	top: 0px;
+	left: $sidebar-width;
+	right: 0;
+	height: $navbar-height;
+	z-index: 3;
+}
+
+.body-wrapper {
+	position: fixed;
+	top: $navbar-height;
+	bottom: 0;
+	left: $sidebar-width;
+	right: 0;
+	z-index: 2
+}
+
+.sidebar-wrapper {
 	position: fixed;
 	top: 0px;
 	left: 0;
@@ -136,23 +169,21 @@ $sidebar-item-height: 50px;
 	background: #191818;
 	color: #999;
 	width: $sidebar-width;
-	border-right: 2px solid #505050;
+	border-right: 2px solid $sidebar-separator-color;
 	.container-fluid {
 		padding: 0;
 	}
 	overflow: auto;
-}
-.content-area-wrapper {
-	position: fixed;
-	top: 0px;
-	bottom: 0;
-	left: $sidebar-width;
-	right: 0;
+	z-index: 1;
 }
 
-.dashboard-menu {
+.sidebar-menu {
 
-	.dashboard-menu-title {
+	.sidebar-menu-title {
+		text-align: center;
+		.management-logo {
+			height: 31px;
+		}
 		a {
 			font-size: ($sidebar-font-size * 1.1);
 			padding: 0.5em 0.8em;
@@ -161,8 +192,8 @@ $sidebar-item-height: 50px;
 		}
 	}
 
-	.dashboard-menu-separator {
-		border-color: #505050;
+	.sidebar-menu-separator {
+		border-color: $sidebar-separator-color;
 		margin-top: 0;
 		margin-bottom: 0;
 	}
@@ -185,7 +216,7 @@ $sidebar-item-height: 50px;
 				white-space: normal;
 				display: block;
 				&:hover {
-					background: #505050;
+					background: $sidebar-separator-color;
 					color: #FFF;
 					text-decoration: none;
 				}
