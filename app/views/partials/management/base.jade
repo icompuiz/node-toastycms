@@ -1,23 +1,22 @@
 doctype html
 //- This is the root view for the management state
 .site-wrapper
-	.navigation-wrapper
-		nav.navbar.navbar-default.navbar-static-top(role='navigation', ng-controller="NavbarCtrl")
-			.container-fluid
-				ul.nav.navbar-nav.navbar-right
-					li.dropdown
-						a(class="dropdown-toggle", data-toggle="dropdown")
-							img.pull-left(src="http://www.gravatar.com/avatar/cf74954dfbbb74594d568d1cc4faf706?s=16&r=pg")
-							| &nbsp; {{currentUser.fullname}} &nbsp;
-							span.caret
-						ul.dropdown-menu(role="menu")
-							li(t-locked-asset="/logout")
-								a.navbar-link(ui-sref="management.authenticated.settings.home")
-									i.icon-user
-									| &nbsp; My Account
-							li(t-locked-asset="/logout")
-								a.navbar-link.logout(ng-click="logout()") 
-									i.icon-exit
-									| &nbsp; Logout
+	.navigation-wrapper(ng-controller="NavbarCtrl")
+		div.dropdown
+			a.btn.btn-default.dropdown-toggle(data-toggle="dropdown")
+				img.pull-left(src="http://www.gravatar.com/avatar/cf74954dfbbb74594d568d1cc4faf706?s=16&r=pg")
+				| &nbsp; {{currentUser.fullname}} &nbsp;
+				span.caret
+			ul.dropdown-menu(role="menu")
+				li(t-locked-asset="/logout")
+					a.navbar-link(ui-sref="management.authenticated.settings.home")
+						i.icon-user
+						| &nbsp; My Account
+				li(t-locked-asset="/logout")
+					a.navbar-link.logout(ng-click="logout()") 
+						i.icon-exit
+						| &nbsp; Logout
+
+
 	.sidebar-wrapper(ui-view='sidebar')
 	.body-wrapper(ui-view='body')

@@ -13,7 +13,7 @@ define(['./module'], function(states) {
 								abstract: true,
 								views: {
 									'body': {
-										template: '<div ui-view="authenticated"></div>'
+										template: '<div class="authenticated" ui-view="authenticated"></div>'
 									},
 									'sidebar': {
 										templateUrl: 'partials/management/sidebar',
