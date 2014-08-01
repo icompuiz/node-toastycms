@@ -19,6 +19,7 @@ define(['./module'], function (states) {
         	views: {
         		'ui-content-types': {
             		templateUrl: 'partials/management/content-types/home',
+                    controller: 'ContentTemplatesCtrl'
         		}
         	}
 

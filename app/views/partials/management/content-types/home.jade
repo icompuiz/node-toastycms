@@ -1,1 +1,24 @@
-| Content Types
+doctype html
+script(id="nodes_renderer.html", type="text/ng-template")
+  div.tree-node-content-wrapper(ui-tree-handle)
+    div.tree-node-content(data-nodrag)
+      span.tree-node-icon.glyphicon(ng-click="toggle(this)", ng-class="{'glyphicon-stop': !node.nodes.length, 'glyphicon-chevron-right': node.nodes.length && collapsed, 'glyphicon-chevron-down': node.nodes.length && !collapsed}")
+      span.item-title
+        | &nbsp;&nbsp; {{node.title}}
+  ol(ui-tree-nodes, ng-model="node.nodes", ng-class="{hidden: collapsed}")
+    li(ng-repeat="node in node.nodes", ui-tree-node, ng-include="'nodes_renderer.html'")
+
+.col-xs-12.content-actions-area
+  .row
+    .col-xs-3
+      .section-title
+        | Content Types
+.col-xs-2.content-menu
+  .row
+    .col-xs-12
+        input.search.form-control(placeholder="Search Content Types")
+  .row
+    .col-xs-12
+      div.tree-view(ui-tree)
+        ol(ui-tree-nodes, ng-model="data")
+          li(ng-repeat="node in data", ui-tree-node, ng-include="'nodes_renderer.html'")

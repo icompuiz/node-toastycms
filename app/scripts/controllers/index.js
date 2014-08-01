@@ -1,4 +1,1 @@
-/**
- * Attach all state definitions
- **/
-define(['./main', './login', './navbar', './sidebar', './content'], function () {});
+define(['./main', './login', './navbar', './sidebar', './content', './contentTemplates', './contentTypes'], function () {});

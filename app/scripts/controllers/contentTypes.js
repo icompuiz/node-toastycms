@@ -1,10 +1,10 @@
 define(['./module'], function(controllers) {
-	'use strict';
+    'use strict';
 
-    return controllers.controller('ContentCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc',
+    return controllers.controller('ContentTypesCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc',
         function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc) {
- 
-            $scope.data = [{
+
+        	$scope.data = [{
                 title: 'Root Element',
                 nodes: [{
                     title: 'Level 1',
@@ -20,18 +20,7 @@ define(['./module'], function(controllers) {
                 }]
             }];
 
+
         }
     ]);
-
 });
-
-
-// define(['./module'], function(controllers) {
-
-//     controllers.controller('', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc','ToastySessionSvc',
-//         function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc) {
-
-//         }
-//     ]);
-
-// });

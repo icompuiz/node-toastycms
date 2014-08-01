@@ -7,5 +7,5 @@
  **/
 define(['angular'], function (ng) {
     'use strict';
-    return ng.module('toastycms.controllers', ['toastycms.controllers']);
+    return ng.module('toastycms.controllers', ['toastycms.models']);
 });

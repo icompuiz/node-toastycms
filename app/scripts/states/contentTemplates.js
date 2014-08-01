@@ -19,6 +19,7 @@ define(['./module'], function (states) {
         	views: {
         		'ui-content-templates': {
             		templateUrl: 'partials/management/content-templates/home',
+                    controller: 'ContentTemplatesCtrl'
         		}
         	}
 

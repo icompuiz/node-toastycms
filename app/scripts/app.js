@@ -12,6 +12,7 @@ define('app', [
     './controllers/index',
     './directives/index',
     './services/index',
+    './models/index',
     './states/index'
 ], function (ng) {
     'use strict';
