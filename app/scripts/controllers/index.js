@@ -1,1 +1,1 @@
-define(['./main', './login', './navbar', './sidebar', './content', './contentTemplates', './contentTypes'], function () {});
+define(['./main', './login', './navbar', './sidebar', './content', './contentTemplates', './contentTypes', './files'], function () {});

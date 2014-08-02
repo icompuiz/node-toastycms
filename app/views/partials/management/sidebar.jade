@@ -4,29 +4,29 @@
 			img.management-logo(src="images/logo-xs.png")
 	hr.sidebar-menu-separator
 	ul.items
+		//- li
+		//- 	a(ng-click="item1Visible = !item1Visible")
+		//- 		i.icon-webpage
+		//- 		| &nbsp; Content Management
+		//- 		//- i.caret(ng-show="!item1Visible", ng-click="item1Visible = !item1Visible")
+		//- 		//- i.caret(ng-show="item1Visible", ng-click="item1Visible = !item1Visible")
+		//- 	ul(collapse="!item1Visible")
 		li
-			a(ng-click="item1Visible = !item1Visible")
-				i.icon-webpage
-				| &nbsp; Content Management
-				//- i.caret(ng-show="!item1Visible", ng-click="item1Visible = !item1Visible")
-				//- i.caret(ng-show="item1Visible", ng-click="item1Visible = !item1Visible")
-			ul(collapse="!item1Visible")
-				li
-					a(ui-sref="management.authenticated.content.home")
-						i.icon-document
-						| &nbsp; Content
-				li
-					a(ui-sref="management.authenticated.content-types.home")
-						i.icon-squaret
-						| &nbsp; Types
-				li
-					a(ui-sref="management.authenticated.content-templates.home")
-						i.icon-html
-						| &nbsp; Templates
+			a(ui-sref="management.authenticated.content.home")
+				i.icon-document
+				| &nbsp; Content
+		li
+			a(ui-sref="management.authenticated.content-types.home")
+				i.icon-squaret
+				| &nbsp; Types
+		li
+			a(ui-sref="management.authenticated.content-templates.home")
+				i.icon-html
+				| &nbsp; Templates
 		li
 			a(ui-sref="management.authenticated.files.home")
 				i.icon-legacyfilemanager
-				| &nbsp; File Management
+				| &nbsp; Files
 		li
 			hr.sidebar-menu-separator
 		li

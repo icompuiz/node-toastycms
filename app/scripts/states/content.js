@@ -26,9 +26,10 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content.add', {
-            url:'/content/add',
+            url:'/add',
+            parent: 'management.authenticated.content.home',
             views: {
-        		'ui-content': {
+        		'ui-content-body': {
             		templateUrl: 'partials/management/content/add',
         		}
         	}

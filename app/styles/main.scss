@@ -261,31 +261,18 @@ $light-border-color: #e7e7e7;
 	height: $navbar-height;
 	line-height: $navbar-height;
 }
-.content-menu {
-	position: fixed;
-	top: $navbar-height;
-	bottom: 0;
-	padding: 0;
-	border-right: 1px solid $light-border-color;
-	overflow:auto;
-	.search {
-		border-radius: 0;
-		border-top: 0;
-		border-left: 0;
-		border-right: 0;
-		border-color: $light-border-color;
-		&:focus {
-			border-color: $light-border-color;
-			box-shadow: none;
-			-webkit-box-shadow: none;
-		}
-	}
+.content-area {
 }
 
-.content-actions-area {
+.content-menu {
+	border-right: 1px solid $light-border-color;
+	overflow:auto;
+}
+
+.main-actions-area {
 	height: $navbar-height;
 	border-bottom: 1px solid $light-border-color;
-	// padding-top: 7px;
+	padding-top: 7px;
 }
 
 .tree-view {
@@ -354,4 +341,16 @@ $light-border-color: #e7e7e7;
 .caret.caret-flipped {
 	border-top-width: 0;
 	border-bottom: 4px solid #000000;
+}
+
+.form-actions {
+	padding: 7px;
+	margin-top:15px;
+}
+
+.tab-content {
+	border: 1px solid #ddd;
+	padding: 15px;
+	border-top: 0;
+	background: #fff;
 }

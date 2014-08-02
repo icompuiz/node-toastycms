@@ -16,8 +16,19 @@ define(['./module'], function (states) {
         $stateProvider.state('management.authenticated.files.home', {
             url:'/files',
             views: {
-				'ui-files': {
-            		templateUrl: 'partials/management/files/home',
+                'ui-files': {
+                    templateUrl: 'partials/management/files/home',
+                    controller: 'FilesCtrl'
+                },
+            }
+        });
+
+        $stateProvider.state('management.authenticated.files.add', {
+            url:'/add',
+            parent: 'management.authenticated.files.home',
+            views: {
+				'ui-files-body': {
+            		templateUrl: 'partials/management/files/add',
 				},
 			}
         });

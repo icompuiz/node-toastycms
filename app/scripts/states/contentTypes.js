@@ -26,9 +26,10 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content-types.add', {
-            url:'/content-types/add',
+            url:'/add',
+            parent: 'management.authenticated.content-types.home',
             views: {
-        		'ui-content-types': {
+        		'ui-content-types-body': {
             		templateUrl: 'partials/management/content-types/add',
         		}
         	}
