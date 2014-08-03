@@ -1,0 +1,13 @@
+doctype html
+script(id="nodes_renderer.html", type="text/ng-template")
+	div.tree-node-content-wrapper(ui-tree-handle, ng-class="{'tree-node-active': selectedNode._id === node._id }")
+		div.tree-node-content(data-nodrag)
+			span.tree-node-icon.glyphicon(ng-click="toggle(this)", ng-class="{'glyphicon-stop': !node.children.length, 'glyphicon-chevron-right': node.children.length && collapsed, 'glyphicon-chevron-down': node.children.length && !collapsed}")
+			span.item-name(ng-click="nodeSelected(node)")
+				| &nbsp;&nbsp; {{node.name}}
+	ol(ui-tree-nodes, ng-model="node.children", ng-class="{hidden: collapsed}")
+		li(ng-repeat="node in node.children", ui-tree-node, ng-include="'nodes_renderer.html'")
+
+div.tree-view(ui-tree)
+	ol(ui-tree-nodes, ng-model="data")
+		li(ng-repeat="node in data", ui-tree-node, ng-include="'nodes_renderer.html'")

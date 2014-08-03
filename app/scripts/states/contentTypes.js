@@ -19,9 +19,8 @@ define(['./module'], function (states) {
         	views: {
         		'ui-content-types': {
             		templateUrl: 'partials/management/content-types/home',
-                    controller: 'ContentTemplatesCtrl'
-        		}
-        	}
+                }
+            }
 
         });
 
@@ -29,8 +28,9 @@ define(['./module'], function (states) {
             url:'/add',
             parent: 'management.authenticated.content-types.home',
             views: {
-        		'ui-content-types-body': {
-            		templateUrl: 'partials/management/content-types/add',
+                'ui-content-types-body': {
+                    templateUrl: 'partials/management/content-types/add',
+                    controller: 'ContentTypesCtrl'
         		}
         	}
         });

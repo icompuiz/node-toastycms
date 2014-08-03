@@ -1,15 +1,4 @@
 doctype html
-script(id="nodes_renderer.html", type="text/ng-template")
-	div.tree-node-content-wrapper(ui-tree-handle)
-		div.tree-node-content(data-nodrag)
-			//- span.tree-node-icon.glyphicon(ng-click="toggle(this)", ng-class="{'glyphicon-file': !node.nodes.length, 'glyphicon-folder-close': node.nodes.length && collapsed, 'glyphicon-folder-open': node.nodes.length && !collapsed}")
-			span.tree-node-icon.glyphicon(ng-click="toggle(this)", ng-class="{'glyphicon-stop': !node.nodes.length, 'glyphicon-chevron-right': node.nodes.length && collapsed, 'glyphicon-chevron-down': node.nodes.length && !collapsed}")
-
-			span.item-title
-				| &nbsp;&nbsp; {{node.title}}
-	ol(ui-tree-nodes, ng-model="node.nodes", ng-class="{hidden: collapsed}")
-		li(ng-repeat="node in node.nodes", ui-tree-node, ng-include="'nodes_renderer.html'")
-
 .col-xs-12
 	.row.main-actions-area
 		.col-xs-6
@@ -23,8 +12,6 @@ script(id="nodes_renderer.html", type="text/ng-template")
 	.row
 		.content-area-wrapper
 			.col-xs-3.content-menu
-				div.tree-view(ui-tree)
-					ol(ui-tree-nodes, ng-model="data")
-						li(ng-repeat="node in data", ui-tree-node, ng-include="'nodes_renderer.html'")
+				toasty-tree-explorer(data-t-api="files")
 			.col-xs-9.content-area
 				div.ui-files-body(ui-view='ui-files-body')

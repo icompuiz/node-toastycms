@@ -1,4 +1,4 @@
 /**
  * Attach all state definitions
  **/
-define(['./main', './tLockedAsset'], function () {});
+define(['./main', './tLockedAsset', './toastyTreeExplorer'], function () {});

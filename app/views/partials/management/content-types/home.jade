@@ -21,8 +21,6 @@ script(id="nodes_renderer.html", type="text/ng-template")
 	.row
 		.content-area-wrapper
 			.col-xs-3.content-menu
-				div.tree-view(ui-tree)
-					ol(ui-tree-nodes, ng-model="data")
-						li(ng-repeat="node in data", ui-tree-node, ng-include="'nodes_renderer.html'")
+				toasty-tree-explorer(data-t-api="contenttypes")
 			.col-xs-9.content-area
 				div.ui-content-types-body(ui-view="ui-content-types-body")
