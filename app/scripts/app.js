@@ -14,7 +14,7 @@ define('app', [
     './services/index',
     './models/index',
     './states/index'
-], function (ng) {
+], function(ng) {
     'use strict';
 
     return ng.module('toastycms', [
@@ -27,14 +27,21 @@ define('app', [
         'ui.bootstrap.tpls',
         'ui.router',
         'ui.tree'
-    ]).config(['$locationProvider', function($locationProvider) {
+    ]).config(['$locationProvider',
+        function($locationProvider) {
 
             $locationProvider.html5Mode(true).hashPrefix('!');
-        
-    }]).run(['$state', '$rootScope', 'Restangular',  function($state, $rootScope, Restangular) {
-    
+
+        }
+    ]).run(['$state', '$rootScope', 'Restangular',
+        function($state, $rootScope, Restangular) {
+
             Restangular.setBaseUrl('/api');
 
-    
-        }]);
+            Restangular.setRestangularFields({
+                id: "_id",
+            });
+
+        }
+    ]);
 });

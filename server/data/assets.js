@@ -67,10 +67,10 @@ var assets = [{
 				name: '/api/fs/files',
 				items: [admin, users]
 		}, {
-				name: '/api/contentitems',
+				name: '/api/content',
 				items: [admin, users]
 		}, {
-				name: '/api/contenttypes',
+				name: '/api/types',
 				items: [admin, users]
 		}, {
 				name: '/api/inputformats',

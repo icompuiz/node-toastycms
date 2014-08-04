@@ -8,37 +8,57 @@ define(['./module'], function(directives) {
             var directive = {
                 restrict: 'EA',
                 scope: {
-                    tApi: '=',
+                    tApi: '@',
                     tRefresh: '&',
                     tAdd: '&',
                     tRemove: '&',
                     tSelect: '&'
                 },
                 templateUrl: 'partials/directives/toastyTreeExplorer',
-                controller: ['$scope',
-                    function($scope) {
+                controller: ['$scope','Restangular','$log',
+                    function($scope, Restangular, $log) {
                         $scope.selectedNode = {};
+                        $scope.data = [];
 
-                        $scope.data = [{
-                        	_id: 'nsfdkfdnkfdkfdkfd3930920923',
-                            name: 'Root Element',
-                            children: [{
-                        		_id: 'jffdvlandnvalvn232323',
-                                name: 'Level 1',
-                                children: [{
-                        			_id: 'dsjg95ign54gg54hprea[v',
-                                    name: 'Level 2',
-                                    children: [{
-                        				_id: 'operidmgfkeirnfdmdfkm',
-                                        name: 'Level 3',
-                                        children: [{
-                        					_id: '[poiuyvdss0sd-lkkl]',
-                                            name: 'Level 4'
-                                        }]
-                                    }]
-                                }]
-                            }]
-                        }];
+                        $scope.treeOptions = {
+
+                            dropped: function(event) {
+                                // disable tree
+
+                                if (event.dest.nodesScope.$parent.node) {
+                                    // disable tree
+                                    var cloneParent = event.dest.nodesScope.$parent.node.clone();
+
+                                    event.source.nodeScope.node.parent = cloneParent._id;
+                                    
+                                    var requestPromise = event.source.nodeScope.node.put();
+                                    requestPromise.then(function() {
+                                        // enable tree
+                                    });
+                                    
+                                    // cloneParent.children = _.map(cloneParent.children, function(child) {
+                                    //     return child._id;
+                                    // });
+
+                                    // var requestPromise = cloneParent.put();
+                                    // requestPromise.then(function(putResult) {
+
+                                    //     // enable tree
+
+                                    // })
+
+                                }
+                            }
+
+                        };
+
+                        Restangular.all($scope.tApi).getList({populate: 'children'}).then(function(getListResult) {
+
+                        	$scope.data = getListResult;
+
+                        }, function(error) {
+
+                        });
 
                         $scope.nodeSelected = function(node) {
 

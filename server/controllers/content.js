@@ -17,6 +17,9 @@ function register() {
     var deleteRequestInterceptor = require('../plugins/deleteRequestInterceptor');
     deleteRequestInterceptor.plugin(resource, model);
 
+    var nestableModelController = require('../plugins/nestableModelController');
+    nestableModelController.plugin(resource, model);
+
     return resource;
 
 

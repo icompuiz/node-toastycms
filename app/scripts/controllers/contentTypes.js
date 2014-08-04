@@ -1,13 +1,21 @@
 define(['./module'], function(controllers) {
     'use strict';
 
-    return controllers.controller('ContentTypesCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$modal',
-        function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $modal) {
+    return controllers.controller('ContentTypesCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$modal', '$stateParams',
+        function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $modal, $stateParams) {
 
             $scope.model = {};
 
             $scope.contentTemplate = {
                 name: 'No Template'
+            };
+
+            $scope.openNode = function(node) {
+
+                $state.go('management.authenticated.content-types.edit', {
+                    id: node._id
+                });
+
             };
 
             $scope.selectContentTemplate = function() {
@@ -17,7 +25,7 @@ define(['./module'], function(controllers) {
                     controller: ['$scope', '$modalInstance',
                         function($scope, $modalInstance) {
 
-                            $scope.apiName = 'contenttemplates';
+                            $scope.apiName = 'templates';
 
                             $scope.modalTitle = 'Select Template';
 
@@ -53,11 +61,47 @@ define(['./module'], function(controllers) {
 
             $scope.save = function() {
 
+
+                if ($scope.model._id) {
+                    var requestPromise = $scope.model.put();
+
+                    requestPromise.then(function(putResult) {
+                        $log.debug(putResult);
+                    });
+                } else {
+                    var requestPromise = Restangular.all('types').post($scope.model);
+
+                    requestPromise.then(function(postResult) {
+
+                        $log.debug(postResult);
+
+                        $scope.model = postResult;
+
+                    }, function(error) {
+
+                        $log.error(error);
+
+                    });
+                }
+
+
+
+
             };
 
             $scope.cancel = function() {
 
+                $state.go('management.authenticated.content-types.home');
+
             };
+
+            if ($stateParams.id) {
+                Restangular.one('types', $stateParams.id).get().then(function(getResult) {
+                    $scope.model = getResult;
+                }, function(error) {
+                    $log.error(error);
+                });
+            }
 
         }
     ]);

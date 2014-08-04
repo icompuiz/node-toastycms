@@ -290,6 +290,10 @@ body {
 
 	.tree-node-content {
 		white-space: nowrap;
+
+		.node-name {
+			cursor: pointer;
+		}
 	}
 
 	.tree-node-content-wrapper {

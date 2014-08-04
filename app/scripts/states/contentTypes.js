@@ -19,6 +19,7 @@ define(['./module'], function (states) {
         	views: {
         		'ui-content-types': {
             		templateUrl: 'partials/management/content-types/home',
+                    controller: 'ContentTypesCtrl'
                 }
             }
 
@@ -33,6 +34,17 @@ define(['./module'], function (states) {
                     controller: 'ContentTypesCtrl'
         		}
         	}
+        });
+
+        $stateProvider.state('management.authenticated.content-types.edit', {
+            url:'/edit/:id',
+            parent: 'management.authenticated.content-types.home',
+            views: {
+                'ui-content-types-body': {
+                    templateUrl: 'partials/management/content-types/add',
+                    controller: 'ContentTypesCtrl'
+                }
+            }
         });
 
     }]);

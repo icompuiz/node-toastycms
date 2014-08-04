@@ -31,10 +31,10 @@ var apiRoutes = [{
     path: '/api/fs/files',
     controller: File
 }, {
-    path: '/api/contentitems',
+    path: '/api/content',
     controller: Content
 }, {
-    path: '/api/contenttypes',
+    path: '/api/types',
     controller: ContentType
 }, {
     path: '/api/inputformats',

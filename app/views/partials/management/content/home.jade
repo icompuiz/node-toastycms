@@ -12,6 +12,7 @@ doctype html
 	.row
 		.content-area-wrapper
 			.col-xs-3.content-menu
-				toasty-tree-explorer(data-t-api="content")
+				toasty-tree-explorer(data-t-api="content", data-t-select="openNode(node)")
+
 			.col-xs-9.content-area
 				div.ui-content-body(ui-view="ui-content-body")

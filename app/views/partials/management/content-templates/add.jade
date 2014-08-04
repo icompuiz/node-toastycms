@@ -1,1 +1,19 @@
-| Add Content Templates
+doctype html
+form.form.toasty-form(name='addContentTemplate', role="form")
+	div.form-actions.pull-right
+		div.btn-group.pull-right
+			a.btn.btn-primary(ng-click="save()")
+				span.glyphicon.glyphicon-save
+				| &nbsp; Save
+			a.btn.btn-danger(ng-click="cancel()")
+				span.glyphicon.glyphicon-save
+				| &nbsp; Cancel
+		.clearfix
+	tabset
+		tab(heading="Template")
+			.form-group
+				label(for='content-type-name') Name
+				input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
+			.form-group
+				label(for='content-template-name') Template
+				textarea.form-control(placeholder="Template Content", ng-model="model.text", rows="10")

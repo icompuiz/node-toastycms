@@ -20,8 +20,8 @@ define(['./module'], function (states) {
         		'ui-content-templates': {
             		templateUrl: 'partials/management/content-templates/home',
                     controller: 'ContentTemplatesCtrl'
-        		}
-        	}
+                }
+            }
 
         });
 
@@ -29,10 +29,22 @@ define(['./module'], function (states) {
             url:'/add',
             parent: 'management.authenticated.content-templates.home',
             views: {
-        		'ui-content-templates-body': {
-            		templateUrl: 'partials/management/content-templates/add',
+                'ui-content-templates-body': {
+                    templateUrl: 'partials/management/content-templates/add',
+                    controller: 'ContentTemplatesCtrl'
         		}
         	}
+        });
+
+        $stateProvider.state('management.authenticated.content-templates.edit', {
+            url:'/edit/:id',
+            parent: 'management.authenticated.content-templates.home',
+            views: {
+                'ui-content-templates-body': {
+                    templateUrl: 'partials/management/content-templates/add',
+                    controller: 'ContentTemplatesCtrl'
+                }
+            }
         });
 
     }]);

@@ -19,9 +19,9 @@ define(['./module'], function (states) {
         	views: {
         		'ui-content': {
             		templateUrl: 'partials/management/content/home',
-            		controller: 'ContentCtrl'
-        		}
-        	}
+                    controller: 'ContentCtrl'
+                }
+            }
 
         });
 
@@ -29,10 +29,22 @@ define(['./module'], function (states) {
             url:'/add',
             parent: 'management.authenticated.content.home',
             views: {
-        		'ui-content-body': {
-            		templateUrl: 'partials/management/content/add',
-        		}
-        	}
+                'ui-content-body': {
+                    templateUrl: 'partials/management/content/add',
+                    controller: 'ContentCtrl'
+                }
+            }
+        });
+
+        $stateProvider.state('management.authenticated.content.edit', {
+            url:'/edit/:id',
+            parent: 'management.authenticated.content.home',
+            views: {
+                'ui-content-body': {
+                    templateUrl: 'partials/management/content/add',
+            		controller: 'ContentCtrl'
+                }
+            }
         });
 
     }]);
