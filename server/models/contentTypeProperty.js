@@ -10,7 +10,7 @@ var ContentTypePropertySchema = new Schema({
     },
     format: {
         type: String,
-        default: 'plaintext'
+        default: 'text'
     }
 });
 

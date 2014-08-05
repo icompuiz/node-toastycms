@@ -5,7 +5,10 @@ form.form.toasty-form(name='addContentTemplate', role="form")
 			a.btn.btn-primary(ng-click="save()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Save
-			a.btn.btn-danger(ng-click="cancel()")
+			a.btn.btn-danger(ng-click="delete()", ng-if="model._id")
+				span.glyphicon.glyphicon-trash
+				| &nbsp; Delete
+			a.btn.btn-warning(ng-click="cancel()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Cancel
 		.clearfix

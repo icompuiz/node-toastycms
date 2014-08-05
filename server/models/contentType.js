@@ -14,7 +14,7 @@ var ContentTypeSchema = Model.schema.extend({
         ref: 'Template',
         type: $mongoose.Schema.Types.ObjectId
     },
-    properties: [ContentTypeProperty]
+    properties: [ContentTypeProperty.schema]
 }, {
     collection: 'contenttypes'
 });

@@ -59,6 +59,31 @@ define(['./module'], function(controllers) {
 
             };
 
+            $scope.addProperty = function() {
+
+                if (!_.isArray($scope.model.properties)) {
+                    $scope.model.properties = [];
+                };
+
+                var property = {
+                    name: '',
+                    format: 'text'
+                };
+
+                $scope.model.properties.push(property);
+
+            };
+
+            $scope.removeProperty = function(index) {
+
+                if (_.isArray($scope.model.properties)) {
+
+                    $scope.model.properties.splice(index, 1);
+
+                }
+
+            };
+
             $scope.save = function() {
 
 
@@ -96,8 +121,11 @@ define(['./module'], function(controllers) {
             };
 
             if ($stateParams.id) {
-                Restangular.one('types', $stateParams.id).get().then(function(getResult) {
+                Restangular.one('types', $stateParams.id).get({populate: 'template'}).then(function(getResult) {
                     $scope.model = getResult;
+                    if ($scope.model.template) {
+                        $scope.contentTemplate = $scope.model.template;
+                    }
                 }, function(error) {
                     $log.error(error);
                 });

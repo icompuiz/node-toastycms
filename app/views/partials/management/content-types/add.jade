@@ -4,7 +4,10 @@ form.form.toasty-form(name='addContentType', role="form")
 			a.btn.btn-primary(ng-click="save()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Save
-			a.btn.btn-danger(ng-click="cancel()")
+			a.btn.btn-danger(ng-click="delete()", ng-if="model._id")
+				span.glyphicon.glyphicon-trash
+				| &nbsp; Delete
+			a.btn.btn-warning(ng-click="cancel()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Cancel
 		.clearfix
@@ -16,7 +19,31 @@ form.form.toasty-form(name='addContentType', role="form")
 			.form-group
 				label(for='content-template-name') Select Template
 				div.content-template
-					a(ng-click="selectContentTemplate()") 
+					a.btn.btn-xs.btn-link(ng-click="selectContentTemplate()") 
 						| {{ contentTemplate.name }}
 		tab(heading="Properties")
-			| Properties
+			.row
+				.col-xs-7
+					.form-group
+							table.table
+								thead
+									th(style="width:10px")
+										a.btn.btn-xs.btn-link(ng-click="addProperty()")
+											span.glyphicon.glyphicon-plus
+									th Name
+									th Format
+								tbody
+									tr(ng-repeat="property in model.properties")
+										td
+											a.btn.btn-xs.btn-link(ng-click="removeProperty($index)")
+												span.glyphicon.glyphicon-trash(style="color: red")
+										td 
+											input.form-control(ng-model="property.name")
+										td 
+											select.form-control(ng-model="property.format")
+												option(value="input-text") Text
+												option(value="input-textarea") Text Area
+												option(value="input-richtext") Rich Text
+												option(value="input-file") File Upload
+												option(value="input-date") Date
+												option(value="input-daterange") Date Range
