@@ -35,30 +35,21 @@ define(['./module'], function(directives) {
                                     requestPromise.then(function() {
                                         // enable tree
                                     });
-                                    
-                                    // cloneParent.children = _.map(cloneParent.children, function(child) {
-                                    //     return child._id;
-                                    // });
-
-                                    // var requestPromise = cloneParent.put();
-                                    // requestPromise.then(function(putResult) {
-
-                                    //     // enable tree
-
-                                    // })
 
                                 }
                             }
 
                         };
 
-                        Restangular.all($scope.tApi).getList({populate: 'children'}).then(function(getListResult) {
+                        function read() {
+                            Restangular.all($scope.tApi).getList({populate: 'children'}).then(function(getListResult) {
 
-                        	$scope.data = getListResult;
+                                $scope.data = getListResult;
 
-                        }, function(error) {
+                            }, function(error) {
 
-                        });
+                            });
+                        }
 
                         $scope.nodeSelected = function(node) {
 
@@ -69,6 +60,10 @@ define(['./module'], function(directives) {
                         	});
 
                         };
+
+                        $scope.$on('management.refresh-tree', read);
+
+                        read();
                     }
                 ],
                 link: function() {}

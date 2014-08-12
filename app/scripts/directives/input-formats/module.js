@@ -7,5 +7,5 @@
  **/
 define(['angular'], function (ng) {
     'use strict';
-    return ng.module('toastycms.directives', ['toastycms.directives.input-formats']);
+    return ng.module('toastycms.directives.input-formats', []);
 });

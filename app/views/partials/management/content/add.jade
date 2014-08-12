@@ -1,5 +1,5 @@
 doctype html
-form.form.toasty-form(name='addContentTemplate', role="form")
+form.form.toasty-form(name='addContentType', role="form")
 	div.form-actions.pull-right
 		div.btn-group.pull-right
 			a.btn.btn-primary(ng-click="save()")
@@ -20,7 +20,12 @@ form.form.toasty-form(name='addContentTemplate', role="form")
 			.form-group
 				label(for='content-type-name') Select Type
 				div.content-type
-					a(ng-click="selectContentType()") 
+					a.btn.btn-xs.btn-link(ng-click="selectContentType()") 
 						| {{ contentType.name }}
 		tab(heading="Properties")
-			| Properties
+			.form-group(ng-repeat="property in model.properties")
+				label(for="{{property.name}}") {{property.name}}
+				a.btn.btn-xs.btn-link(ng-click="removeProperty($index)")
+					span.glyphicon.glyphicon-remove(style="color: red")
+				toasty-input(data-t-property="property")
+				hr

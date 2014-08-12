@@ -161,13 +161,13 @@ function AccessControlListsController(resource, model) {
 
     });
 
-    resource.after('get', removeAclProp);
+    // resource.after('get', removeAclProp);
 
-    resource.after('post', removeAclProp);
+    // resource.after('post', removeAclProp);
 
-    resource.after('put', removeAclProp);
+    // resource.after('put', removeAclProp);
 
-    resource.after('delete', removeAclProp);
+    // resource.after('delete', removeAclProp);
 
     resource.after('get', handleAclFilter);
 

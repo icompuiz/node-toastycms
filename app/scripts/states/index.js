@@ -1,4 +1,3 @@
-/**
- * Attach all state definitions
- **/
-define(['./main','./authenticated','./dashboard', './settings', './content','./contentTypes','./contentTemplates', './files'], function () {});
+/* global define:true */
+
+define(['./main', './authenticated', './dashboard', './settings', './content', './contentTypes', './contentTemplates', './files'], function() {});

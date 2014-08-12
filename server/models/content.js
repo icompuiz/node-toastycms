@@ -14,7 +14,7 @@ var ContentSchema = Model.schema.extend({
         ref: 'ContentType',
         type: $mongoose.Schema.Types.ObjectId
     },
-    properties: [ContentProperty]
+    properties: [ContentProperty.schema]
 }, {
     collection: 'contentitems'
 });

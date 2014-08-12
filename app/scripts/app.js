@@ -11,6 +11,7 @@ define('app', [
     'restangular',
     './controllers/index',
     './directives/index',
+    './directives/input-formats/index',
     './services/index',
     './models/index',
     './states/index'

@@ -34,12 +34,13 @@ function AccessControlListPlugin(schema, options) {
 
 		if (currentUser) {
 
+			console.log('Model ACL Record', data.acl);
+
 			AccessControlList
-				.findOne(data.acl)
+				.findOne({ _id: data.acl})
 				.populate('users groups')
 				.exec(function(err, acl) {
 
-					console.log("AccessControlListPlugin::isAllowed::findById::enter", acl._id);
 
 					if (err) {
 						return done(err);
@@ -49,6 +50,8 @@ function AccessControlListPlugin(schema, options) {
 						var err = new Error('ACL for model missing');
 						return done(err);
 					}
+					
+					console.log("AccessControlListPlugin::isAllowed::findById::enter", acl._id);
 
 					var userFound = false;
 					var groupFound = false;
@@ -85,7 +88,7 @@ function AccessControlListPlugin(schema, options) {
 											allowed = userACE.access[right] || userACE.access.all;
 											console.log('---------------------------------------');
 											console.log('Model', acl.model, 'Id', data._id);
-											console.log('Current', currentUser.username, 'ACE', user.username,'Right', right, 'Allowed', allowed);
+											console.log('Current', currentUser.username, 'ACE', user.username,'Right', right, 'Allowed', allowed, 'Access', userACE.access);
 											console.log('---------------------------------------');
 											if (undefined === allowed) {
 												allowed = false;
@@ -145,6 +148,7 @@ function AccessControlListPlugin(schema, options) {
 
 									console.log(group.name);
 
+									// console.log("AccessControlListPlugin::isAllowed::checkGroups::User Found",user, user !== undefined);
 									if (user) {
 
 										groupFound = true;
@@ -153,6 +157,9 @@ function AccessControlListPlugin(schema, options) {
 										if (undefined === allowed) {
 											allowed = false;
 										}
+
+										console.log("AccessControlListPlugin::isAllowed::checkGroups::afterCheck",allowed,groupACE.access, right);
+
 
 										if (!allowed) {
 											return processNextGroup('notallowed')

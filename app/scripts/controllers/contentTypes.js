@@ -1,8 +1,8 @@
 define(['./module'], function(controllers) {
     'use strict';
 
-    return controllers.controller('ContentTypesCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$modal', '$stateParams',
-        function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $modal, $stateParams) {
+    return controllers.controller('ContentTypesCtrl', ['$rootScope', '$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$modal', '$stateParams',
+        function($rootScope, $scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $modal, $stateParams) {
 
             $scope.model = {};
 
@@ -91,12 +91,17 @@ define(['./module'], function(controllers) {
                     var requestPromise = $scope.model.put();
 
                     requestPromise.then(function(putResult) {
+                        $scope.refreshTree();
+
                         $log.debug(putResult);
                     });
                 } else {
                     var requestPromise = Restangular.all('types').post($scope.model);
 
                     requestPromise.then(function(postResult) {
+
+                        $scope.refreshTree();
+
 
                         $log.debug(postResult);
 
@@ -114,6 +119,23 @@ define(['./module'], function(controllers) {
 
             };
 
+            $scope.refreshTree = function() {
+                $rootScope.$broadcast('management.refresh-tree');
+            };
+
+            $scope.delete = function() {
+
+                $scope.model.remove().then(function() {
+                    $scope.refreshTree();
+
+                    $state.go('management.authenticated.content-types.home', {
+                        action: 'remove',
+                        result: 'success'
+                    });
+                });
+
+            };
+
             $scope.cancel = function() {
 
                 $state.go('management.authenticated.content-types.home');
@@ -121,10 +143,13 @@ define(['./module'], function(controllers) {
             };
 
             if ($stateParams.id) {
-                Restangular.one('types', $stateParams.id).get({populate: 'template'}).then(function(getResult) {
+                Restangular.one('types', $stateParams.id).get({
+                    populate: 'template'
+                }).then(function(getResult) {
                     $scope.model = getResult;
                     if ($scope.model.template) {
                         $scope.contentTemplate = $scope.model.template;
+                        $scope.model.template = $scope.contentTemplate._id;
                     }
                 }, function(error) {
                     $log.error(error);

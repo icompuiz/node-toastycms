@@ -1,11 +1,19 @@
 define(['./module'], function(controllers) {
     'use strict';
 
-    return controllers.controller('ContentCtrl', ['$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$stateParams',
-        function($scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $stateParams) {
+    return controllers.controller('ContentCtrl', ['$rootScope', '$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$stateParams', '$modal',
+        function($rootScope, $scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $stateParams, $modal) {
 
 
-            $scope.model = {};
+            $scope.model = {
+                properties: []
+            };
+
+            $scope.contentType = {
+                name: 'No Type',
+                properties: []
+            };
+
 
             $scope.openNode = function(node) {
 
@@ -14,6 +22,24 @@ define(['./module'], function(controllers) {
                 });
 
             };
+
+            $scope.$watch('contentType', function(contentType) {
+
+                _(contentType.properties).forEach(function(property) {
+
+                    var exists = _.find($scope.model.properties, {
+                        name: property.name
+                    });
+
+                    if (!exists) {
+                        property = _.clone(property);
+                        delete property._id;
+                        $scope.model.properties.push(property);
+                    }
+
+                });
+
+            });
 
             $scope.selectContentType = function() {
 
@@ -48,9 +74,9 @@ define(['./module'], function(controllers) {
 
                 modalInstance.result.then(function(node) {
 
-                    $scope.model.template = node._id;
+                    $scope.model.type = node._id;
 
-                    $scope.contentTemplate = node;
+                    $scope.contentType = node;
 
                 }, function(reason) {})
 
@@ -63,6 +89,7 @@ define(['./module'], function(controllers) {
                     var requestPromise = $scope.model.put();
 
                     requestPromise.then(function(putResult) {
+                        $scope.refreshTree();
                         $log.debug(putResult);
                     });
                 } else {
@@ -70,8 +97,8 @@ define(['./module'], function(controllers) {
 
                     requestPromise.then(function(postResult) {
 
+                        $scope.refreshTree();
                         $log.debug(postResult);
-
                         $scope.model = postResult;
 
                     }, function(error) {
@@ -86,6 +113,30 @@ define(['./module'], function(controllers) {
 
             };
 
+            $scope.removeProperty = function($index) {
+
+                $scope.model.properties[$index].value = null;
+
+            };
+
+            $scope.refreshTree = function() {
+                $rootScope.$broadcast('management.refresh-tree');
+            };
+
+            $scope.delete = function() {
+
+                $scope.model.remove().then(function() {
+                    $scope.refreshTree();
+
+                    $state.go('management.authenticated.content.home', {
+                        action: 'remove',
+                        result: 'success'
+                    });
+                });
+
+
+            };
+
             $scope.cancel = function() {
 
                 $state.go('management.authenticated.content.home');
@@ -93,8 +144,15 @@ define(['./module'], function(controllers) {
             };
 
             if ($stateParams.id) {
-                Restangular.one('content', $stateParams.id).get().then(function(getResult) {
+                Restangular.one('content', $stateParams.id).get({
+                    populate: 'type'
+                }).then(function(getResult) {
                     $scope.model = getResult;
+                    if ($scope.model.type) {
+                        $scope.contentType = $scope.model.type;
+                        $scope.model.type = $scope.contentType._id;
+
+                    }
                 }, function(error) {
                     $log.error(error);
                 });
