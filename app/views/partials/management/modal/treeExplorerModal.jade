@@ -5,4 +5,4 @@ div.modal-body
 	toasty-tree-explorer(data-t-api="{{apiName}}", data-t-select="onSelected(node)")
 div.modal-footer
 	button.btn.btn-primary(ng-click='ok()', ng-disabled="!selectedNode._id") Select
-	button.btn.btn-warning(ng-click='cancel()') Cancel
+	button.btn.btn-warning(ng-click='cancel()', ng-if="cancel !== false") Cancel

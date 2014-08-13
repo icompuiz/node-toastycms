@@ -20,6 +20,8 @@ var InputFormat = require('./controllers/inputFormat.js');
 var OutputFormat = require('./controllers/outputFormat.js');
 var Template = require('./controllers/template.js');
 
+var ContentManager = require('./controllers/contentManager.js')
+
 
 var apiRoutes = [{
     path: '/api/mocks',
@@ -93,7 +95,7 @@ var staticRoutes = [{
             user: req.user
         });
     },
-},{
+}, {
     path: '/management/',
     httpMethod: 'GET',
     middleware: function(req, res) {
@@ -110,6 +112,13 @@ var staticRoutes = [{
         });
     },
 }];
+
+var contentRoutes = [{
+    path: '/:contentId([0-9a-fA-F]{24})',
+    httpMethod: 'GET',
+    middleware: [ContentManager.view]
+}];
+
 
 
 function cleanRequest(req, res, next) {
@@ -173,55 +182,63 @@ function main(app, afterRoutesRegistered) {
 
     function registerAuthRoutes(afterRegisterAuthRoutes) {
 
-    	async.each(authRoutes, registerRoute, afterRegisterAuthRoutes);
+        async.each(authRoutes, registerRoute, afterRegisterAuthRoutes);
 
     }
 
     function registerStaticRoutes(afterRegisterStaticRoutes) {
-    	
-    	async.each(staticRoutes, registerRoute, afterRegisterStaticRoutes);
+
+        async.each(staticRoutes, registerRoute, afterRegisterStaticRoutes);
 
     }
 
     function registerAPIRoutes(afterRegisterAPIRoutes) {
-	    
-	    async.each(apiRoutes, function(route, afterRegisterRoute) {
 
-	        console.log('Registering route', route.path);
+        async.each(apiRoutes, function(route, afterRegisterRoute) {
 
-	        route.controller.resource
-	            .before('get', Route.checkRoute)
-	            .before('post', Route.checkRoute);
+            console.log('Registering route', route.path);
 
-	        route.controller.register();
+            route.controller.resource
+                .before('get', Route.checkRoute)
+                .before('post', Route.checkRoute);
 
-	        route.controller.resource
-	        	.after('get', cleanRequest)
-	            .after('post', cleanRequest)
-	            .after('put', cleanRequest)
-	            .after('delete', cleanRequest);
+            route.controller.register();
 
-	        route.controller.resource.register(app, route.path);
+            route.controller.resource
+                .after('get', cleanRequest)
+                .after('post', cleanRequest)
+                .after('put', cleanRequest)
+                .after('delete', cleanRequest);
 
-	        afterRegisterRoute();
+            route.controller.resource.register(app, route.path);
 
-	    }, afterRegisterAPIRoutes);
+            afterRegisterRoute();
+
+        }, afterRegisterAPIRoutes);
+
+    }
+
+    function registerContentRoutes(afterRegisterContentRoutes) {
+
+        async.each(contentRoutes, registerRoute, afterRegisterContentRoutes);
+
 
     }
 
     async.series({
 
-    	registerAuthRoutes: registerAuthRoutes,
-		registerStaticRoutes: registerStaticRoutes,
-		registerAPIRoutes: registerAPIRoutes
+        registerAuthRoutes: registerAuthRoutes,
+        registerStaticRoutes: registerStaticRoutes,
+        registerAPIRoutes: registerAPIRoutes,
+        registerContentRoutes: registerContentRoutes
 
     }, afterRoutesRegistered);
-    
+
 }
 
 module.exports = {
-	apiRoutes: apiRoutes,
-	authRoutes: authRoutes,
-	staticRoutes: staticRoutes,
+    apiRoutes: apiRoutes,
+    authRoutes: authRoutes,
+    staticRoutes: staticRoutes,
     register: main
 };

@@ -18,9 +18,9 @@ form.form.toasty-form(name='addContentType', role="form")
 				label(for='content-type-name') Name
 				input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
 			.form-group
-				label(for='content-type-name') Select Type
+				label(for='content-type-name') Content Type
 				div.content-type
-					a.btn.btn-xs.btn-link(ng-click="selectContentType()") 
+					a.btn.btn-xs.btn-link(ng-click="selectContentType()", disabled) 
 						| {{ contentType.name }}
 		tab(heading="Properties")
 			.form-group(ng-repeat="property in model.properties")

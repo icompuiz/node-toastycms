@@ -39,6 +39,22 @@ define(['./module'], function(controllers) {
 
                 });
 
+                $scope.model.properties = _($scope.model.properties).filter(function(property) {
+
+                    var exists = _.find(contentType.properties, {
+                        name: property.name
+                    });
+
+                    if (exists) {
+                        return property;
+                    } else {
+                        if (!_.isEmpty(property.value)) {
+                            return property;
+                        }
+                    }
+
+                }).value();
+
             });
 
             $scope.selectContentType = function() {
@@ -47,6 +63,8 @@ define(['./module'], function(controllers) {
                     templateUrl: 'partials/management/modal/treeExplorerModal',
                     controller: ['$scope', '$modalInstance',
                         function($scope, $modalInstance) {
+
+                            $scope.cancel = false;
 
                             $scope.apiName = 'types';
 
@@ -156,6 +174,10 @@ define(['./module'], function(controllers) {
                 }, function(error) {
                     $log.error(error);
                 });
+            } else {
+                if ($state.is("management.authenticated.content.add")) {
+                    $scope.selectContentType();
+                }
             }
 
         }
