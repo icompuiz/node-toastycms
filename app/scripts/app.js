@@ -37,6 +37,16 @@ define('app', [
     ]).run(['$state', '$rootScope', 'Restangular',
         function($state, $rootScope, Restangular) {
 
+            $rootScope.alerts = [];
+            $rootScope.addAlert = function(alert) {
+                $rootScope.alerts.push(alert);
+            };
+
+            $rootScope.closeAlert = function(alert) {
+                var index = $rootScope.alerts.indexOf(alert);
+                $rootScope.alerts.splice(index,1);
+            };
+
             Restangular.setBaseUrl('/api');
 
             Restangular.setRestangularFields({

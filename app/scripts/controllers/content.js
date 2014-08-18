@@ -14,13 +14,9 @@ define(['./module'], function(controllers) {
                 properties: []
             };
 
+            $scope.parent = {
 
-            $scope.openNode = function(node) {
-
-                $state.go('management.authenticated.content.edit', {
-                    id: node._id
-                });
-
+                name: 'No Parent',
             };
 
             $scope.$watch('contentType', function(contentType) {
@@ -57,9 +53,72 @@ define(['./module'], function(controllers) {
 
             });
 
+            $scope.noType = function() {
+                $state.go('^.home');
+                $scope.addAlert({
+                    type: 'danger',
+                    msg: 'A type must be selected'
+                });
+            };
+
+            $scope.selectParentContent = function() {
+
+                var modalInstance = $modal.open({
+                    backdrop: 'static',
+                    keyboard: false,
+                    templateUrl: 'partials/management/modal/treeExplorerModal',
+                    controller: ['$scope', '$modalInstance',
+                        function($scope, $modalInstance) {
+
+                            $scope.cancel = false;
+
+                            $scope.apiName = 'content';
+
+
+                            $scope.modalTitle = 'Select Parent Content';
+
+                            $scope.selectedNode = {};
+
+
+                            $scope.onSelected = function(node) {
+
+                                $scope.selectedNode = node;
+
+                            };
+
+
+                            $scope.ok = function() {
+                                $modalInstance.close($scope.selectedNode);
+                            };
+
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+
+                        }
+                    ]
+                });
+
+                modalInstance.result.then(function(node) {
+
+                    if (node._id !== $scope.model._id) {
+                        $scope.model.parent = node._id;
+
+                        $scope.parent = node;
+                    }
+
+                }, function(reason) {
+
+
+                });
+
+            };
+
             $scope.selectContentType = function() {
 
                 var modalInstance = $modal.open({
+                    backdrop: 'static',
+                    keyboard: false,
                     templateUrl: 'partials/management/modal/treeExplorerModal',
                     controller: ['$scope', '$modalInstance',
                         function($scope, $modalInstance) {
@@ -68,15 +127,18 @@ define(['./module'], function(controllers) {
 
                             $scope.apiName = 'types';
 
+
                             $scope.modalTitle = 'Select Type';
 
                             $scope.selectedNode = {};
+
 
                             $scope.onSelected = function(node) {
 
                                 $scope.selectedNode = node;
 
                             };
+
 
                             $scope.ok = function() {
                                 $modalInstance.close($scope.selectedNode);
@@ -96,7 +158,11 @@ define(['./module'], function(controllers) {
 
                     $scope.contentType = node;
 
-                }, function(reason) {})
+                }, function(reason) {
+
+                    $scope.noType();
+
+                })
 
             };
 
@@ -118,6 +184,7 @@ define(['./module'], function(controllers) {
                         $scope.refreshTree();
                         $log.debug(postResult);
                         $scope.model = postResult;
+                        $scope.openNode(postResult);
 
                     }, function(error) {
 
@@ -125,20 +192,29 @@ define(['./module'], function(controllers) {
 
                     });
                 }
+            };
 
+            $scope.openNode = function(node) {
 
-
+                $state.go('^.edit', {
+                    id: node._id
+                });
 
             };
 
             $scope.removeProperty = function($index) {
-
                 $scope.model.properties[$index].value = null;
-
             };
 
             $scope.refreshTree = function() {
                 $rootScope.$broadcast('management.refresh-tree');
+            };
+
+            $scope.removeParent = function() {
+                $scope.parent = {
+                    name: 'Not Set'
+                };
+                $scope.model.parent = null;
             };
 
             $scope.delete = function() {
@@ -146,7 +222,7 @@ define(['./module'], function(controllers) {
                 $scope.model.remove().then(function() {
                     $scope.refreshTree();
 
-                    $state.go('management.authenticated.content.home', {
+                    $state.go('^.home', {
                         action: 'remove',
                         result: 'success'
                     });
@@ -157,25 +233,40 @@ define(['./module'], function(controllers) {
 
             $scope.cancel = function() {
 
-                $state.go('management.authenticated.content.home');
+                $state.go('^.home');
 
             };
 
             if ($stateParams.id) {
                 Restangular.one('content', $stateParams.id).get({
-                    populate: 'type'
+                    
+                    populate: 'type parent'
+
                 }).then(function(getResult) {
                     $scope.model = getResult;
                     if ($scope.model.type) {
+
                         $scope.contentType = $scope.model.type;
                         $scope.model.type = $scope.contentType._id;
+
+                    }
+
+                    if ($scope.model.parent) {
+                        $scope.parent = $scope.model.parent;
+                        $scope.model.parent = $scope.parent._id;
 
                     }
                 }, function(error) {
                     $log.error(error);
                 });
             } else {
-                if ($state.is("management.authenticated.content.add")) {
+                if ($state.is("management.authenticated.content.home")) {
+
+                    if ($stateParams.alert) {
+                        $scope.addAlert($stateParams.alert);
+                    }
+
+                } else if ($state.is("management.authenticated.content.add")) {
                     $scope.selectContentType();
                 }
             }

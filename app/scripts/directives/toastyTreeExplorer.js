@@ -36,13 +36,22 @@ define(['./module'], function(directives) {
                                         // enable tree
                                     });
 
+                                } else {
+
+                                    event.source.nodeScope.node.parent = undefined;
+                                    
+                                    var requestPromise = event.source.nodeScope.node.put();
+                                    requestPromise.then(function() {
+                                        // enable tree
+                                    });
+
                                 }
                             }
 
                         };
 
                         function read() {
-                            Restangular.all($scope.tApi).getList({populate: 'children'}).then(function(getListResult) {
+                            Restangular.all($scope.tApi).getList().then(function(getListResult) {
 
                                 $scope.data = getListResult;
 

@@ -4,14 +4,52 @@ var mongoose = require('mongoose');
 
 var NestableModelControler = function(resource, model) {
 
+    resource.route('tree.get', {
+        detail: true,
+        handler: function(req, res) {
+
+            var id = req.params.id;
+
+            model.findById(id).exec(function(err, doc) {
+
+                if (err) {
+                    res.send(400, err);
+                } else if (doc) {
+
+                    doc.getTreeStack(function(err, treeStack) {
+
+                        if (err) {
+                            res.send(400, err);
+                        } else {
+
+                            res.jsonp(treeStack);
+
+                        }
+
+                    });
+
+                } else {
+                    res.send(404, 'Not found');
+                }
+
+            });
+
+        }
+    });
+
     resource.before('get', function(req, res, next) {
 
         if (!req.params.id) {
             req.quer.where({
-                parent: {
-                    $exists: false
-                }
-            })
+
+                $or: [{
+                    parent: {
+                        $exists: false
+                    }
+                }, {
+                    parent: null
+                }]
+            });
         }
 
         next();
@@ -37,35 +75,59 @@ var NestableModelControler = function(resource, model) {
                 return res.send(404, err.message || err);
             }
 
-            if (req.body.parent) {
+            var parentId = req.body.parent;
 
-                if (req.body.parent !== doc.parent) {
+            function addToTree() {
+                doc.addToTree(parentId, function(err) {
+                    if (err) {
+                        res.send(400, err.message || err);
+                    } else {
+                        next();
+                    }
+                });
+            }
 
-                    console.log(model.schema.paths);
+            if (parentId) { // case 1
 
-                    var parentModelName = model.schema.paths.parent.options.ref;
-
-                    var ParentModel = mongoose.model(parentModelName);
-
-                    ParentModel.findOneAndUpdate({
-                        _id: req.body.parent
-                    }, {
-                        $push: {
-                            children: doc._id
-                        }
-                    }, function(err, updated) {
+                if (!doc.parent) {
+                    // continue
+                    addToTree();
+                } else if (doc.parent.equals(parentId)) {
+                    // remove the property from the body
+                    res.send(400, 'Cannot be a child of itself');
+                } else {
+                    doc.addToTree(parentId, function(err) {
                         if (err) {
-                            res.send(400, err.message);
+                            res.send(400, err.message || err);
+                        } else {
+                            doc.removeFromTree(doc.parent, function(err) {
+                                if (err) {
+                                    res.send(400, err.message || err);
+                                } else {
+                                    next();
+                                }
+                            });
+                        }
+                    })
+                }
+
+            } else { // case 2
+
+                req.body.parent = null;
+
+                if (!doc.parent) {
+                    next();
+                } else {
+                    doc.removeFromTree(doc.parent, function(err) {
+                        if (err) {
+                            res.send(400, err.message || err);
                         } else {
                             next();
                         }
                     });
                 }
 
-            } else {
-                next();
             }
-
 
         });
     });

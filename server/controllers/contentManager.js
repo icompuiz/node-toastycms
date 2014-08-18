@@ -43,7 +43,6 @@ function parseTags(template) {
             };
 
             return outputConfig;
-
         })
         .filter(function(tag) {
             return tag !== null;
@@ -53,7 +52,7 @@ function parseTags(template) {
 
 }
 
-function compile(template) {
+function compileTemplate(template) {
 
     var tags = parseTags(template);
 
@@ -77,8 +76,6 @@ function compile(template) {
             var property = _.find(properties, {
                 name: tag.property
             });
-
-
 
             if (!property) {
             	console.log(tag);
@@ -118,6 +115,7 @@ function compile(template) {
 
 };
 
+
 var ViewPage = function(req, res) {
 
     var contentId = req.params.contentId;
@@ -136,7 +134,7 @@ var ViewPage = function(req, res) {
         }, function(contentType) {
 
 
-            var html = compile(content.type.template.text)(content);
+            var html = compileTemplate(content.type.template.text)(content);
 
             res.send(200, html);
 
@@ -147,6 +145,51 @@ var ViewPage = function(req, res) {
 
 };
 
+function GetTemplate(req, res) {
+
+    var contentId = req.params.contentId;
+
+    var Content = mongoose.model('Content');
+    var ContentType = mongoose.model('ContentType');
+    var Template = mongoose.model('Template');
+
+    var contentQuery = Content.findById(contentId);
+
+    contentQuery.populate('type');
+
+    contentQuery.exec(function(err, content) {
+
+        ContentType.populate(content.type, {
+            path: 'template'
+        }, function(err, contentType) {
+
+            if (err) {
+
+                res.send(400, err);
+
+            } else if (!contentType) {
+
+                res.send(404, 'A type must be specified for all items');
+
+            } else {
+                var template = new Template(contentType.template);
+
+                var stack = template.getTreeStack();
+
+                console.log(stack);
+            }
+
+
+
+
+        });
+
+    });
+
+}
+ 
+
+
 module.exports = {
-    view: ViewPage
+    view: GetTemplate
 };

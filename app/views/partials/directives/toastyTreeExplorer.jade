@@ -6,7 +6,7 @@ script(id="nodes_renderer.html", type="text/ng-template")
 			span.node-name(ng-click="nodeSelected(node)")
 				| &nbsp;&nbsp; {{node.name}}
 	ol(ui-tree-nodes, ng-model="node.children", ng-class="{hidden: collapsed}")
-		li(ng-repeat="node in node.children", ui-tree-node, ng-include="'nodes_renderer.html'")
+		li(ng-repeat="node in node.children", ui-tree-node, ng-include="'nodes_renderer.html'", tree-populate)
 
 div.tree-view(ui-tree="treeOptions")
 	ol(ui-tree-nodes, ng-model="data")
