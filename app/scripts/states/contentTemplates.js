@@ -17,7 +17,7 @@ define(['./module'], function (states) {
         $stateProvider.state('management.authenticated.content-templates.home', {
         	url: '/content-templates',
         	views: {
-        		'ui-content-templates': {
+        		'ui-content-templates-body': {
             		templateUrl: 'partials/management/content-templates/home',
                     controller: 'ContentTemplatesCtrl'
                 }
@@ -26,8 +26,7 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content-templates.add', {
-            url:'/add',
-            parent: 'management.authenticated.content-templates.home',
+            url:'/content-templates/add',
             views: {
                 'ui-content-templates-body': {
                     templateUrl: 'partials/management/content-templates/add',
@@ -37,8 +36,7 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content-templates.edit', {
-            url:'/edit/:id',
-            parent: 'management.authenticated.content-templates.home',
+            url:'/content-templates/edit/:id',
             views: {
                 'ui-content-templates-body': {
                     templateUrl: 'partials/management/content-templates/add',

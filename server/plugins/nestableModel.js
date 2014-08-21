@@ -27,7 +27,7 @@ var NestableModelPlugin = function(schema, modelName) {
         console.log('plugin::NestableModelPlugin::getTreeStack::enter');
 
         function test() {
-            console.log('plugin::NestableModelPlugin::getTreeStack::test::');
+            console.log('plugin::NestableModelPlugin::getTreeStack::test::', currentNode === null);
             return currentNode === null;
         }
 

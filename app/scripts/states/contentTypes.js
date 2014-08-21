@@ -3,6 +3,7 @@ define(['./module'], function (states) {
 
     return states.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
+        // base state for module
         $stateProvider.state('management.authenticated.content-types', {
             url:'',
             abstract: true,
@@ -17,7 +18,7 @@ define(['./module'], function (states) {
         $stateProvider.state('management.authenticated.content-types.home', {
         	url: '/content-types',
         	views: {
-        		'ui-content-types': {
+        		'ui-content-types-body': {
             		templateUrl: 'partials/management/content-types/home',
                     controller: 'ContentTypesCtrl'
                 }
@@ -26,8 +27,7 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content-types.add', {
-            url:'/add',
-            parent: 'management.authenticated.content-types.home',
+            url:'/content-types/add',
             views: {
                 'ui-content-types-body': {
                     templateUrl: 'partials/management/content-types/add',
@@ -37,8 +37,7 @@ define(['./module'], function (states) {
         });
 
         $stateProvider.state('management.authenticated.content-types.edit', {
-            url:'/edit/:id',
-            parent: 'management.authenticated.content-types.home',
+            url:'/content-types/edit/:id',
             views: {
                 'ui-content-types-body': {
                     templateUrl: 'partials/management/content-types/add',

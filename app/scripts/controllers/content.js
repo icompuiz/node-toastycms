@@ -55,7 +55,7 @@ define(['./module'], function(controllers) {
 
             $scope.noType = function() {
                 $state.go('^.home');
-                $scope.addAlert({
+                $scope.setAlert({
                     type: 'danger',
                     msg: 'A type must be selected'
                 });
@@ -194,21 +194,10 @@ define(['./module'], function(controllers) {
                 }
             };
 
-            $scope.openNode = function(node) {
-
-                $state.go('^.edit', {
-                    id: node._id
-                });
-
-            };
-
             $scope.removeProperty = function($index) {
                 $scope.model.properties[$index].value = null;
             };
 
-            $scope.refreshTree = function() {
-                $rootScope.$broadcast('management.refresh-tree');
-            };
 
             $scope.removeParent = function() {
                 $scope.parent = {
@@ -221,10 +210,10 @@ define(['./module'], function(controllers) {
 
                 $scope.model.remove().then(function() {
                     $scope.refreshTree();
-
-                    $state.go('^.home', {
-                        action: 'remove',
-                        result: 'success'
+                    $state.go('^.home');
+                    $scope.setAlert({
+                        type: 'info',
+                        msg: 'Content deleted successfully'
                     });
                 });
 
@@ -263,7 +252,7 @@ define(['./module'], function(controllers) {
                 if ($state.is("management.authenticated.content.home")) {
 
                     if ($stateParams.alert) {
-                        $scope.addAlert($stateParams.alert);
+                        $scope.setAlert($stateParams.alert);
                     }
 
                 } else if ($state.is("management.authenticated.content.add")) {

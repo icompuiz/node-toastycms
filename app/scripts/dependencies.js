@@ -4,7 +4,11 @@
  * or 3rd party libraries
  */
 requirejs.config({
-
+    packages: [{
+        name: 'codemirror',
+        location: '../bower_components/codemirror',
+        main: 'lib/codemirror'
+    }],
     paths: {
         'domReady': '../bower_components/requirejs-domready/domReady',
         'angular': '../bower_components/angular/angular',
@@ -15,9 +19,12 @@ requirejs.config({
         '_': '../bower_components/lodash/dist/lodash',
         'aysnc': '../bower_components/async/lib/async',
         '$': '../bower_components/jquery/dist/jquery',
-        'angular-bootstrap':'../bower_components/angular-bootstrap/ui-bootstrap',
-        'restangular':'../bower_components/restangular/dist/restangular.min',
-        'angular-bootstrap-tmpls': '../bower_components/angular-bootstrap/ui-bootstrap-tpls'
+        'angular-bootstrap': '../bower_components/angular-bootstrap/ui-bootstrap',
+        'restangular': '../bower_components/restangular/dist/restangular.min',
+        'angular-bootstrap-tmpls': '../bower_components/angular-bootstrap/ui-bootstrap-tpls',
+        'ckeditor': '../bower_components/ng-ckeditor/libs/ckeditor/ckeditor',
+        'ng-ckeditor': '../bower_components/ng-ckeditor/ng-ckeditor.min',
+        'ui-codemirror': '../bower_components/angular-ui-codemirror/ui-codemirror',
     },
 
     /**
@@ -25,29 +32,35 @@ requirejs.config({
      * require some fine tuning to dependency mgt'
      */
     shim: {
-        'angular':{
+        'angular': {
             exports: 'angular'
         },
         'restangular': {
-            deps:['angular', '_'],
+            deps: ['angular', '_'],
         },
-        'angular-ui-router':{
-            deps:['angular']
-        },
-        'angular-ui-tree':{
-            deps:['angular']
-        },
-        'handlebars':{
-            exports:'Handlebars'
-        },
-        '_':{
-            exports:'_'
-        },
-        'angular-bootstrap-tmpls':{
+        'angular-ui-router': {
             deps: ['angular']
         },
-        'angular-bootstrap':{
-            deps:['angular', '$', 'angular-bootstrap-tmpls']
+        'ng-ckeditor': {
+            deps: ['angular', 'ckeditor']
+        },
+        'ui-codemirror': {
+            deps: ['angular', 'codemirror']
+        },
+        'angular-ui-tree': {
+            deps: ['angular']
+        },
+        'handlebars': {
+            exports: 'Handlebars'
+        },
+        '_': {
+            exports: '_'
+        },
+        'angular-bootstrap-tmpls': {
+            deps: ['angular']
+        },
+        'angular-bootstrap': {
+            deps: ['angular', '$', 'angular-bootstrap-tmpls']
         }
     },
 

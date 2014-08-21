@@ -92,10 +92,10 @@ var NestableModelControler = function(resource, model) {
                 if (!doc.parent) {
                     // continue
                     addToTree();
-                } else if (doc.parent.equals(parentId)) {
+                } else if (doc._id.equals(parentId)) {
                     // remove the property from the body
                     res.send(400, 'Cannot be a child of itself');
-                } else {
+                } else if (!doc.parent.equals(parentId)) {
                     doc.addToTree(parentId, function(err) {
                         if (err) {
                             res.send(400, err.message || err);
@@ -109,6 +109,8 @@ var NestableModelControler = function(resource, model) {
                             });
                         }
                     })
+                } else {
+                    next();
                 }
 
             } else { // case 2

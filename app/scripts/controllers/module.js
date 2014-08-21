@@ -5,7 +5,12 @@
  * below, you can see we bring in our controllers and constants modules
  * which avails each service of, for example, the `config` constants object.
  **/
-define(['angular'], function (ng) {
+define(['angular', 
+	'codemirror',
+    'codemirror/mode/htmlmixed/htmlmixed',
+    'ui-codemirror',
+], function(ng, codemirror) {
     'use strict';
-    return ng.module('toastycms.controllers', ['toastycms.models']);
+    window.CodeMirror = codemirror;
+    return ng.module('toastycms.controllers', ['toastycms.models', 'ui.codemirror']);
 });

@@ -7,13 +7,20 @@ var mongoose = require('mongoose'),
     path = require('path');
 
 var inputFormatsPath = path.join(__dirname, '..', 'plugins', 'output-formats');
+var regex = {
+    global: /\{{2}=([a-zA-Z0-9_\$-]+)\}{2}([\W\w]+)\{{2}\1=\}{2}/g,
+    single: /\{{2}=([a-zA-Z0-9_\$-]+)\}{2}([\W\w]+)\{{2}\1=\}{2}/
+};
 
 function parseTags(template) {
 
-    var parsed = template
-        .match(/\{\{[^}]*}}/gi)
+    var parsed = template.match(/\{\{[^(+|=)][^}]*[^(=|+)]\}\}/g) || [];
+
+    console.log(parsed);
+
+    parsed = parsed
         .map(function(tag) {
-            return tag.replace(/(^\{\{)|(}}$)/g, '');
+            return tag.replace(/(^\{\{)|(\}\}$)/g, '');
         })
         .map(function(tag) {
 
@@ -48,15 +55,22 @@ function parseTags(template) {
             return tag !== null;
         });
 
+
     return parsed;
 
 }
 
 function compileTemplate(template) {
 
+    console.log(template);
     var tags = parseTags(template);
 
     return function(content) {
+
+        var siteSettings = [{
+            name: '$site-title',
+            value: 'Node ToastyCMS'
+        }];
 
         content.properties = content.properties.concat([{
             name: '$name',
@@ -67,7 +81,7 @@ function compileTemplate(template) {
         }, {
             name: '$modified',
             value: content.modified
-        }]);
+        }]).concat(siteSettings);
 
         var properties = content.properties;
 
@@ -78,7 +92,7 @@ function compileTemplate(template) {
             });
 
             if (!property) {
-            	console.log(tag);
+                console.log(tag);
                 return null;
             }
 
@@ -174,9 +188,90 @@ function GetTemplate(req, res) {
             } else {
                 var template = new Template(contentType.template);
 
-                var stack = template.getTreeStack();
+                template.getTreeStack(function(err, stack) {
 
-                console.log(stack);
+                    function processMatch(match) {
+                        var parts = match.match(regex.single);
+                        console.log(parts);
+                        var block = {
+                            placeholder: parts[1],
+                            block: (parts[3] || parts[2]).trim(),
+                            raw: parts[0]
+                        };
+
+                        if (parts[3]) {
+                            var options = parts[2];
+                            var parts = options.split(',').map(function(i) {
+                                return i.trim();
+                            }).filter(function(i) {
+                                return i.trim();
+                            });
+                            block.options = {};
+                            parts.map(function(i) {
+                                var keyval = i.split('=');
+                                var option = {
+                                    key: keyval[0],
+                                    value: keyval[1] || true
+                                };
+                                return option;
+                            }).forEach(function(i) {
+                                block.options[i.key] = i.value;
+                            });
+                        }
+
+                        return block;
+                    }
+
+                    function findBlocks(stack, accumulator, callback) {
+
+                        var currentNode = stack.shift();
+
+
+                        if (accumulator) {
+                            var keys = _.keys(accumulator);
+                            keys.forEach(function(key) {
+                                var regex = '{{+' + key + '}}';
+                                currentNode.text = currentNode.text.replace(regex, accumulator[key]);
+                            });
+                        } else {
+                            accumulator = {};
+                        }
+
+                        if (currentNode.parent) {
+
+                            var matches = currentNode.text.match(regex.global)
+                                .map(function(match) {
+
+                                    var block = processMatch(match);
+                                    // console.log(block);
+                                    return block;
+                                }).forEach(function(block) {
+                                    accumulator[block.placeholder] = block.block;
+                                });
+
+                            findBlocks(stack, accumulator, callback);
+
+                        } else {
+                            // console.log(currentNode);
+                            callback(null, currentNode.text);
+                        }
+
+                    }
+
+                    if (stack && stack.length) {
+
+                        findBlocks(stack, null, function(err, text) {
+                            var html = compileTemplate(text)(content);
+                            res.send(200, html);
+                        });
+
+                    } else {
+                        res.send(400);
+                    }
+
+
+                });
+
             }
 
 
@@ -187,7 +282,7 @@ function GetTemplate(req, res) {
     });
 
 }
- 
+
 
 
 module.exports = {

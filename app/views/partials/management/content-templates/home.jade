@@ -1,17 +1,1 @@
-doctype html
-.col-xs-12
-	.row.main-actions-area
-		.col-xs-6
-			div.input-group
-				span.input-group-btn
-					a.btn.btn-default(type="button", ng-click="refreshTree()")
-						span.glyphicon.glyphicon-refresh
-					a.btn.btn-default(type="button", ui-sref="management.authenticated.content-templates.add")
-						span.glyphicon.glyphicon-plus
-				input.form-control(type="text",placeholder="Search for templates")
-	.row
-		.content-area-wrapper
-			.col-xs-3.content-menu
-				toasty-tree-explorer(data-t-api="templates", data-t-select="openNode(node)")
-			.col-xs-9.content-area
-				div.ui-content-templates-body(ui-view="ui-content-templates-body")
+alert(ng-repeat="alert in alerts", type="{{alert.type}}", data-close="closeAlert(alert)") {{alert.msg}}

@@ -1,4 +1,4 @@
 /**
  * Attach all state definitions
  **/
-define(['./input-text'], function () {});
+define(['./input-text','./input-textarea','./input-richtext'], function () {});

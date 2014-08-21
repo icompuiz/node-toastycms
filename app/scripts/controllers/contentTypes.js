@@ -10,12 +10,68 @@ define(['./module'], function(controllers) {
                 name: 'No Template'
             };
 
-            $scope.openNode = function(node) {
+            $scope.parent = {
 
-                $state.go('management.authenticated.content-types.edit', {
-                    id: node._id
+                name: 'No Parent',
+            };
+            $scope.selectParentContentType = function() {
+
+                var modalInstance = $modal.open({
+                    backdrop: 'static',
+                    keyboard: false,
+                    templateUrl: 'partials/management/modal/treeExplorerModal',
+                    controller: ['$scope', '$modalInstance',
+                        function($scope, $modalInstance) {
+
+                            $scope.cancel = false;
+
+                            $scope.apiName = 'types';
+
+
+                            $scope.modalTitle = 'Select Parent Type';
+
+                            $scope.selectedNode = {};
+
+
+                            $scope.onSelected = function(node) {
+
+                                $scope.selectedNode = node;
+
+                            };
+
+
+                            $scope.ok = function() {
+                                $modalInstance.close($scope.selectedNode);
+                            };
+
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+
+                        }
+                    ]
                 });
 
+                modalInstance.result.then(function(node) {
+
+                    if (node._id !== $scope.model._id) {
+                        $scope.model.parent = node._id;
+
+                        $scope.parent = node;
+                    }
+
+                }, function(reason) {
+
+
+                });
+
+            };
+
+            $scope.removeParent = function() {
+                $scope.parent = {
+                    name: 'Not Set'
+                };
+                $scope.model.parent = null;
             };
 
             $scope.selectContentTemplate = function() {
@@ -101,11 +157,10 @@ define(['./module'], function(controllers) {
                     requestPromise.then(function(postResult) {
 
                         $scope.refreshTree();
-
-
                         $log.debug(postResult);
-
                         $scope.model = postResult;
+                        $scope.openNode(postResult);
+
 
                     }, function(error) {
 
@@ -119,18 +174,14 @@ define(['./module'], function(controllers) {
 
             };
 
-            $scope.refreshTree = function() {
-                $rootScope.$broadcast('management.refresh-tree');
-            };
-
             $scope.delete = function() {
 
                 $scope.model.remove().then(function() {
                     $scope.refreshTree();
-
-                    $state.go('management.authenticated.content-types.home', {
-                        action: 'remove',
-                        result: 'success'
+                    $state.go('^.home');
+                    $scope.setAlert({
+                        type: 'info',
+                        msg: 'Type deleted successfully'
                     });
                 });
 
@@ -138,19 +189,25 @@ define(['./module'], function(controllers) {
 
             $scope.cancel = function() {
 
-                $state.go('management.authenticated.content-types.home');
+                $state.go('^.home');
 
             };
 
             if ($stateParams.id) {
                 Restangular.one('types', $stateParams.id).get({
-                    populate: 'template'
+                    populate: 'template parent'
                 }).then(function(getResult) {
                     $scope.model = getResult;
                     if ($scope.model.template) {
                         $scope.contentTemplate = $scope.model.template;
                         $scope.model.template = $scope.contentTemplate._id;
                     }
+                    if ($scope.model.parent) {
+                        $scope.parent = $scope.model.parent;
+                        $scope.model.parent = $scope.parent._id;
+
+                    }
+
                 }, function(error) {
                     $log.error(error);
                 });
