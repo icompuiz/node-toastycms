@@ -45,6 +45,15 @@ define('app', [
                 id: "_id",
             });
 
+            Restangular.all('settings').getList().then(function(settings) {
+
+                $rootScope.settings = {};
+                _.forEach(settings, function(setting) {
+                    $rootScope.settings[setting.alias] = setting;
+                });
+
+            });
+
         }
     ]);
 });

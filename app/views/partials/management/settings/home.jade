@@ -1,1 +1,37 @@
-| Settings
+doctype html
+form.form.toasty-form(name='manageSettings', role="form")
+	div.form-actions.pull-right
+		a.btn.btn-primary(ng-click="addSetting()")
+			span.glyphicon.glyphicon-plus
+			| &nbsp; Add New
+		| &nbsp;
+		div.btn-group.pull-right
+			a.btn.btn-primary(ng-click="save()")
+				span.glyphicon.glyphicon-save
+				| &nbsp; Save All
+			a.btn.btn-warning(ng-click="cancel()")
+				span.glyphicon.glyphicon-save
+				| &nbsp; Cancel
+		.clearfix
+	tabset
+		tab(heading="Settings")
+			table.table
+				thead
+					th
+					th Name
+					th Alias
+					th Value
+				tbody
+					tr(ng-repeat="setting in settings")
+						td
+							a.btn.btn-link.btn-xs(ng-show="!setting.system", style="color: red", ng-click="deleteSetting($index)")
+								span.glyphicon.glyphicon-trash
+							a.btn.btn-link.btn-xs.red(ng-show="setting.system")
+								span.glyphicon &nbsp;
+						td
+							input.form-control(type="text", placeholder="Enter name", ng-model="setting.name", ng-disabled="setting.system")
+						td
+							input.form-control(type="text", placeholder="Enter alias", ng-model="setting.alias", ng-disabled="setting.system")
+					
+						td
+							input.form-control(type="text", placeholder="Enter value", ng-model="setting.value", ng-keypress="aliasManuallyChanged()")

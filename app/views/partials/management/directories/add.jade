@@ -16,18 +16,8 @@ form.form.toasty-form(name='addBlock', role="form")
 		tab(heading="File")
 			.row
 				.form-group.col-sm-6
-					label(for='file-name') Name
+					label(for='block-name') Name
 					input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
 				.form-group.col-sm-6
-					label(for='file-name') Alias
-					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-keypress="aliasManuallyChanged()")
-			.form-group
-				label(for='file-name') Directory
-				a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="directory._id")
-					span.glyphicon.glyphicon-remove(style="color: red")
-				div.directory
-					a.btn.btn-xs.btn-link(ng-click="selectDirectory()") 
-						| {{ directory.name }}
-			.form-group
-				label File
-				toasty-file-upload(on-ready="onFileUploadReady(properties)", directory="directory")
+					label(for='block-name') Alias
+					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias")

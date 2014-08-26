@@ -5,7 +5,8 @@ var $async = require('async'),
 
 var userData = require('./users'),
     groupData = require('./groups'),
-    assetData = require('./assets');
+    assetData = require('./assets'),
+    settingData = require('./settings');
 
 
 function removeTemplates(doneRemovingTemplates) {
@@ -19,6 +20,51 @@ function removeTemplates(doneRemovingTemplates) {
         }
         console.log('loadData::removeTemplates::success');
         doneRemovingTemplates();
+    });
+
+}
+
+function removeBlocks(doneRemovingBlocks) {
+    var Block = $mongoose.model('Block');
+    Block.remove({}, function(err) {
+
+
+        if (err) {
+            console.log('loadData::removeBlocks::fail', err);
+            return doneRemovingBlocks(err);
+        }
+        console.log('loadData::removeBlocks::success');
+        doneRemovingBlocks();
+    });
+
+}
+
+function removeScripts(doneRemovingScripts) {
+    var Script = $mongoose.model('Script');
+    Script.remove({}, function(err) {
+
+
+        if (err) {
+            console.log('loadData::removeScripts::fail', err);
+            return doneRemovingScripts(err);
+        }
+        console.log('loadData::removeScripts::success');
+        doneRemovingScripts();
+    });
+
+}
+
+function removeSettings(doneRemovingSettings) {
+    var Setting = $mongoose.model('Setting');
+    Setting.remove({}, function(err) {
+
+
+        if (err) {
+            console.log('loadData::removeSettings::fail', err);
+            return doneRemovingSettings(err);
+        }
+        console.log('loadData::removeSettings::success');
+        doneRemovingSettings();
     });
 
 }
@@ -377,6 +423,68 @@ function addMocks(doneAddingMocks) {
     });
 }
 
+function addRootDirectory(doneAddingRootDirectory) {
+    var Directory = $mongoose.model('Directory');
+
+    var rootDirectory = {
+        name: 'Site Root',
+        alias: 'site_root',
+        system: true,
+    };
+
+    rootDirectory = new Directory(rootDirectory);
+
+    rootDirectory.save(function(err) {
+        if (err) {
+            console.log('loadData::addRootDirectory::error', err);
+            return doneAddingRootDirectory(err, 'addRootDirectory::error');
+
+        }
+        console.log('loadData::addRootDirectory::success');
+
+        doneAddingRootDirectory(null, 'addRootDirectory::sucessful');
+    });
+}
+
+function addSettings(doneAddingSettings) {
+    console.log('loadData::addSettings::enter');
+
+    var Setting = $mongoose.model('Setting');
+
+    var settings = settingData.data;
+
+    $async.each(settings, function(currentSetting, processNextSetting) {
+
+        var setting = new Setting(currentSetting);
+
+        setting.save(function(err) {
+
+            if (err) {
+                console.log('loadData::addSettings::error', err);
+                processNextSetting(err);
+
+            } else {
+                console.log('loadData::addSettings::success');
+                processNextSetting();
+            }
+
+
+        });
+
+    }, function(err) {
+        if (err) {
+            console.log('loadData::addMocks::error', err);
+            return doneAddingSettings(err, 'addSettings::error');
+
+        }
+        console.log('loadData::addSettings::success');
+
+        doneAddingSettings(null, 'addSettings::sucessful');
+
+    });
+
+}
+
 function addAssets(doneAddingAssets) {
     console.log('loadData::addAssets::enter');
 
@@ -473,10 +581,15 @@ var tasks = {
     removeTemplates: removeTemplates,
     removeContentTypes: removeContentTypes,
     removeContent: removeContent,
+    removeBlocks: removeBlocks,
+    removeScripts: removeScripts,
+    removeSettings: removeSettings,
     addGroups: addGroups,
     addUsers: addUsers,
     addAssets: addAssets,
-    addMocks: addMocks
+    addRootDirectory: addRootDirectory,
+    addMocks: addMocks,
+    addSettings: addSettings
 };
 
 function main(onDataInitialized) {

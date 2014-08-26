@@ -20,6 +20,11 @@ var InputFormat = require('./controllers/inputFormat.js');
 var OutputFormat = require('./controllers/outputFormat.js');
 var Template = require('./controllers/template.js');
 
+var Block = require('./controllers/block.js');
+var Script = require('./controllers/script.js');
+
+var Setting = require('./controllers/setting.js');
+
 var ContentManager = require('./controllers/contentManager.js')
 
 
@@ -47,6 +52,15 @@ var apiRoutes = [{
 }, {
     path: '/api/templates',
     controller: Template
+}, {
+    path: '/api/blocks',
+    controller: Block
+}, {
+    path: '/api/scripts',
+    controller: Script
+}, {
+    path: '/api/settings',
+    controller: Setting
 }];
 
 var authRoutes = [{
@@ -116,7 +130,11 @@ var staticRoutes = [{
 var contentRoutes = [{
     path: '/:contentId([0-9a-fA-F]{24})',
     httpMethod: 'GET',
-    middleware: [ContentManager.view]
+    middleware: [ContentManager.viewById]
+}, {
+    path: '/*',
+    httpMethod: 'GET',
+    middleware: [ContentManager.viewByPath]
 }];
 
 

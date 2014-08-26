@@ -12,13 +12,27 @@ define(['./module'], function(directives) {
                     tRefresh: '&',
                     tAdd: '&',
                     tRemove: '&',
-                    tSelect: '&'
+                    tSelect: '&',
+                    tOptions: '=tOpts' 
                 },
                 templateUrl: 'partials/directives/toastyTreeExplorer',
                 controller: ['$scope','Restangular','$log',
                     function($scope, Restangular, $log) {
                         $scope.selectedNode = {};
                         $scope.data = [];
+
+                        $scope.parent = 'parent';
+                        $scope.children = 'children';
+                        if ($scope.tOptions) {
+                            if ($scope.tOptions.children) {
+                                $scope.children = $scope.tOptions.children;
+                            }
+                            if ($scope.tOptions.parent) {
+                                $scope.parent = $scope.tOptions.parent;
+                            }
+                        }
+
+
 
                         $scope.treeOptions = {
 
@@ -49,6 +63,12 @@ define(['./module'], function(directives) {
                             }
 
                         };
+
+                        if ($scope.tOptions) {
+                            if ($scope.tOptions.nodrag === true) {
+                                $scope.treeOptions.nodrag = true;
+                            }
+                        }
 
                         function read() {
                             Restangular.all($scope.tApi).getList().then(function(getListResult) {

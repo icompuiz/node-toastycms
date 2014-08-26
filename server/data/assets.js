@@ -81,6 +81,15 @@ var assets = [{
 		}, {
 				name: '/api/templates',
 				items: [admin, users]
+		}, {
+				name: '/api/blocks',
+				items: [admin, users]
+		}, {
+				name: '/api/scripts',
+				items: [admin, users]
+		}, {
+				name: '/api/settings',
+				items: [admin, users]
 		}
 ];
 

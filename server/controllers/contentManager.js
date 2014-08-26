@@ -2,7 +2,6 @@
 var mongoose = require('mongoose'),
     _ = require('lodash'),
     async = require('async'),
-    mustache = require('mustache'),
     fs = require('fs'),
     path = require('path');
 
@@ -12,11 +11,9 @@ var regex = {
     single: /\{{2}=([a-zA-Z0-9_\$-]+)\}{2}([\W\w]+)\{{2}\1=\}{2}/
 };
 
-function parseTags(template) {
+function extractPropertyTags(template) {
 
-    var parsed = template.match(/\{\{[^(+|=)][^}]*[^(=|+)]\}\}/g) || [];
-
-    console.log(parsed);
+    var parsed = template.match(/\{\{[^(+|=|~)][^}]*[^(=|+|~)]\}\}/g) || [];
 
     parsed = parsed
         .map(function(tag) {
@@ -60,17 +57,102 @@ function parseTags(template) {
 
 }
 
-function compileTemplate(template) {
+function extractScriptTags(template) {
 
-    console.log(template);
-    var tags = parseTags(template);
+    var parsed = template.match(/\{{2}~[^\{.]*\}{2}/g) || [];
 
-    return function(content) {
+    parsed = parsed
+        .map(function(tag) {
+            return tag.replace(/(^\{{2}~)|(\}{2}|$)/g, '');
+        })
+        .map(function(tag) {
+            if (!tag) {
+                return null;
+            }
 
-        var siteSettings = [{
-            name: '$site-title',
-            value: 'Node ToastyCMS'
-        }];
+            var outputConfig = tag.split(':');
+
+            if (outputConfig.length === 0) {
+                return null;
+            }
+
+            var options = outputConfig.splice(1);
+
+            var name = tag;
+            if (options.length) {
+                name = name.replace(':' + options, '');
+
+
+                options = options.shift().split(',');
+
+                var mapped = options.map(function(part) {
+                    var parts1 = part.split('=');
+                    var option = {
+                        name: parts1[0],
+                        value: true
+                    };
+                    if (parts1[1]) {
+                        option.value = parts1[1];
+                    }
+
+                    return option;
+                });
+
+                options = {};
+                _.forEach(mapped, function(item) {
+                    options[item.name] = item.value;
+                });
+            }
+
+            outputConfig = {
+                name: name,
+                options: options,
+                raw: ['{{~', tag, '}}'].join('')
+            };
+
+            return outputConfig;
+        })
+        .filter(function(tag) {
+            return tag !== null;
+        });
+
+
+
+
+    return parsed;
+
+}
+
+function linkProperties(template, content, callback) {
+
+    var tags = extractPropertyTags(template);
+
+    var Setting = mongoose.model('Setting');
+
+
+
+
+    function getSettings(forwardSettings) {
+        var siteSettings = [];
+
+        Setting.find({}).exec(function(err, settings) {
+            if (err) {
+                return forwardSettings(err);
+            }
+
+            _.forEach(settings, function(setting) {
+                siteSettings.push({
+                    name: '$' + setting.alias,
+                    value: setting.value
+                });
+            })
+
+            return forwardSettings(null, siteSettings);
+        });
+
+    }
+
+    function link(siteSettings, doneLinking) {
 
         content.properties = content.properties.concat([{
             name: '$name',
@@ -92,7 +174,6 @@ function compileTemplate(template) {
             });
 
             if (!property) {
-                console.log(tag);
                 return null;
             }
 
@@ -123,55 +204,77 @@ function compileTemplate(template) {
 
         });
 
-        return compiledTemplate;
-
-    };
-
-};
+        return doneLinking(null, compiledTemplate);
+    }
 
 
-var ViewPage = function(req, res) {
-
-    var contentId = req.params.contentId;
-
-    var Content = mongoose.model('Content');
-    var ContentType = mongoose.model('ContentType');
-
-    var contentQuery = Content.findById(contentId);
-
-    contentQuery.populate('type');
-
-    contentQuery.exec(function(err, content) {
-
-        ContentType.populate(content.type, {
-            path: 'template'
-        }, function(contentType) {
+    async.waterfall([getSettings, link], function(err, template) {
+        callback(null, template);
+    });
 
 
-            var html = compileTemplate(content.type.template.text)(content);
+}
 
-            res.send(200, html);
 
+function linkScripts(template, content, callback) {
+
+    var tags = extractScriptTags(template, content);
+
+    var Script = mongoose.model('Script');
+    async.map(tags, function(tag, mapNextTag) {
+
+        Script.findOne({
+            name: tag.name
+        }).exec(function(err, script) {
+            if (err) {
+                mapNextTag(err);
+            } else if (!script) {
+                mapNextTag();
+            } else {
+                script.tag = tag;
+                script.execute(content, mapNextTag);
+            }
+        });
+
+    }, function(err, results) {
+        results = results.filter(function(tag) {
+            return tag !== null && tag !== undefined;
+        });
+
+        _.forEach(results, function(tag) {
+            console.log(tag);
+            template = template.replace(tag.raw, tag.content || '');
 
         });
 
+        callback(null, template);
     });
 
-};
+}
 
-function GetTemplate(req, res) {
+function compileTemplate(template) {
 
-    var contentId = req.params.contentId;
+    // console.log(template);
 
-    var Content = mongoose.model('Content');
+    // if () {} // for example if the template is in another format like jade
+
+    return function(content, callback) {
+
+        linkProperties(template, content, function(err, compiledTemplate) {
+
+            linkScripts(compiledTemplate, content, callback);
+
+        });
+
+    };
+
+}
+
+function getTemplate(content, req, res) {
     var ContentType = mongoose.model('ContentType');
     var Template = mongoose.model('Template');
-
-    var contentQuery = Content.findById(contentId);
-
-    contentQuery.populate('type');
-
-    contentQuery.exec(function(err, content) {
+    content.getPath(function(err, path) {
+        content.path = path;
 
         ContentType.populate(content.type, {
             path: 'template'
@@ -192,7 +295,7 @@ function GetTemplate(req, res) {
 
                     function processMatch(match) {
                         var parts = match.match(regex.single);
-                        console.log(parts);
+                        // console.log(parts);
                         var block = {
                             placeholder: parts[1],
                             block: (parts[3] || parts[2]).trim(),
@@ -201,7 +304,7 @@ function GetTemplate(req, res) {
 
                         if (parts[3]) {
                             var options = parts[2];
-                            var parts = options.split(',').map(function(i) {
+                            parts = options.split(',').map(function(i) {
                                 return i.trim();
                             }).filter(function(i) {
                                 return i.trim();
@@ -239,7 +342,7 @@ function GetTemplate(req, res) {
 
                         if (currentNode.parent) {
 
-                            var matches = currentNode.text.match(regex.global)
+                            currentNode.text.match(regex.global)
                                 .map(function(match) {
 
                                     var block = processMatch(match);
@@ -261,8 +364,9 @@ function GetTemplate(req, res) {
                     if (stack && stack.length) {
 
                         findBlocks(stack, null, function(err, text) {
-                            var html = compileTemplate(text)(content);
-                            res.send(200, html);
+                            compileTemplate(text)(content, function(err, html) {
+                                res.send(200, html);
+                            });
                         });
 
                     } else {
@@ -278,6 +382,42 @@ function GetTemplate(req, res) {
 
 
         });
+    });
+}
+
+function getTemplateByPath(req, res) {
+
+    var contentPath = req.url;
+
+
+    var Content = mongoose.model('Content');
+
+    Content.findByPath(contentPath, function(err, contentId) {
+
+        if (err) {
+            res.send(404, 'Not Found');
+        } else {
+            req.params.contentId = contentId;
+            getTemplateById(req, res);
+        }
+
+    });
+
+}
+
+function getTemplateById(req, res) {
+
+    var contentId = req.params.contentId;
+
+    var Content = mongoose.model('Content');
+
+    var contentQuery = Content.findById(contentId);
+
+    contentQuery.populate('type');
+
+    contentQuery.exec(function(err, content) {
+
+        getTemplate(content, req, res);
 
     });
 
@@ -286,5 +426,6 @@ function GetTemplate(req, res) {
 
 
 module.exports = {
-    view: GetTemplate
+    viewById: getTemplateById,
+    viewByPath: getTemplateByPath
 };

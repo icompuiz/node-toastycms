@@ -48,8 +48,9 @@ function register() {
 
             if (err) {
                 console.log('controller::directory::before::delete::findById::err', err);
-                return res.send(500, err.message || err);
+                return res.send(400, err.message || err);
             }
+
 
             if (!directory) {
                 err = new Error('Directory not found');
@@ -57,6 +58,13 @@ function register() {
                 return res.send(404, err.message || err);
             }
 
+            if (directory.system) {
+
+                console.log('System directories cannot be deleted')
+                err = new Error('System directories cannot be deleted');
+                return res.send(400, err.message || err);
+
+            }
 
             directory.remove(function(err) {
                 if (err) {

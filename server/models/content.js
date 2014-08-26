@@ -1,7 +1,10 @@
+'use strict';
+
 var $mongoose = require('mongoose'),
-    extend = require('mongoose-schema-extend'),
     ContentProperty = require('./contentProperty'),
     Model = require('./_model');
+
+require('mongoose-schema-extend');
 
 var ContentSchema = Model.schema.extend({
     name: {

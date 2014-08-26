@@ -6,12 +6,12 @@ doctype html
 				span.input-group-btn
 					a.btn.btn-default(type="button", ng-click="refreshTree()")
 						span.glyphicon.glyphicon-refresh
-					a.btn.btn-default(type="button", ui-sref="management.authenticated.files.add")
+					a.btn.btn-default(type="button", ui-sref="management.authenticated.scripts.add")
 						span.glyphicon.glyphicon-plus
-				input.form-control(type="text",placeholder="Search for files")
+				input.form-control(type="text",placeholder="Search for Script")
 	.row
 		.content-area-wrapper
 			.col-xs-3.content-menu
-				toasty-tree-explorer(data-t-api="fs/directories",data-t-opts="treeExplorerOpts", data-t-select="openNode(node)")
+				toasty-tree-explorer(data-t-api="scripts",data-t-opts="treeExplorerOpts", data-t-select="openNode(node)")
 			.col-xs-9.content-area
-				div.ui-files-body(ui-view="ui-files-body")
+				div.ui-scripts-body(ui-view="ui-scripts-body")

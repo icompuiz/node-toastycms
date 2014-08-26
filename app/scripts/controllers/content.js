@@ -1,3 +1,5 @@
+/* global define:true, _: true */
+
 define(['./module'], function(controllers) {
     'use strict';
 
@@ -14,9 +16,28 @@ define(['./module'], function(controllers) {
                 properties: []
             };
 
+            $scope.alias = '';
+
             $scope.parent = {
 
                 name: 'No Parent',
+            };
+
+            var stopWatchingName = $scope.$watch('model.name', function(newValue) {
+                $scope.model.alias = newValue.toLowerCase().replace(/\W/, '_');
+            });
+
+            $scope.$watch('model.alias', function(newValue) {
+                $scope.model.alias = newValue.replace(/\W/, '_');
+            });
+
+            var flag = true;
+            
+            $scope.aliasManuallyChanged = function() {
+                if (flag) {
+                    stopWatchingName();
+                    flag = false;
+                }
             };
 
             $scope.$watch('contentType', function(contentType) {
@@ -107,7 +128,7 @@ define(['./module'], function(controllers) {
                         $scope.parent = node;
                     }
 
-                }, function(reason) {
+                }, function() {
 
 
                 });
@@ -158,17 +179,20 @@ define(['./module'], function(controllers) {
 
                     $scope.contentType = node;
 
-                }, function(reason) {
+                }, function() {
 
                     $scope.noType();
 
-                })
+                });
 
             };
 
             $scope.save = function() {
 
-
+                if ($scope.model.alias) {
+                    $scope.model.alias.trim();
+                }
+                
                 if ($scope.model._id) {
                     var requestPromise = $scope.model.put();
 
@@ -245,6 +269,11 @@ define(['./module'], function(controllers) {
                         $scope.model.parent = $scope.parent._id;
 
                     }
+
+                    if ($scope.model.alias) {
+                        stopWatchingName();
+                    }
+
                 }, function(error) {
                     $log.error(error);
                 });

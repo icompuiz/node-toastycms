@@ -8,7 +8,9 @@
 define(['angular', 
 	'codemirror',
     'codemirror/mode/htmlmixed/htmlmixed',
-    'ui-codemirror',
+    'codemirror/mode/javascript/javascript',
+    'codemirror/mode/jade/jade',
+    'ui-codemirror'
 ], function(ng, codemirror) {
     'use strict';
     window.CodeMirror = codemirror;

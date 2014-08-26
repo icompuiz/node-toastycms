@@ -17,7 +17,6 @@ requirejs.config({
         'handlebars': '../bower_components/handlebars/handlebars',
         // 'text': '../bower_components/requirejs-text/text',
         '_': '../bower_components/lodash/dist/lodash',
-        'aysnc': '../bower_components/async/lib/async',
         '$': '../bower_components/jquery/dist/jquery',
         'angular-bootstrap': '../bower_components/angular-bootstrap/ui-bootstrap',
         'restangular': '../bower_components/restangular/dist/restangular.min',
@@ -25,6 +24,7 @@ requirejs.config({
         'ckeditor': '../bower_components/ng-ckeditor/libs/ckeditor/ckeditor',
         'ng-ckeditor': '../bower_components/ng-ckeditor/ng-ckeditor.min',
         'ui-codemirror': '../bower_components/angular-ui-codemirror/ui-codemirror',
+        'async': '../bower_components/async/lib/async',
     },
 
     /**

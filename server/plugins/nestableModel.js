@@ -14,14 +14,19 @@ var NestableModelPlugin = function(schema, modelName) {
         children: [{
             ref: modelName,
             type: $mongoose.Schema.Types.ObjectId
-        }]
+        }],
+        alias: {
+            type: String,
+            default: '',
+            trim: true,
+        }
     });
 
     schema.methods.getTreeStack = function(returnTreeNodes) {
 
         var self = this;
         var currentNode = self;
-        var Model = self.constructor;
+        var Model = $mongoose.model(modelName);
         var stack = [];
 
         console.log('plugin::NestableModelPlugin::getTreeStack::enter');
@@ -37,7 +42,9 @@ var NestableModelPlugin = function(schema, modelName) {
 
             stack.push(currentNode);
 
-            Model.findById(currentNode.parent).exec(function(err, parentNode) {
+            Model.findOne({
+                _id: currentNode.parent
+            }).exec(function(err, parentNode) {
 
                 if (err) {
                     callback(err);
@@ -83,7 +90,7 @@ var NestableModelPlugin = function(schema, modelName) {
             }
         });
 
-    }
+    };
 
     schema.methods.addToTree = function(parentId, done) {
 
@@ -155,6 +162,87 @@ var NestableModelPlugin = function(schema, modelName) {
                 });
             }
 
+        });
+
+
+
+    };
+
+    schema.pre('save', function(done) {
+        var doc = this;
+
+        if (_.isEmpty(doc.alias)) {
+            doc.alias = doc.name.toLowerCase().replace(/\W/, '_');
+        } else {
+            doc.alias = doc.alias.toLowerCase().replace(/\W/, '_');
+        }
+
+
+        done();
+    });
+
+    schema.methods.getPath = function(callback) {
+
+        var doc = this;
+
+        doc.getTreeStack(function(err, stack) {
+            if (err) {
+                callback(err);
+            } else {
+                var path = stack.reverse().map(function(item) {
+                    return item.alias.replace(/\W/, '_');
+                }).join('/');
+                path = '/' + path;
+                callback(null, path);
+            }
+        });
+
+    };
+
+    schema.statics.findByPath = function(path, callback) {
+
+        var Model = this;
+
+        path = path.replace(/^\//, '');
+        var aliasStack = path.split('/').reverse();
+
+        var root = {
+            parent: null,
+            alias: aliasStack.pop()
+        };
+
+        var currentNode = null;
+
+        function getNextNode(conditions, done) {
+
+            if (!conditions.alias) {
+                done(null, currentNode);
+            } else {
+
+                Model.findOne(conditions)
+                    .exec(function(err, doc) {
+                        if (err) {
+                            done(err);
+                        } else if (doc) {
+                            currentNode = doc;
+                            var nextConditions = {
+                                parent: doc._id,
+                                alias: aliasStack.pop()
+                            };
+                            getNextNode(nextConditions, done);
+                        } else {
+                            done(new Error('Not found'));
+                        }
+                    });
+            }
+        }
+
+        getNextNode(root, function(err, finalNode) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, finalNode._id);
+            }
         });
 
 

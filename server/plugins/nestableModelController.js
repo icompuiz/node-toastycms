@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var _ = require('lodash');
 
 var NestableModelControler = function(resource, model) {
 
@@ -51,6 +52,19 @@ var NestableModelControler = function(resource, model) {
                 }]
             });
         }
+
+        next();
+
+    });
+
+    resource.before('put', function(req, res, next) {
+
+        if (_.isEmpty(req.body.alias)) {
+            req.body.alias = req.body.name.toLowerCase().replace(/\W/, '_');
+        } else {
+            req.body.alias = req.body.alias.toLowerCase().replace(/\W/, '_');
+        }
+
 
         next();
 

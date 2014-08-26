@@ -9,6 +9,11 @@ var FileSystemItemSchema = Model.schema.extend({
         trim: true,
         required: true
     },
+    alias: {
+        type: String,
+        default: '',
+        trim: true,
+    },
     directory: {
         type: $mongoose.Schema.Types.ObjectId,
         ref: 'Directory'
