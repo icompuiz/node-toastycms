@@ -13,7 +13,7 @@ form.form.toasty-form(name='addBlock', role="form")
 				| &nbsp; Cancel
 		.clearfix
 	tabset
-		tab(heading="File")
+		tab(heading="Directory")
 			.row
 				.form-group.col-sm-6
 					label(for='block-name') Name
@@ -21,3 +21,10 @@ form.form.toasty-form(name='addBlock', role="form")
 				.form-group.col-sm-6
 					label(for='block-name') Alias
 					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias")
+				.form-group
+					label(for='file-name') Parent
+					a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="directory._id")
+						span.glyphicon.glyphicon-remove(style="color: red")
+					div.directory
+						a.btn.btn-xs.btn-link(ng-click="selectDirectory()") 
+							| {{ directory.name }}

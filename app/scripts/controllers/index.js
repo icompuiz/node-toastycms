@@ -7,6 +7,7 @@ define(
         './contentTemplates',
         './contentTypes',
         './files',
+        './directories',
         './script',
         './settings',
         './block'

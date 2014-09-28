@@ -22,7 +22,7 @@ form.form.toasty-form(name='addBlock', role="form")
 					label(for='file-name') Alias
 					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-keypress="aliasManuallyChanged()")
 			.form-group
-				label(for='file-name') Directory
+				label(for='file-name') Parent
 				a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="directory._id")
 					span.glyphicon.glyphicon-remove(style="color: red")
 				div.directory
