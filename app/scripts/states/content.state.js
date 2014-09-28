@@ -31,7 +31,7 @@ define(['./module'], function(states) {
                 views: {
                     'ui-content-body': {
                         templateUrl: 'partials/management/content/add',
-                        controller: 'ContentCtrl'
+                        controller: 'AddContentCtrl'
                     }
                 }
             });
@@ -41,7 +41,7 @@ define(['./module'], function(states) {
                 views: {
                     'ui-content-body': {
                         templateUrl: 'partials/management/content/add',
-                        controller: 'ContentCtrl'
+                        controller: 'AddContentCtrl'
                     }
                 }
             });

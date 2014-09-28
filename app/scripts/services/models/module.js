@@ -1,5 +1,5 @@
 /**
- * attach services to this module
+ * attach model services to this module
  * if you get 'unknown {x}Provider' errors from angular, be sure they are
  * properly referenced in one of the module dependencies in the array.
  * below, you can see we bring in our services and constants modules
@@ -7,5 +7,5 @@
  **/
 define(['angular'], function (ng) {
     'use strict';
-    return ng.module('toastycms.services', []);
+    return ng.module('toastycms.services.models', ['toastycms.factories']);
   });

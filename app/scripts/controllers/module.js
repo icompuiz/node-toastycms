@@ -14,5 +14,5 @@ define(['angular',
 ], function(ng, codemirror) {
     'use strict';
     window.CodeMirror = codemirror;
-    return ng.module('toastycms.controllers', ['toastycms.models', 'ui.codemirror']);
+    return ng.module('toastycms.controllers', ['toastycms.services','toastycms.services.models', 'ui.codemirror']);
 });
