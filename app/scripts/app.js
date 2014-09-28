@@ -12,9 +12,8 @@ define('app', [
     'ng-ckeditor',
     './controllers/index',
     './directives/index',
-    './directives/input-formats/index',
     './services/index',
-    './models/index',
+    './factories/index',
     './states/index'
 ], function(ng) {
     'use strict';

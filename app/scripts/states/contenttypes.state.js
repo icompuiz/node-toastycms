@@ -31,7 +31,7 @@ define(['./module'], function (states) {
             views: {
                 'ui-content-types-body': {
                     templateUrl: 'partials/management/content-types/add',
-                    controller: 'ContentTypesCtrl'
+                    controller: 'AddContentTypesCtrl'
         		}
         	}
         });
@@ -41,7 +41,7 @@ define(['./module'], function (states) {
             views: {
                 'ui-content-types-body': {
                     templateUrl: 'partials/management/content-types/add',
-                    controller: 'ContentTypesCtrl'
+                    controller: 'AddContentTypesCtrl'
                 }
             }
         });

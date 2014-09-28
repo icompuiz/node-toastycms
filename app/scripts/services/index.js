@@ -1,4 +1,4 @@
 /**
  * Attach all state definitions
  **/
-define(['./main', './auth', './toastySession', './modalFactory'], function () {});
+define(['./main', './auth','./session', './models/index'], function () {});
