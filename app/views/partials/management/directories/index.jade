@@ -2,16 +2,15 @@ doctype html
 .col-xs-12
 	.row.main-actions-area
 		.col-xs-6
-			div.input-group
-				span.input-group-btn
-					a.btn.btn-default(type="button", ng-click="refreshTree()")
-						span.glyphicon.glyphicon-refresh
-					a.btn.btn-default(type="button", ui-sref="management.authenticated.files.add")
-						span.glyphicon.glyphicon-plus
-				input.form-control(type="text",placeholder="Search for files")
+			div.btn-toolbar
+				a.btn.btn-default(type="button", ng-click="refreshTree()")
+					span.glyphicon.glyphicon-refresh
+				a.btn.btn-default(type="button", ui-sref="management.authenticated.files.add")
+					span.glyphicon.glyphicon-plus
+					| &nbsp;Add Directory
 	.row
 		.content-area-wrapper
 			.col-xs-3.content-menu
-				toasty-tree-explorer(data-t-api="directories",data-t-opts="treeExplorerOpts", data-t-select="openNode(node)")
+				toasty-tree-explorer(data-t-api="fs/directories", data-t-select="openNode(node)")
 			.col-xs-9.content-area
 				div.ui-files-body(ui-view="ui-files-body")

@@ -8,15 +8,6 @@ var FileSystemItemSchema = Model.schema.extend({
         default: '',
         trim: true,
         required: true
-    },
-    alias: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    directory: {
-        type: $mongoose.Schema.Types.ObjectId,
-        ref: 'Directory'
     }
 }, {
     collection: 'filesystemitems'
@@ -29,8 +20,8 @@ FileSystemItemSchema.pre('save', function(done) {
         name: fsItem.name
     };
 
-    if (fsItem.directory) {
-        conditions.directory = fsItem.directory;
+    if (fsItem.parent) {
+        conditions.parent = fsItem.parent;
     }
 
     var FileSystemItem = $mongoose.model('FileSystemItem');
@@ -54,78 +45,8 @@ FileSystemItemSchema.pre('save', function(done) {
             });
 });
 
-FileSystemItemSchema.pre('save', function(done) {
-    var fsItem = this;
-    var Directory = $mongoose.model('Directory');
-
-    if (!fsItem.directory) {
-        return done();
-    }
-
-    Directory
-        .findOneAndUpdate({
-                _id: fsItem.directory
-            }, {
-                $push: {
-                    files: fsItem._id
-                }
-            }, {
-                safe: true
-            },
-            function(err, directory) {
-                console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::enter');
-                if (err) {
-                    console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::error', err);
-                    return done(err);
-                }
-
-                if (!directory) {
-                    err = new Error('Specified directory not found');
-                    console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::error', err);
-                    return done(err); // TODO: need to do clean up
-                }
-
-                console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::success');
-                done();
-            });
-});
-
-FileSystemItemSchema.post('remove', function(fsItem) {
-
-    if (!fsItem.directory) {
-        return;
-    }
-
-    var Directory = $mongoose.model('Directory');
-    Directory
-        .findOneAndUpdate({
-                _id: fsItem.directory
-            }, {
-                $pull: {
-                    files: fsItem._id
-                }
-            }, {
-                safe: true
-            },
-            function(err, directory) {
-                console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::enter');
-                if (err) {
-                    console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::error', err);
-                    // return done(err);
-                    return;
-                }
-
-                if (!directory) {
-                    err = new Error('Specified directory not found');
-                    console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::error', err);
-                    // return done(err); // TODO: need to do clean up
-                    return;
-                }
-
-                console.log('model::filesystemitem::handleFileUpload::findOneAndUpdate::success');
-                // done();
-            });
-});
+var nestableModel = require('../plugins/nestableModel');
+FileSystemItemSchema.plugin(nestableModel, 'FileSystemItem');
 
 var FileSystemItem = $mongoose.model('FileSystemItem', FileSystemItemSchema);
 module.exports = FileSystemItem;

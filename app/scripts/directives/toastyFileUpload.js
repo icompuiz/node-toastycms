@@ -8,17 +8,19 @@ define(['./module'], function(directives) {
 								restrict: 'E',
 								scope: {
 										onReady: '&',
-										directory: '='
+										parent: '='
 								},
 								templateUrl: 'partials/directives/toastyFileUpload',
 								controller: ['$scope', function($scope) {
 
 									$scope.file = {
-										directory: $scope.directory._id
+										parent: null
 									};
 
-									$scope.$watch('directory', function(newValue) {
-										$scope.file.directory = newValue._id;
+									$scope.$watch('parent', function(newValue) {
+										if (newValue) {
+											$scope.file.parent = newValue._id;
+										}
 									});
 
 									function doUpload(callback) {

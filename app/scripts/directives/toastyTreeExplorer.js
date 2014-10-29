@@ -43,7 +43,7 @@ define(['./module'], function(directives) {
                                     // disable tree
                                     var cloneParent = event.dest.nodesScope.$parent.node.clone();
 
-                                    event.source.nodeScope.node.parent = cloneParent._id;
+                                    event.source.nodeScope.node[$scope.parent] = cloneParent._id;
                                     
                                     var requestPromise = event.source.nodeScope.node.put();
                                     requestPromise.then(function() {
@@ -52,7 +52,7 @@ define(['./module'], function(directives) {
 
                                 } else {
 
-                                    event.source.nodeScope.node.parent = undefined;
+                                    event.source.nodeScope.node[$scope.parent] = undefined;
                                     
                                     var requestPromise = event.source.nodeScope.node.put();
                                     requestPromise.then(function() {

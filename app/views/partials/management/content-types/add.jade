@@ -13,24 +13,26 @@ form.form.toasty-form(name='addContentType', role="form")
 		.clearfix
 	tabset
 		tab(heading="Type")
-			.form-group
-				label(for='content-type-name') Name
-				input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
-			.form-group
-				label(for='content-type-name') Parent
-				a.btn.btn-xs.btn-link(ng-click="removeParent()", ng-show="parent._id")
-					span.glyphicon.glyphicon-remove(style="color: red")
-				div.parent-content
-					a.btn.btn-xs.btn-link(ng-click="selectParentContentType()") 
-						| {{ parent.name }}
-			.form-group
-				label(for='content-template-name') Select Template
-				div.content-template
-					a.btn.btn-xs.btn-link(ng-click="selectContentTemplate()") 
-						| {{ contentTemplate.name }}
+			.row
+				.form-group.col-md-6
+					label(for='content-type-name') Name
+					input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
+			.row
+				.form-group.col-md-6
+					label(for='content-type-name') Parent
+					a.btn.btn-xs.btn-link(ng-click="removeParent()", ng-show="parent._id")
+						span.glyphicon.glyphicon-remove(style="color: red")
+					div.parent-content
+						a.btn.btn-xs.btn-link(ng-click="selectParentContentType()") 
+							| {{ parent.name }}
+				.form-group.col-md-6
+					label(for='content-template-name') Select Template
+					div.content-template
+						a.btn.btn-xs.btn-link(ng-click="selectContentTemplate()") 
+							| {{ contentTemplate.name }}
 		tab(heading="Properties")
 			.row
-				.col-xs-7
+				.col-md-12
 					.form-group
 							table.table
 								thead

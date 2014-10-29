@@ -6,7 +6,8 @@ define(['./module'], function(states) {
     return states.config(['$stateProvider',
         function($stateProvider) {
             // base state for module
-            $stateProvider.state('management.authenticated.files', {
+
+            $stateProvider.state('management.authenticated.directories', {
                 url: '',
                 abstract: true,
                 views: {
@@ -33,33 +34,34 @@ define(['./module'], function(states) {
                 }
             });
 
-            $stateProvider.state('management.authenticated.files.home', {
-                url: '/files',
+
+            $stateProvider.state('management.authenticated.directories.home', {
+                url: '/directories',
                 views: {
                     'ui-files-body': {
-                        templateUrl: 'partials/management/files/home',
-                        controller: 'FilesCtrl'
+                        templateUrl: 'partials/management/directories/home',
+                        controller: 'DirectoriesCtrl'
                     }
                 }
 
             });
 
-            $stateProvider.state('management.authenticated.files.add', {
-                url: '/files/add/:type',
+            $stateProvider.state('management.authenticated.directories.add', {
+                url: '/directories/add',
                 views: {
                     'ui-files-body': {
-                        templateUrl: 'partials/management/files/add',
-                        controller: 'FilesCtrl'
+                        templateUrl: 'partials/management/directories/add',
+                        controller: 'DirectoriesCtrl'
                     }
                 }
             });
 
-            $stateProvider.state('management.authenticated.files.edit', {
-                url: '/files/edit/:id/:type',
+            $stateProvider.state('management.authenticated.directories.edit', {
+                url: '/directories/edit/:id',
                 views: {
                     'ui-files-body': {
-                        templateUrl: 'partials/management/files/add',
-                        controller: 'FilesCtrl'
+                        templateUrl: 'partials/management/directories/add',
+                        controller: 'DirectoriesCtrl'
                     }
                 }
             });

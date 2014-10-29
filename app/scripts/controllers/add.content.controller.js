@@ -249,29 +249,6 @@ define(['./module'], function(controllers) {
                     $log.error(error);
                 });
                 
-                // if ($scope.model._id) {
-                //     var requestPromise = $scope.model.put();
-
-                //     requestPromise.then(function(putResult) {
-                //         $scope.refreshTree();
-                //         $log.debug(putResult);
-                //     });
-                // } else {
-                //     var requestPromise = Restangular.all('content').post($scope.model);
-
-                //     requestPromise.then(function(postResult) {
-
-                //         $scope.refreshTree();
-                //         $log.debug(postResult);
-                //         $scope.model = postResult;
-                //         $scope.openNode(postResult);
-
-                //     }, function(error) {
-
-                //         $log.error(error);
-
-                //     });
-                // }
             };
 
             $scope.removeProperty = function($index) {

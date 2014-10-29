@@ -28,7 +28,7 @@ function register() {
 
             // var onAllowed = function onAllowed(directory) {
 
-            req.body.directory = req.params.id;
+            req.body.parent = req.params.id;
 
             FileCtrl.handleFileUpload(req, res, next); // single place to handle file upload case
             // };
@@ -78,37 +78,8 @@ function register() {
         });
     });
 
-    resource.before('get', function(req, res, next) {
-
-        if (!req.params.id) {
-            req.quer.where({
-
-                $or: [{
-                    directory: {
-                        $exists: false
-                    }
-                }, {
-                    directory: null
-                }]
-            });
-        }
-
-        next();
-
-    });
-
-    resource.before('put', function(req, res, next) {
-
-        if (_.isEmpty(req.body.alias)) {
-            req.body.alias = req.body.name.toLowerCase().replace(/\W/, '_');
-        } else {
-            req.body.alias = req.body.alias.toLowerCase().replace(/\W/, '_');
-        }
-
-
-        next();
-
-    });
+    var nestableModelController = require('../plugins/nestableModelController');
+    nestableModelController.plugin(resource, 'FileSystemItem');
 
     return resource;
 

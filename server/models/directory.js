@@ -3,27 +3,22 @@ var $mongoose = require('mongoose'),
 	$extend = require('mongoose-schema-extend'),
 	FileSystemItem = require('./fileSystemItem');
 
-var DirectorySchema = FileSystemItem.schema.extend({
-	files: [{
-		type: $mongoose.Schema.Types.ObjectId,
-		ref: 'FileSystemItem'
-	}]
-});
+var DirectorySchema = FileSystemItem.schema.extend({});
 
-DirectorySchema.pre('remove', function(preRemoveDone) {
-	var directory = this;
+// DirectorySchema.pre('remove', function(preRemoveDone) {
+// 	var directory = this;
 
-    console.log('model::directory::pre::remove::enter');
+//     console.log('model::directory::pre::remove::enter');
 
 
-	FileSystemItem.find({ directory: directory._id }).exec(function(err, files) {
-		$async.each(files, function(file, removeNextItem) {
+// 	FileSystemItem.find({ directory: directory._id }).exec(function(err, files) {
+// 		$async.each(files, function(file, removeNextItem) {
 
-			file.remove(removeNextItem);
+// 			file.remove(removeNextItem);
 
-		}, preRemoveDone)
-	});
-});
+// 		}, preRemoveDone)
+// 	});
+// });
 
 var Directory = $mongoose.model('Directory', DirectorySchema);
 module.exports = Directory;

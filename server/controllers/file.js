@@ -21,7 +21,7 @@ var handleFileUpload = function(req, res, next) {
     if (keys.length > 0) {
 
 
-        var directoryId = req.body.directory;
+        var directoryId = req.body.parent;
 
         if (!directoryId) {
             return res.send(500, 'Please specify a directory');
@@ -39,11 +39,10 @@ var handleFileUpload = function(req, res, next) {
 
         var fileData = {
             name: tmpFile.name,
-            directory: directoryId
+            parent: directoryId
         };
 
         var file = new File(fileData);
-
 
         console.log('controller::file::handleFileUpload::update::before', fileData.name);
 
@@ -150,8 +149,8 @@ var handleFileDownload = function(req, res, next) {
 
 // when you upload to a valid file, you can modify the gridfs ref
 // resource.route('upload.post', {
-// 	detail: true,
-// 	handler: handleFileUpload
+//  detail: true,
+//  handler: handleFileUpload
 // });
 
 function register() {
@@ -195,6 +194,9 @@ function register() {
 
 
     });
+
+    var nestableModelController = require('../plugins/nestableModelController');
+    nestableModelController.plugin(resource, 'FileSystemItem');
 
     return resource;
 

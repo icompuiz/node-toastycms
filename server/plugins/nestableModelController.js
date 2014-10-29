@@ -1,9 +1,18 @@
 'use strict';
 
-var mongoose = require('mongoose');
 var _ = require('lodash');
+var mongoose = require('mongoose');
 
-var NestableModelControler = function(resource, model) {
+var NestableModelControler = function(resource, model, options) {
+
+    if (_.isString(model)) {
+        model = mongoose.model(model);
+    }
+
+    options = options || {
+        parent: 'parent',
+        children: 'children'
+    };
 
     resource.route('tree.get', {
         detail: true,
@@ -41,16 +50,22 @@ var NestableModelControler = function(resource, model) {
     resource.before('get', function(req, res, next) {
 
         if (!req.params.id) {
-            req.quer.where({
 
-                $or: [{
-                    parent: {
-                        $exists: false
-                    }
-                }, {
-                    parent: null
-                }]
-            });
+            var conditions = {
+                $or: []
+            };
+
+            var opt = {};
+            opt[options.parent] = {
+                $exists: false
+            };
+
+            conditions.$or.push(opt);
+
+            opt[options.parent] = null;
+
+
+            req.quer.where(conditions);
         }
 
         next();
@@ -89,7 +104,7 @@ var NestableModelControler = function(resource, model) {
                 return res.send(404, err.message || err);
             }
 
-            var parentId = req.body.parent;
+            var parentId = req.body[options.parent];
 
             function addToTree() {
                 doc.addToTree(parentId, function(err) {
@@ -103,18 +118,18 @@ var NestableModelControler = function(resource, model) {
 
             if (parentId) { // case 1
 
-                if (!doc.parent) {
+                if (!doc[options.parent]) {
                     // continue
                     addToTree();
                 } else if (doc._id.equals(parentId)) {
                     // remove the property from the body
                     res.send(400, 'Cannot be a child of itself');
-                } else if (!doc.parent.equals(parentId)) {
+                } else if (!doc[options.parent].equals(parentId)) {
                     doc.addToTree(parentId, function(err) {
                         if (err) {
                             res.send(400, err.message || err);
                         } else {
-                            doc.removeFromTree(doc.parent, function(err) {
+                            doc.removeFromTree(doc[options.parent], function(err) {
                                 if (err) {
                                     res.send(400, err.message || err);
                                 } else {
@@ -122,19 +137,19 @@ var NestableModelControler = function(resource, model) {
                                 }
                             });
                         }
-                    })
+                    });
                 } else {
                     next();
                 }
 
             } else { // case 2
 
-                req.body.parent = null;
+                req.body[options.parent] = null;
 
-                if (!doc.parent) {
+                if (!doc[options.parent]) {
                     next();
                 } else {
-                    doc.removeFromTree(doc.parent, function(err) {
+                    doc.removeFromTree(doc[options.parent], function(err) {
                         if (err) {
                             res.send(400, err.message || err);
                         } else {

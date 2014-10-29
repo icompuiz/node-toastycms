@@ -15,28 +15,29 @@ form.form.toasty-form(name='addContentType', role="form")
 	tabset
 		tab(heading="Content")
 			.row
-				.form-group.col-sm-6
+				.form-group.col-md-6
 					label(for='content-type-name') Name
 					input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
-				.form-group.col-sm-6
+				.form-group.col-md-6
 					label(for='content-type-name') Alias
 					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-keypress="aliasManuallyChanged()")
-			.form-group
-				label(for='content-type-name') Content Type
-				div.content-type
-					a.btn.btn-xs.btn-link(ng-click="selectContentType()", disabled) 
-						| {{ contentType.name }}
-			.form-group
-				label(for='content-type-name') Parent
-				a.btn.btn-xs.btn-link(ng-click="removeParent()", ng-show="parent._id")
-					span.glyphicon.glyphicon-remove(style="color: red")
-				div.parent-content
-					a.btn.btn-xs.btn-link(ng-click="selectParentContent()") 
-						| {{ parent.name }}
+				.form-group.col-md-6
+					label(for='content-type-name') Content Type
+					div.content-type
+						a.btn.btn-xs.btn-link(ng-click="selectContentType()", disabled) 
+							| {{ contentType.name }}
+				.form-group.col-md-6
+					label(for='content-type-name') Parent
+					a.btn.btn-xs.btn-link(ng-click="removeParent()", ng-show="parent._id")
+						span.glyphicon.glyphicon-remove(style="color: red")
+					div.parent-content
+						a.btn.btn-xs.btn-link(ng-click="selectParentContent()") 
+							| {{ parent.name }}
 		tab(heading="Properties")
-			.form-group(ng-repeat="property in model.properties")
-				label(for="{{property.name}}") {{property.name}}
-				a.btn.btn-xs.btn-link(ng-click="removeProperty($index)")
-					span.glyphicon.glyphicon-remove(style="color: red")
-				toasty-input(data-t-property="property")
-				hr
+			.row
+				.form-group.col-md-12(ng-repeat="property in model.properties")
+					label(for="{{property.name}}") {{property.name}}
+					a.btn.btn-xs.btn-link(ng-click="removeProperty($index)")
+						span.glyphicon.glyphicon-remove(style="color: red")
+					toasty-input(data-t-property="property")
+					hr

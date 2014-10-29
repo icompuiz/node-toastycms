@@ -14,9 +14,10 @@ form.form.toasty-form(name='addBlock', role="form")
 		.clearfix
 	tabset
 		tab(heading="Block")
-			.form-group
-				label(for='block-name') Name
-				input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
-			.form-group
-				label(for='block-text') Content
-				textarea.form-control(ui-codemirror, ui-codemirror-opts="editorOptions", placeholder="Block Content", ng-model="model.text", rows="10")
+			.row
+				.form-group.col-md-6
+					label(for='block-name') Name
+					input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
+				.form-group.col-md-12
+					label(for='block-text') Content
+					textarea.form-control(ui-codemirror, ui-codemirror-opts="editorOptions", placeholder="Block Content", ng-model="model.text", rows="10")

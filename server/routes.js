@@ -32,6 +32,9 @@ var apiRoutes = [{
     path: '/api/mocks',
     controller: Mock
 }, {
+    path: '/api/fs',
+    controller: Directory
+},{
     path: '/api/fs/directories',
     controller: Directory
 }, {

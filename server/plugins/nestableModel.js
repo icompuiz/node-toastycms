@@ -4,23 +4,33 @@ var $mongoose = require('mongoose');
 var $async = require('async');
 var _ = require('lodash');
 
-var NestableModelPlugin = function(schema, modelName) {
+var NestableModelPlugin = function(schema, modelName, options) {
 
-    schema.add({
-        parent: {
-            ref: modelName,
-            type: $mongoose.Schema.Types.ObjectId
-        },
-        children: [{
-            ref: modelName,
-            type: $mongoose.Schema.Types.ObjectId
-        }],
-        alias: {
-            type: String,
-            default: '',
-            trim: true,
-        }
-    });
+    options = options || {
+        parent: 'parent',
+        children: 'children'
+    };
+
+    var schemaProps = {};
+
+    schemaProps[options.parent] = {
+        ref: modelName,
+        type: $mongoose.Schema.Types.ObjectId
+    };
+
+    schemaProps[options.children] = [{
+        ref: modelName,
+        type: $mongoose.Schema.Types.ObjectId
+    }];
+
+
+    schemaProps.alias = {
+        type: String,
+        default: '',
+        trim: true,
+    };
+
+    schema.add(schemaProps);
 
     schema.methods.getTreeStack = function(returnTreeNodes) {
 
@@ -43,7 +53,7 @@ var NestableModelPlugin = function(schema, modelName) {
             stack.push(currentNode);
 
             Model.findOne({
-                _id: currentNode.parent
+                _id: currentNode[options.parent]
             }).exec(function(err, parentNode) {
 
                 if (err) {
@@ -76,12 +86,13 @@ var NestableModelPlugin = function(schema, modelName) {
 
         var Model = $mongoose.model(modelName);
 
+        var pull = {};
+        pull[options.children] = doc._id;
+
         Model.findOneAndUpdate({
             _id: parentId
         }, {
-            $pull: {
-                children: doc._id
-            }
+            $pull: pull
         }, function(err) {
             if (err) {
                 done(err);
@@ -100,13 +111,15 @@ var NestableModelPlugin = function(schema, modelName) {
 
         function addToParent() {
 
+            var addToSet = {};
+            addToSet[options.children] = doc._id;
+
+
             Model
                 .findOneAndUpdate({
                         _id: parentId
                     }, {
-                        $addToSet: {
-                            children: doc._id
-                        }
+                        $addToSet: addToSet
                     }, {
                         safe: true
                     },
@@ -253,11 +266,11 @@ var NestableModelPlugin = function(schema, modelName) {
     schema.pre('save', function(done) {
         var doc = this;
 
-        if (!doc.parent) {
+        if (!doc[options.parent]) {
             return done();
         }
 
-        doc.addToTree(doc.parent, done);
+        doc.addToTree(doc[options.parent], done);
 
 
     });
@@ -281,18 +294,19 @@ var NestableModelPlugin = function(schema, modelName) {
     });
     schema.post('remove', function(doc) {
 
-        if (!doc.parent) {
+        if (!doc[options.parent]) {
             return;
         }
 
         var Model = $mongoose.model(modelName);
+        var pull = {};
+        pull[options.children] = doc._id;
+
         Model
             .findOneAndUpdate({
-                    _id: doc.parent
+                    _id: doc[options.parent]
                 }, {
-                    $pull: {
-                        children: doc._id
-                    }
+                    $pull: pull
                 }, {
                     safe: true
                 },

@@ -1,13 +1,15 @@
 define(['./module'], function(controllers) {
     'use strict';
 
-    return controllers.controller('FilesCtrl', ['$scope', '$http', '$log', '$state', '$stateParams', 'Restangular', '$modal',
+    return controllers.controller('DirectoriesCtrl', ['$scope', '$http', '$log', '$state', '$stateParams', 'Restangular', '$modal',
         function($scope, $http, $log, $state, $stateParams, Restangular, $modal) {
 
             $scope.model = {};
 
 
-            $scope.parent = {};
+            $scope.parent = null;
+
+            $scope.isSiteRoot = false;
 
             $scope.siteRoot = null;
 
@@ -34,53 +36,6 @@ define(['./module'], function(controllers) {
                 }
             };
 
-            $scope.openNode = function(node) {
-
-                var destination = 'management.authenticated.files.edit';
-                if (node.__t === 'Directory') {
-                    destination = 'management.authenticated.directories.edit';
-                }
-
-                $state.go(destination, {
-                    id: node._id,
-                    type: node.__t
-                });
-
-            };
-
-            $scope.removeParent = function() {
-                $scope.parent = $scope.siteRoot;
-                $scope.model.parent = $scope.siteRoot._id;
-            };
-
-            function setSiteRoot(callback) {
-                callback = callback || angular.noop;
-
-                Restangular.all('fs/directories?alias=site_root').getList({
-
-                    populate: 'children parent'
-
-                }).then(function(getResults) {
-                        $scope.siteRoot = getResults[0];
-
-                        if ($scope.siteRoot) {
-                            if ($scope.model._id === $scope.siteRoot._id) {
-                                $scope.isSiteRoot = true;
-                            } else {
-                                $scope.parent = $scope.siteRoot;
-                                $scope.model.parent = $scope.parent._id;
-                            }
-                        }
-
-                        callback();
-
-                    },
-                    function(error) {
-                        $log.error(error);
-                        callback();
-                    });
-
-            }
 
 
             $scope.selectDirectory = function() {
@@ -150,7 +105,7 @@ define(['./module'], function(controllers) {
                         $log.debug(putResult);
                     });
                 } else {
-                    var postRequest = Restangular.all('content').post($scope.model);
+                    var postRequest = Restangular.all('fs/directories').post($scope.model);
 
                     postRequest.then(function(postResult) {
 
@@ -167,16 +122,9 @@ define(['./module'], function(controllers) {
                 }
             };
 
-            $scope.removeProperty = function($index) {
-                $scope.model.properties[$index].value = null;
-            };
-
-
             $scope.removeParent = function() {
-                $scope.parent = {
-                    name: 'Not Set'
-                };
-                $scope.model.parent = null;
+                $scope.parent = $scope.siteRoot;
+                $scope.model.parent = $scope.siteRoot._id;
             };
 
             $scope.delete = function() {
@@ -186,7 +134,7 @@ define(['./module'], function(controllers) {
                     $state.go('^.home');
                     $scope.setAlert({
                         type: 'info',
-                        msg: 'Content deleted successfully'
+                        msg: 'Directory deleted successfully'
                     });
                 });
 
@@ -199,8 +147,37 @@ define(['./module'], function(controllers) {
 
             };
 
+            function setSiteRoot(callback) {
+                callback = callback || angular.noop;
+
+                Restangular.all('fs/directories?alias=site_root').getList({
+
+                    populate: 'children parent'
+
+                }).then(function(getResults) {
+                        $scope.siteRoot = getResults[0];
+
+                        if ($scope.siteRoot) {
+                            if ($scope.model._id === $scope.siteRoot._id) {
+                                $scope.isSiteRoot = true;
+                            } else {
+                                $scope.parent = $scope.siteRoot;
+                                $scope.model.parent = $scope.parent._id;
+                            }
+                        }
+
+                        callback();
+
+                    },
+                    function(error) {
+                        $log.error(error);
+                        callback();
+                    });
+
+            }
+
             if ($stateParams.id) {
-                Restangular.one('fs/files', $stateParams.id).get({
+                Restangular.one('fs/directories', $stateParams.id).get({
 
                     populate: 'children parent'
 
@@ -223,7 +200,7 @@ define(['./module'], function(controllers) {
                         $log.error(error);
                     });
             } else {
-                if ($state.is('management.authenticated.content.home')) {
+                if ($state.is('management.authenticated.directories.home')) {
 
                     if ($stateParams.alert) {
                         $scope.setAlert($stateParams.alert);
