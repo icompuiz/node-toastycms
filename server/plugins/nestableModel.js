@@ -212,49 +212,49 @@ var NestableModelPlugin = function(schema, modelName, options) {
 
     };
 
-    schema.statics.findByPath = function(path, callback) {
+    schema.statics.findByPath = function(path, findByPathTaskDone) {
 
         var Model = this;
 
         path = path.replace(/^\//, '');
         var aliasStack = path.split('/').reverse();
 
-        var root = {
+        var rootConditions = {
             parent: null,
             alias: aliasStack.pop()
         };
 
         var currentNode = null;
 
-        function getNextNode(conditions, done) {
+        function getNextNode(conditions, getNextNodeTaskDone) {
 
             if (!conditions.alias) {
-                done(null, currentNode);
+                getNextNodeTaskDone(null, currentNode);
             } else {
 
                 Model.findOne(conditions)
                     .exec(function(err, doc) {
                         if (err) {
-                            done(err);
+                            getNextNodeTaskDone(err);
                         } else if (doc) {
                             currentNode = doc;
                             var nextConditions = {
                                 parent: doc._id,
                                 alias: aliasStack.pop()
                             };
-                            getNextNode(nextConditions, done);
+                            getNextNode(nextConditions, getNextNodeTaskDone);
                         } else {
-                            done(new Error('Not found'));
+                            getNextNodeTaskDone(new Error('Not found'));
                         }
                     });
             }
         }
 
-        getNextNode(root, function(err, finalNode) {
+        getNextNode(rootConditions, function(err, finalNode) {
             if (err) {
-                callback(err);
+                findByPathTaskDone(err);
             } else {
-                callback(null, finalNode._id);
+                findByPathTaskDone(null, finalNode);
             }
         });
 

@@ -384,3 +384,21 @@ body {
 	border: 1px solid #eee;
 	border-left: none;
 }
+
+.file-link {
+	a {
+		word-wrap: break-word
+	}
+}
+
+.file-preview {
+	max-width: 100%;
+	.thumbnail {
+		width: 100%;
+		height: auto;
+	}
+}
+
+.ut-padding-0 {
+	padding: 0;
+}

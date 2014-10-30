@@ -20,6 +20,7 @@ requirejs.config({
         '$': '../bower_components/jquery/dist/jquery',
         'angular-bootstrap': '../bower_components/angular-bootstrap/ui-bootstrap',
         'restangular': '../bower_components/restangular/dist/restangular.min',
+        'angular-file-upload': '../bower_components/angular-file-upload/angular-file-upload.min',
         'angular-bootstrap-tmpls': '../bower_components/angular-bootstrap/ui-bootstrap-tpls',
         'ckeditor': '../bower_components/ng-ckeditor/libs/ckeditor/ckeditor',
         'ng-ckeditor': '../bower_components/ng-ckeditor/ng-ckeditor.min',
@@ -39,6 +40,9 @@ requirejs.config({
             deps: ['angular', '_'],
         },
         'angular-ui-router': {
+            deps: ['angular']
+        },
+        'angular-file-upload': {
             deps: ['angular']
         },
         'ng-ckeditor': {

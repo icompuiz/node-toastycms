@@ -48,6 +48,14 @@ define(['./module'], function(controllers) {
 
             };
 
+            $scope.uploadFile = angular.noop;
+
+            $scope.onUploaderReady = function(uploaderOptions) {
+
+                $scope.uploadFile = uploaderOptions.upload;
+
+            };
+
             $scope.removeParent = function() {
                 $scope.parent = $scope.siteRoot;
                 $scope.model.parent = $scope.siteRoot._id;
@@ -136,6 +144,14 @@ define(['./module'], function(controllers) {
 
             };
 
+            $scope.getFileUrl = function(fileId) {
+                
+                if (fileId) {
+                    return '/api/fs/files/' + fileId + '/download';
+                }
+
+            };
+
             $scope.save = function() {
 
                 if ($scope.model.alias) {
@@ -143,25 +159,23 @@ define(['./module'], function(controllers) {
                 }
 
                 if ($scope.model._id) {
+
                     var putRequest = $scope.model.put();
-
                     putRequest.then(function(putResult) {
+                        console.log(putResult);
                         $scope.refreshTree();
-                        $log.debug(putResult);
                     });
+
                 } else {
-                    var postRequest = Restangular.all('content').post($scope.model);
+                    $scope.uploadFile(function(err, uploadResult) {
 
-                    postRequest.then(function(postResult) {
+                        if (!err) {
+                            $scope.refreshTree();
+                            console.log(uploadResult);
+                            $scope.model = uploadResult;
+                            $scope.openNode(uploadResult);
+                        }
 
-                        $scope.refreshTree();
-                        $log.debug(postResult);
-                        $scope.model = postResult;
-                        $scope.openNode(postResult);
-
-                    }, function(error) {
-
-                        $log.error(error);
 
                     });
                 }

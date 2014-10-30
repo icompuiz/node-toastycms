@@ -7,6 +7,8 @@ define('app', [
     'angular-ui-router',
     'angular-ui-tree',
     'angular-bootstrap',
+    'angular-file-upload',
+    
     // 'text!',
     'restangular',
     'ng-ckeditor',
@@ -22,6 +24,7 @@ define('app', [
         'toastycms.controllers',
         'restangular',
         'ngCkeditor',
+        'angularFileUpload',
         'toastycms.directives',
         'toastycms.services',
         'toastycms.states',

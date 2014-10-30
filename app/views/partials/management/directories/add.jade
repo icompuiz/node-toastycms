@@ -1,6 +1,6 @@
 doctype html
 form.form.toasty-form(name='addBlock', role="form")
-	div.form-actions.pull-right
+	div.form-actions.pull-right(ng-if="!model.system")
 		div.btn-group.pull-right
 			a.btn.btn-primary(ng-click="save()")
 				span.glyphicon.glyphicon-save
@@ -17,10 +17,10 @@ form.form.toasty-form(name='addBlock', role="form")
 			.row
 				.form-group.col-md-6
 					label(for='block-name') Name
-					input.form-control(type="text", placeholder="Enter name", ng-model="model.name")
+					input.form-control(type="text", placeholder="Enter name", ng-model="model.name", ng-readonly="model.system")
 				.form-group.col-md-6
 					label(for='block-name') Alias
-					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias")
+					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-readonly="model.system")
 				.form-group.col-md-6(ng-hide="isSiteRoot")
 					label(for='file-name') Parent
 					a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="parent._id")

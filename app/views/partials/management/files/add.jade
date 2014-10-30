@@ -29,5 +29,22 @@ form.form.toasty-form(name='addBlock', role="form")
 						a.btn.btn-xs.btn-link(ng-click="selectDirectory()") 
 							| {{ parent.name }}
 				.form-group.col-md-6
-					label File
-					toasty-file-upload(on-ready="onFileUploadReady(properties)", parent="parent")
+					label Upload File
+					toasty-file-upload(on-uploader-ready="onUploaderReady(uploaderOptions)", data-model="model")
+			.row(ng-if="model._id")
+				.col-md-6(ng-if="model.type.match('image').length")
+					label File Preview
+					div.file-preview
+						img.thumbnail(ng-src="/api/fs/files/{{model._id}}/download")
+				.col-md-6.ut-padding-0
+					.col-md-12
+						label Live Link
+						div.file-link
+							a(target="_blank", href="/api/fs/files/{{model._id}}/download") 
+								| /api/fs/files/{{model._id}}/download
+					.col-md-12
+						label URL Path
+						div.file-link
+							a(target="_blank", href="/api/fs/files/{{model._id}}/download") 
+								| /api/fs/files/{{model._id}}/download
+						

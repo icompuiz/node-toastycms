@@ -14,6 +14,8 @@ var prefix = 'fs';
 // var filesCollection = prefix + '.files';
 
 var FileSchema = FileSystemItem.schema.extend({
+    type: String,
+    size: String,
     fileId: {
         type: Schema.Types.ObjectId
     }

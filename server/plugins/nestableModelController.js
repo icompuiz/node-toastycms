@@ -14,6 +14,24 @@ var NestableModelControler = function(resource, model, options) {
         children: 'children'
     };
 
+    resource.route('path.get', {
+        handler: function(req, res, next) {
+
+            var path = req.params.path;
+
+            model.findByPath(path, function(error, node) {
+
+                if (error) {
+                    return req.jsonp(400, error);
+                }
+
+                return req.jsonp(200, node);
+
+            })
+
+        }
+    });
+
     resource.route('tree.get', {
         detail: true,
         handler: function(req, res) {
