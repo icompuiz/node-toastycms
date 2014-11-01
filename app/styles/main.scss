@@ -161,36 +161,41 @@ body {
 }
 
 .body-wrapper {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: $sidebar-width;
-	right: 0;
-	z-index: 2
+	// position: fixed;
+	// top: 0;
+	// bottom: 0;
+	// left: $sidebar-width;
+	// right: 0;
+	// z-index: 2;
+	height: 100%;
+	width: 100%;
+	> .container-fluid {
+		padding-left: 0;
+	}
 }
 
 .sidebar-wrapper {
-	position: fixed;
-	top: 0px;
-	left: 0;
-	bottom: 0;
+	// position: fixed;
+	// top: 0px;
+	// left: 0;
+	// bottom: 0;
 	background: $tdark;
 	color: #999;
-	width: $sidebar-width;
+	// width: $sidebar-width;
 	border-right: 2px solid $sidebar-separator-color;
-	.container-fluid {
-		padding: 0;
-	}
 	overflow: auto;
-	z-index: 1;
+	// z-index: 1;
+	height: 100%;
+	width: 100%;
 }
 
 .sidebar-menu {
 
 	.sidebar-menu-title {
-		text-align: center;
+		// text-align: center;
 		.management-logo {
-			height: 31px;
+			height: auto;
+			width: 100%
 		}
 		a {
 			font-size: ($sidebar-font-size * 1.1);
@@ -220,7 +225,7 @@ body {
 			list-style: none;
 			a {
 				cursor: pointer;
-				padding: 0.6em 1em;
+				padding: 0.6em 1.5em;
 				white-space: normal;
 				display: block;
 				&:hover {
@@ -269,19 +274,32 @@ body {
 	line-height: $navbar-height;
 }
 .content-area {
+	border-left: 1px solid $light-border-color;
+	padding: 0;
+	padding-top: 15px;
+}
+
+.content-area-item {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.content-area-tools {
+	// border-right: 1px solid $light-border-color;
+	padding: 0;
+	padding-top: 15px;
 }
 
 .content-menu {
-	border-right: 1px solid $light-border-color;
 	overflow:auto;
 	padding: 0;
-	padding-top: $tarea-padding-top;
+	// padding-top: $tarea-padding-top;
 }
 
 .main-actions-area {
-	height: $navbar-height;
-	border-bottom: 1px solid $light-border-color;
-	padding-top: 7px;
+	// height: $navbar-height;
+	// border-bottom: 1px solid $light-border-color;
+	// padding-top: 7px;
 }
 
 .tree-view {
@@ -401,4 +419,30 @@ body {
 
 .ut-padding-0 {
 	padding: 0;
+}
+
+.ut-height-100 {
+	height:100%;
+}
+
+.ut-width-100 {
+	width: 100%;
+}
+
+.content-area-tools {
+	padding-left: 0;
+}
+
+.application-menu {
+	padding: 9px 0 6px;
+}
+
+.application-menu-divider {
+	margin-bottom: 0;
+	margin-top: 14px;
+}
+
+.content-area-tools-menu-divider {
+	margin-top: 15px;
+	margin-bottom: 0px;
 }

@@ -1,30 +1,33 @@
 doctype html
-form.form.toasty-form(name='addBlock', role="form")
-	div.form-actions.pull-right(ng-if="!model.system")
-		div.btn-group.pull-right
-			a.btn.btn-primary(ng-click="save()")
+.content-area-item
+	div.form-actions(ng-if="!model.system")
+		div.btn-group
+			a.btn.btn-sm.btn-primary(ng-click="save()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Save
-			a.btn.btn-danger(ng-click="delete()", ng-if="model._id")
+			a.btn.btn-sm.btn-danger(ng-click="delete()", ng-if="model._id")
 				span.glyphicon.glyphicon-trash
 				| &nbsp; Delete
-			a.btn.btn-warning(ng-click="cancel()")
+			a.btn.btn-sm.btn-warning(ng-click="cancel()")
 				span.glyphicon.glyphicon-save
 				| &nbsp; Cancel
 		.clearfix
-	tabset
-		tab(heading="Directory")
-			.row
-				.form-group.col-md-6
-					label(for='block-name') Name
-					input.form-control(type="text", placeholder="Enter name", ng-model="model.name", ng-readonly="model.system")
-				.form-group.col-md-6
-					label(for='block-name') Alias
-					input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-readonly="model.system")
-				.form-group.col-md-6(ng-hide="isSiteRoot")
-					label(for='file-name') Parent
-					a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="parent._id")
-						span.glyphicon.glyphicon-remove(style="color: red")
-					div.directory
-						a.btn.btn-xs.btn-link(ng-click="selectDirectory()") 
-							| {{ parent.name }}
+hr.ut-width-100.content-area-tools-menu-divider
+.content-area-item
+	form.form.toasty-form-wrapper(name='addBlock', role="form")
+		tabset.toasty-form
+			tab(heading="Directory")
+				.row
+					.form-group.col-md-6
+						label(for='block-name') Name
+						input.form-control(type="text", placeholder="Enter name", ng-model="model.name", ng-readonly="model.system")
+					.form-group.col-md-6
+						label(for='block-name') Alias
+						input.form-control(type="text", placeholder="Enter alias", ng-model="model.alias", ng-readonly="model.system")
+					.form-group.col-md-6(ng-hide="isSiteRoot")
+						label(for='file-name') Parent
+						a.btn.btn-xs.btn-link(ng-click="removeDirectory()", ng-show="parent._id")
+							span.glyphicon.glyphicon-remove(style="color: red")
+						div.directory
+							a.btn.btn-xs.btn-link(ng-click="selectDirectory()") 
+								| {{ parent.name }}

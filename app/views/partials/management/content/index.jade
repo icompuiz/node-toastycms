@@ -1,17 +1,18 @@
 doctype html
-.col-xs-12
-	.row.main-actions-area
-		.col-xs-6
-			div.btn-toolbar
-				a.btn.btn-default(type="button", ng-click="refreshTree()")
-					span.glyphicon.glyphicon-refresh
-				a.btn.btn-default(type="button", ui-sref="management.authenticated.content.add")
-					span.glyphicon.glyphicon-plus
-					| &nbsp;Add Content
-	.row
-		.content-area-wrapper
-			.col-xs-3.content-menu
+.row
+	.content-area-wrapper.col-xs-12.ut-padding-0
+		.col-md-4.content-area-tools
+			.main-actions-area.col-xs-12
+				div.btn-group
+					a.btn.btn-sm.btn-default(type="button", ng-click="refreshTree()")
+						span.glyphicon.glyphicon-refresh
+					a.btn.btn-sm.btn-default(type="button", ui-sref="management.authenticated.content.add")
+						span.glyphicon.glyphicon-plus
+						| &nbsp;Add Content
+			.clearfix
+			hr.ut-width-100.content-area-tools-menu-divider
+			.content-menu.col-xs-12
 				toasty-tree-explorer(data-t-api="content", data-t-select="openNode(node)")
-
-			.col-xs-9.content-area
-				div.ui-content-body(ui-view="ui-content-body")
+			hr.ut-width-100.content-area-tools-menu-divider
+		.col-md-8.content-area
+			div.ui-content-body(ui-view="ui-content-body")

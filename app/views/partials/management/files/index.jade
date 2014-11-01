@@ -1,22 +1,22 @@
 doctype html
-.col-xs-12
-	.row.main-actions-area
-		.col-xs-6
-			.btn-toolbar
+.row
+	.content-area-wrapper.col-xs-12.ut-padding-0
+		.col-md-4.content-area-tools
+			.main-actions-area.col-xs-12
 				div.btn-group
-					a.btn.btn-default(type="button", ng-click="refreshTree()")
+					a.btn.btn-sm.btn-default(type="button", ng-click="refreshTree()")
 						span.glyphicon.glyphicon-refresh
-				div.btn-group
-					a.btn.btn-default(type="button", ui-sref="management.authenticated.files.add")
+					a.btn.btn-sm.btn-default(type="button", ui-sref="management.authenticated.files.add")
 						span.glyphicon.glyphicon-plus
 						| &nbsp;Add File
-					a.btn.btn-default(type="button", ui-sref="management.authenticated.directories.add")
+					a.btn.btn-sm.btn-default(type="button", ui-sref="management.authenticated.directories.add")
 						span.glyphicon.glyphicon-plus
 						| &nbsp;Add Directory
-
-	.row
-		.content-area-wrapper
-			.col-xs-3.content-menu
+			.clearfix
+			hr.ut-width-100.content-area-tools-menu-divider
+			.content-menu.col-xs-12
 				toasty-tree-explorer(data-t-api="fs/directories", data-t-select="openNode(node)")
-			.col-xs-9.content-area
-				div.ui-files-body(ui-view="ui-files-body")
+			hr.ut-width-100.content-area-tools-menu-divider
+
+		.col-md-8.content-area
+			div.ui-files-body(ui-view="ui-files-body")

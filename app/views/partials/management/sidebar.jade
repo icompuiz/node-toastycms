@@ -1,16 +1,10 @@
-.sidebar-left.container-fluid.sidebar-menu
-	.sidebar-menu-title
-		a(ui-sref="management.authenticated.dashboard.home")
-			img.management-logo(src="images/logo-xs.png")
-	hr.sidebar-menu-separator
-	ul.items
-		//- li
-		//- 	a(ng-click="item1Visible = !item1Visible")
-		//- 		i.icon-webpage
-		//- 		| &nbsp; Content Management
-		//- 		//- i.caret(ng-show="!item1Visible", ng-click="item1Visible = !item1Visible")
-		//- 		//- i.caret(ng-show="item1Visible", ng-click="item1Visible = !item1Visible")
-		//- 	ul(collapse="!item1Visible")
+.sidebar-left.sidebar-menu
+	.sidebar-menu-title.col-xs-12
+		.container-fluid
+			a(ui-sref="management.authenticated.dashboard.home")
+				img.management-logo(src="images/logo-xs.png")
+	//- hr.ut-width-100.sidebar-menu-separator
+	ul.items.col-xs-12
 		li
 			a(ui-sref="management.authenticated.content.home")
 				i.icon-document
@@ -35,8 +29,8 @@
 			a(ui-sref="management.authenticated.blocks.home")
 				i.glyphicon.glyphicon-tree-deciduous
 				| &nbsp; Blocks
-		li
-			hr.sidebar-menu-separator
+	hr.sidebar-menu-separator.ut-width-100
+	ul.items.col-xs-12
 		li
 			a(ui-sref="management.authenticated.settings.home") 
 				i.icon-controlpanel
