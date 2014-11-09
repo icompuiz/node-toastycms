@@ -31,7 +31,7 @@ define(['./module'], function (factories) {
 				_this.current = null;
 			};
 
-			_this.create = function create(resetOnSuccess) {
+			_this.create = function create(resetOnSuccess, makeCurrent) {
 
 				if (!_this.current._id) {
 					var promise = Endpoint.endpoint.post(_this.current);
@@ -39,6 +39,10 @@ define(['./module'], function (factories) {
 					if (resetOnSuccess) {
 						promise.then(function() {
 							_this.reset();
+						});
+					} else if (makeCurrent) {
+						promise.then(function(data) {
+							_this.current = data;
 						});
 					}
 
@@ -66,7 +70,7 @@ define(['./module'], function (factories) {
 				return promise;
 			};
 
-			_this.update = function update(options, beforeSave) {
+			_this.update = function update(options, beforeSave, makeCurrent) {
 				
 				beforeSave = beforeSave || angular.noop;
 
@@ -76,7 +80,16 @@ define(['./module'], function (factories) {
 
 					beforeSave(clone);
 
-					return clone.put(options);
+					var promise = clone.put(options);
+
+					if (makeCurrent) {
+						promise.then(function(data) {
+							_this.current = data;
+						});
+					}
+
+
+					return promise;
 				}
 				return false;
 			};
@@ -100,17 +113,17 @@ define(['./module'], function (factories) {
 				return Endpoint.endpoint.getList(options);
 			};
 
-			_this.save = function save(beforeSave) {
+			_this.save = function save(beforeSave, makeCurrent) {
 
 				var promise = false;
 				if (_this.current) {
 
 					if (_this.current._id) {
 						// put (update)
-						promise = _this.update(null, beforeSave);
+						promise = _this.update(null, beforeSave, makeCurrent);
 					} else {
 						// post (new)
-						promise = _this.create();
+						promise = _this.create(false, makeCurrent);
 					}
 
 				}
