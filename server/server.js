@@ -56,7 +56,7 @@ function main(app, config, argument2, argument3) {
 	app.use($express.methodOverride());
 
 
-	app.set('views', $path.join(__dirname,'..','app', 'views'));
+	app.set('views', $path.join(__dirname,'..','client', 'views'));
 	app.set('view engine', 'jade');
 	app.set('view options', {
 		layout: false
@@ -76,7 +76,7 @@ function main(app, config, argument2, argument3) {
 	app.use($passport.session());
 
 	app.use($express.static($path.join(__dirname, '..', '.tmp')));
-	app.use($express.static($path.join(__dirname, '..', 'app')));
+	app.use($express.static($path.join(__dirname, '..', 'client')));
 	app.use(app.router);
 
 

@@ -108,7 +108,7 @@ var staticRoutes = [{
     path: '/management',
     httpMethod: 'GET',
     middleware: function(req, res) {
-        res.render('management', {
+        res.render('index', {
             user: req.user
         });
     },
@@ -116,7 +116,7 @@ var staticRoutes = [{
     path: '/management/',
     httpMethod: 'GET',
     middleware: function(req, res) {
-        res.render('management', {
+        res.render('index', {
             user: req.user
         });
     },
@@ -124,7 +124,7 @@ var staticRoutes = [{
     path: '/management/*',
     httpMethod: 'GET',
     middleware: function(req, res) {
-        res.render('management', {
+        res.render('index', {
             user: req.user
         });
     },
