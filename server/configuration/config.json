@@ -1,12 +1,12 @@
 {
-    "port": 4562,
+    "port": 9000,
     "db": {
         "connectionString": "",
         "username": "",
         "password": "",
         "hostname": "localhost",
         "port": "",
-        "database": "ttkdposter",
+        "database": "toastycms",
         "options": ""
     },
     "test": {
@@ -15,7 +15,7 @@
         "password": "",
         "hostname": "localhost",
         "port": "",
-        "database": "ttkdposter-test",
+        "database": "toastycms-test",
         "options": ""
     },
     "security": {
@@ -24,7 +24,7 @@
     	"sessionKey": "TTKD PRIVATE Session Key",
     	"sessionStore": {
     		"hostname": "localhost",
-    		"database": "ttkdposter-session"
+    		"database": "toastycms-session"
     	}
     }
 }

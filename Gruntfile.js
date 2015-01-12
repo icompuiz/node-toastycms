@@ -61,7 +61,7 @@ module.exports = function(grunt) {
           '<%= yeoman.app %>/js/**/*.js'
         ],
         tasks: [
-          'newer:jshint:all',
+          // 'newer:jshint:all',
           'copy:dist'
         ],
       },

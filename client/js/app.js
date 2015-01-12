@@ -7,5 +7,8 @@
     angular.module('inspinia', [
         'ui.router',
         'ui.bootstrap',
-    ])
+        'inspinia.templates'
+    ]).run(['$state', function($state) {
+
+    }])
 })();

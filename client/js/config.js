@@ -12,12 +12,12 @@ function config($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('main', {
             url: "/main",
-            templateUrl: "views/main.html",
+            templateUrl: "partials/main",
             data: { pageTitle: 'Example view' }
         })
         .state('minor', {
             url: "/minor",
-            templateUrl: "views/minor.html",
+            templateUrl: "partials/minor",
             data: { pageTitle: 'Example view' }
         })
 }
