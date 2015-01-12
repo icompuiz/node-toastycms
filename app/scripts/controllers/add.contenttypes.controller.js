@@ -166,8 +166,12 @@ define(['./module'], function(controllers) {
                     $scope.refreshTree();
                     $log.debug(result);
                     $scope.model = result;
-                    ContentTypeModel.reset();
-                    $scope.openNode(result);
+                    
+                    if (!ContentTypeModel.current._id) {
+                        ContentTypeModel.reset();
+                        $scope.openNode(result);
+                    }
+
                 }, function(error) {
                     $log.error(error);
                 });

@@ -1,12 +1,12 @@
 {
-    "port": 9001,
+    "port": 4562,
     "db": {
         "connectionString": "",
         "username": "",
         "password": "",
         "hostname": "localhost",
         "port": "",
-        "database": "toastycms",
+        "database": "ttkdposter",
         "options": ""
     },
     "test": {
@@ -15,16 +15,16 @@
         "password": "",
         "hostname": "localhost",
         "port": "",
-        "database": "toastycms-test",
+        "database": "ttkdposter-test",
         "options": ""
     },
     "security": {
-    	"cookieSecret": "yds93NzWnp0In64DJDGi",
-    	"sessionSecret": "BricWayvEVMIQ8eFqr5i",
-    	"sessionKey": "Toasty Session Key",
+    	"cookieSecret": "uhivdefjhgkdffdjvhdfvjgdfvgsjk",
+    	"sessionSecret": "54df654df4d6f465d4dfb45454treb",
+    	"sessionKey": "TTKD PRIVATE Session Key",
     	"sessionStore": {
     		"hostname": "localhost",
-    		"database": "toastycms-session"
+    		"database": "ttkdposter-session"
     	}
     }
 }

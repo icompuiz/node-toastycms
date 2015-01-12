@@ -3,7 +3,7 @@
 define(['./module'], function(controllers) {
     'use strict';
 
-    return controllers.controller('AddContentCtrl', ['$rootScope', '$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$stateParams', '$modal','ContentModel',
+    return controllers.controller('AddContentCtrl', ['$rootScope', '$scope', '$http', '$log', '$state', 'Restangular', 'AuthenticationSvc', 'ToastySessionSvc', '$stateParams', '$modal', 'ContentModel',
         function($rootScope, $scope, $http, $log, $state, Restangular, AuthenticationSvc, ToastySessionSvc, $stateParams, $modal, ContentModel) {
 
             /// private variable definitions
@@ -33,7 +33,7 @@ define(['./module'], function(controllers) {
                 });
 
                 var aliasManuallyChangedFlag = true;
-                
+
                 $scope.aliasManuallyChanged = function() {
                     if (aliasManuallyChangedFlag) {
                         unwatchName();
@@ -238,17 +238,21 @@ define(['./module'], function(controllers) {
                     $scope.model.alias.trim();
                 }
 
-                var requestPromise = ContentModel.save();
+                var requestPromise = ContentModel.save(null, true);
                 requestPromise.then(function(result) {
                     $scope.refreshTree();
                     $log.debug(result);
                     $scope.model = result;
-                    ContentModel.reset();
-                    $scope.openNode(result);
+
+                    if (!ContentModel.current._id) {
+                        ContentModel.reset();
+                        $scope.openNode(result);
+                    }
+
                 }, function(error) {
                     $log.error(error);
                 });
-                
+
             };
 
             $scope.removeProperty = function($index) {
@@ -287,11 +291,11 @@ define(['./module'], function(controllers) {
             /// Initialize current context
             if ($stateParams.id) {
                 var options = {
-                    
+
                     populate: 'type parent'
 
                 };
-                ContentModel.read($stateParams.id,options, true).then(function() {
+                ContentModel.read($stateParams.id, options, true).then(function() {
                     $scope.model = ContentModel.current;
                     completeInitialization($scope.model);
                     // equivalent to $scope.model = data; where data is the first argument passed to this callback
@@ -299,9 +303,9 @@ define(['./module'], function(controllers) {
             } else {
                 $scope.model = ContentModel.init(defaults);
                 addObservers();
-                
+
             }
-            
+
             /// end - Initialize current context
 
 

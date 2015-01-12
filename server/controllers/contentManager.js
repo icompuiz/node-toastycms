@@ -145,7 +145,7 @@ function linkProperties(template, content, callback) {
                     name: '$' + setting.alias,
                     value: setting.value
                 });
-            })
+            });
 
             return forwardSettings(null, siteSettings);
         });
@@ -258,15 +258,29 @@ function compileTemplate(template) {
 
     // if () {} // for example if the template is in another format like jade
 
-    return function(content, callback) {
+    try {
 
-        linkProperties(template, content, function(err, compiledTemplate) {
+        var jade = require('jade');
 
-            linkScripts(compiledTemplate, content, callback);
+        var templateFunction = jade.compile(template);
 
-        });
+        template = templateFunction({});
 
-    };
+        return function(content, callback) {
+
+            linkProperties(template, content, function(err, compiledTemplate) {
+
+                linkScripts(compiledTemplate, content, callback);
+
+            });
+
+        };
+
+    } catch(error) {
+
+        return error;
+        
+    }
 
 }
 
@@ -364,7 +378,13 @@ function getTemplate(content, req, res) {
                     if (stack && stack.length) {
 
                         findBlocks(stack, null, function(err, text) {
-                            compileTemplate(text)(content, function(err, html) {
+                            var compiler = compileTemplate(text);
+
+                            if (!_.isFunction(compiler)) {
+                                return res.render('404');
+                            }
+
+                            compiler(content, function(err, html) {
                                 res.send(200, html);
                             });
                         });
@@ -383,6 +403,24 @@ function getTemplate(content, req, res) {
 
         });
     });
+}
+
+function getTemplateById(req, res) {
+
+    var contentId = req.params.contentId;
+
+    var Content = mongoose.model('Content');
+
+    var contentQuery = Content.findById(contentId);
+
+    contentQuery.populate('type');
+
+    contentQuery.exec(function(err, content) {
+
+        getTemplate(content, req, res);
+
+    });
+
 }
 
 function getTemplateByPath(req, res) {
@@ -405,23 +443,6 @@ function getTemplateByPath(req, res) {
 
 }
 
-function getTemplateById(req, res) {
-
-    var contentId = req.params.contentId;
-
-    var Content = mongoose.model('Content');
-
-    var contentQuery = Content.findById(contentId);
-
-    contentQuery.populate('type');
-
-    contentQuery.exec(function(err, content) {
-
-        getTemplate(content, req, res);
-
-    });
-
-}
 
 
 
