@@ -264,6 +264,20 @@ module.exports = function(grunt) {
             src: '<%= yeoman.app %>/favicon.ico',
             dest: '<%= yeoman.dist %>/favicon.ico'
           },
+          // Copy application components
+          {
+            expand: true,
+            cwd: '<%= yeoman.app %>/components/',
+            src: '**/*',
+            dest: '<%= yeoman.dist %>/components/'
+          },
+          // Copy application bower components
+          {
+            expand: true,
+            cwd: '<%= yeoman.app %>/bower_components/',
+            src: '**/*',
+            dest: '<%= yeoman.dist %>/bower_components/'
+          },
           // Copy application scripts
           {
             expand: true,
@@ -348,7 +362,7 @@ module.exports = function(grunt) {
     html2js: {
       options: {
         base: '.',
-        module: 'inspinia.templates',
+        module: 'toastycms.tpls',
         rename: function(modulePath) {
           var moduleName = modulePath.replace('.tmp/views/', '').replace('.html', '');
           console.log(moduleName);
@@ -359,7 +373,7 @@ module.exports = function(grunt) {
         src: [
           '<%= yeoman.tmp %>/views/**/*.html'
         ],
-        dest: '<%= yeoman.dist %>/js/inspinia-templates.js'
+        dest: '<%= yeoman.dist %>/js/toastycms-tpls.js'
       }
     },
   });
